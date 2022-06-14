@@ -1,0 +1,190 @@
+// Temp nav styles
+ul.navigation-secondary {
+    margin-top: 20px;
+    li {
+      cursor: pointer;
+      font-size: 15px;
+      width: 100%;
+      box-shadow: none;
+      padding: 5px 0;
+      color: #1d1d1d;
+      span { margin-left: 50px; }
+      &:active, &.active{
+        background: #f5f5f5;
+        color: var(--pf-global--link--Color);
+      }
+      &:hover { color: var(--pf-global--link--Color); }
+    }
+  }
+
+.pf-c-page__main#root {
+  padding: 30px;
+  overflow-x: auto;
+}
+
+.users-list__actions_dot {
+  padding: .79em;
+  line-height: 1em;
+  min-height: 1em;
+  border-radius: .29rem;
+}
+
+.users-list__actions_dot:hover {
+  background: #e0e1e2 none;
+}
+
+.ui.table.users-list {
+  border: none;
+
+  thead {
+    th,
+    th.sorted {
+      border-left: none;
+      background: white;
+    }
+  }
+}
+
+.items-list {
+  background-color: white;
+  border-radius: 3px;
+  margin-top: 20px;
+  min-width: 600px;
+  padding: 20px;
+}
+.ui.basic.label {
+  border: 1px solid #9f3a38;
+  color: #9f3a38;
+}
+
+.ui.progress .bar {
+  min-width: 0;
+}
+
+.ui.segment {
+  padding: 2em;
+}
+
+.ui.button {
+  &.back__top {
+    margin-bottom: 2em;
+  }
+
+  &.back__bottom {
+    margin-top: 2em;
+  }
+}
+
+.tabs {
+  margin-top: 20px;
+}
+
+.ui.dropdown .menu > .item-red,
+.ui.dropdown .menu > .item-red:hover {
+  color: #FF0000;
+}
+
+.ui.form.delete {
+  .field > label {
+    font-weight: 400;
+  }
+}
+
+.ui.modal {
+  > .header {
+    border-bottom: none;
+  }
+
+  > .content {
+    padding-top: 0;
+  }
+
+  .description {
+    margin-bottom: 1em;
+  }
+}
+
+.ui.modal.delete-client {
+  .actions {
+    border: none;
+    padding: 1.5rem;
+    padding-top: 0;
+  }
+
+  .description {
+    padding: 0 1.5rem;
+    margin-bottom: 1em;
+  }
+
+  .button.primary {
+    background-color: #db2828;
+  }
+
+  .button.primary:hover {
+    background-color: #d01919;
+  }
+}
+.item {
+  pointer-events: all;
+}
+.ui.dropdown.dropdown .menu > .input {
+  margin: unset;
+}
+
+.ui.form input[type=text] {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+
+  &:focus {
+    border-radius: 0;
+  }
+}
+
+.ui.label > .delete.icon {
+  margin-left: 1rem;
+}
+
+.ui.form .field :disabled {
+  background-color: #e8e8e8;
+}
+
+.popup-icon {
+  border-radius: 2px;
+  cursor: pointer;
+  margin-left: 3px;
+}
+
+.text_left {
+  float: left;
+}
+
+.text_right {
+  float: right;
+}
+
+.user-password {
+  position: relative;
+  top: 10px;
+}
+
+.fa-eye, .fa-eye-slash {
+  cursor: pointer;
+}
+
+.ui.popup.popup_field {
+  min-width: 376px;
+}
+
+#_pendo-badge_l7YKiAFx16jPyvrkFQOwMuH2aXg {
+  display: none !important;
+}
+
+.ui.modal > .actions { 
+  background-color: transparent;
+}  
+
+.users-list tr:hover {
+  background: #f8f8f8;
+  cursor: pointer;
+}
