@@ -1,5 +1,5 @@
 import * as ActionTypes from './AppConstants';
-import API from './Utilities/Api';
+import { fetchData, createData, deleteData } from 'container/Api';
 import cogoToast from 'cogo-toast';
 
 const notificationMessages = {
@@ -16,18 +16,6 @@ const notificationMessages = {
         deleteDiskError: 'Unassign clients and delete snapshots before deleting disk.'
     }
 };
-
-const base = (url) => {
-    const { locations } = window.insights.getUserInfo().external;
-    const location = window.insights.getLocation();
-    return locations[location] + url;
-};
-
-const fetchData = (url, headers, options) => API.get(base(url), { ...headers, Authorization: `Bearer ${window.insights.getToken()}` }, { role: window.insights.getRole(), ...options });
-
-const createData = (url, payload, headers) => API.put(base(`${url}?role=${window.insights.getRole()}`), payload, { ...headers, Authorization: `Bearer ${window.insights.getToken()}` });
-
-const deleteData = (url, payload, headers) =>  API.delete(base(`${url}?role=${window.insights.getRole()}`), payload, { ...headers, Authorization: `Bearer ${window.insights.getToken()}` });
 
 const notificationOptions = { position: 'top-right', hideAfter: 7 };
 
@@ -49,12 +37,12 @@ const checkErrorCodes = (item) => {
 
 export const fetchInfo = () => ({
     type: ActionTypes.INFO_FETCH,
-    payload: fetchData(ActionTypes.infoUrl(), {}, {})
+    payload: fetchData(ActionTypes.infoUrl())
 });
 
 export const createS3user = (payload) => ({
     type: ActionTypes.CREATE_S3_USER,
-    payload: createData(ActionTypes.s3UsersUrl(), payload, {})
+    payload: createData(ActionTypes.s3UsersUrl(), payload)
 });
 
 export const fetchS3Users = (options) => ({
@@ -64,17 +52,17 @@ export const fetchS3Users = (options) => ({
 
 export const deleteS3user = (name) => ({
     type: ActionTypes.DELETE_S3_USER,
-    payload: deleteData(`${ActionTypes.s3UsersUrl()}/${name}`, {}, {})
+    payload: deleteData(`${ActionTypes.s3UsersUrl()}/${name}`)
 });
 
 export const editS3user = (name, payload) => ({
     type: ActionTypes.EDIT_S3_USER,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}`, payload, {})
+    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}`, payload)
 });
 
 export const fetchS3User = (name) => ({
     type: ActionTypes.S3_USER_FETCH,
-    payload: fetchData(`${ActionTypes.s3UsersUrl()}/${name}`, {}, {})
+    payload: fetchData(`${ActionTypes.s3UsersUrl()}/${name}`)
 });
 
 export const clearS3UserFetchStatus = () => ({
@@ -83,17 +71,17 @@ export const clearS3UserFetchStatus = () => ({
 
 export const lockS3user = (name) => ({
     type: ActionTypes.S3_USER_LOCK,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/lock`, {}, {})
+    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/lock`)
 });
 
 export const unlockS3user = (name) => ({
     type: ActionTypes.S3_USER_UNLOCK,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/unlock`, {}, {})
+    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/unlock`)
 });
 
 export const generateKeys = (name) => ({
     type: ActionTypes.S3_USER_GENERATE_KEYS,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/keys`, {}, {})
+    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/keys`)
 });
 
 export const createS3userAndFetch = (payload) => {
@@ -174,22 +162,22 @@ export const unlockS3userAndFetch = (name) => {
 
 export const fetchBuckets = (name) => ({
     type: ActionTypes.BUCKETS_FETCH,
-    payload: fetchData(`${ActionTypes.s3UsersUrl()}/${name}/buckets`, {}, {})
+    payload: fetchData(`${ActionTypes.s3UsersUrl()}/${name}/buckets`)
 });
 
 export const createBucket = (name, payload) => ({
     type: ActionTypes.CREATE_BUCKET,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/buckets`, payload, {})
+    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/buckets`, payload)
 });
 
 export const deleteBucket = (bucket) => ({
     type: ActionTypes.DELETE_BUCKET,
-    payload: deleteData(`${ActionTypes.s3UsersUrl()}/${bucket.s3user_name}/buckets/${bucket.bucket_name}`, {}, {})
+    payload: deleteData(`${ActionTypes.s3UsersUrl()}/${bucket.s3user_name}/buckets/${bucket.bucket_name}`)
 });
 
 export const editBucket = (name, payload) => ({
     type: ActionTypes.DELETE_BUCKET,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/buckets/${payload.bucket_name}`, payload, {})
+    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/buckets/${payload.bucket_name}`, payload)
 });
 
 export const createBucketAndFetch = (name, payload) => {
