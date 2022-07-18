@@ -51,7 +51,7 @@
     "workbox-webpack-plugin": "^6.4.2"
   },
   "dependencies": {
-    "cogo-toast": "https://github.com/Voloshch/cogo",
+    "cogo-toast": "^4.2.3",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
