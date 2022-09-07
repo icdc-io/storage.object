@@ -149,12 +149,12 @@ const UsersList = ({ t, items }) => {
                             <Dropdown direction='left' icon='ellipsis vertical' className='users-list__actions_dot'>
                                 <Dropdown.Menu >
                                     <UserModal t={t} key={i} edit user={item}/>
-                                    { item.is_locked && userRole === 'admin' ?
+                                    { item.is_locked ?
                                         <Dropdown.Item
                                             icon='lock open'
                                             text={t('unlockS3user')}
                                             onClick={() => dispatch(unlockS3userAndFetch(item.s3user_name))}
-                                        /> : userRole === 'admin' &&
+                                        /> :
                                         <Dropdown.Item
                                             icon='lock'
                                             text={t('lockS3user')}

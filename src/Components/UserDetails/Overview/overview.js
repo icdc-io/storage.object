@@ -68,10 +68,9 @@ const UserOverview = ({ t, s3user }) => {
                 <Grid.Column textAlign='right' width={16}>
                     <Button content={t('generatenewKeys')} onClick={generateNewKeys}
                         style={{ width: '270px' }}/>
-                    { s3user.is_locked && userRole === 'admin' ?
+                    { s3user.is_locked ?
                         <Button content={t('unlockS3user')} style={{ width: '270px' }}
                             onClick={() => dispatch(unlockS3userAndFetch(s3user.s3user_name))}/> :
-                        userRole === 'admin' &&
                         <Button content={t('lockS3user')} style={{ width: '270px' }}
                             onClick={() => dispatch(lockS3userAndFetch(s3user.s3user_name))}/>}
                     <Button negative onClick={() => setDeleteConfirm(true)} content={t('deleteS3user')}
