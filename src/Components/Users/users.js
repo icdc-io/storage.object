@@ -5,14 +5,15 @@ import UsersList from './usersList';
 import PropTypes from 'prop-types';
 import UserModal from './userModal';
 import { intersperse } from '../../AppConstants';
-import { fetchS3Users, fetchInfo } from '../../AppActions';
+import { fetchS3Users, fetchInfo, fetchPools } from '../../AppActions';
 import { useHistory } from 'react-router-dom';
+import UserQuotas from './userQuotas';
 
-const showEndpoints = (endpointsData) => {
-    const endpoints = endpointsData;
+// const showEndpoints = (endpointsData) => {
+//     const endpoints = endpointsData;
 
-    return endpoints.map(endpoint => <span key={endpoint} style={{ color: '#2185d0' }}>{endpoint}</span>);
-};
+//     return endpoints.map(endpoint => <span key={endpoint} style={{ color: '#2185d0' }}>{endpoint}</span>);
+// };
 
 const Overview = ({ t }) => {
     const s3users = useSelector(state => state.AmazonStore.s3users);
@@ -28,10 +29,12 @@ const Overview = ({ t }) => {
     useEffect(() => {
         dispatch(fetchS3Users());
         dispatch(fetchInfo());
+        dispatch(fetchPools({type: 's3'}))
     }, [dispatch, user]);
 
     return <React.Fragment>
-        <List horizontal divided>
+        <UserQuotas t={t} info={info}/>
+        {/* <List horizontal divided>
             {
                 info.map((item, i) => (
                     <List.Item key={i}>
@@ -48,7 +51,7 @@ const Overview = ({ t }) => {
                     </List.Item>
                 ))
             }
-        </List>
+        </List> */}
 
         {s3usersFetchStatus === 'pending' && s3users.length === 0 && <Loader active inline='centered' />}
 
@@ -76,7 +79,7 @@ const Overview = ({ t }) => {
                 <section className="items-list">
                     <Grid>
                         <Grid.Row>
-                            <Grid.Column verticalAlign='middle' width={4}><Header as='h4'>{t('users')}</Header></Grid.Column>
+                            <Grid.Column verticalAlign='middle' width={4}><Header as='h4'>{t('s3users')}</Header></Grid.Column>
                             <Grid.Column textAlign='right' width={12}>
                                 <UserModal t={t} />
                             </Grid.Column>

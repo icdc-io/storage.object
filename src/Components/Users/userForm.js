@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Modal, Form, Button, Label } from 'semantic-ui-react';
+import { Modal, Form, Button, Label, Dropdown } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { required, number, s3user, email } from '../../Validaions';
 
@@ -20,7 +20,14 @@ Fld.propTypes = {
     meta: PropTypes.any
 };
 
-const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin }) => {
+const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools }) => {
+
+    const storageTypes = pools.map((item, index) => ({
+        key: index,
+        text: item.class,
+        value: item.id
+    }));
+
     return <React.Fragment>
         <Form>
             <Field
@@ -44,6 +51,10 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin }) => {
                 type="email"
                 validate={edit ? [required, email] : [email]}
             />}
+            <Form.Field name="storageType">
+                <label>{t('storageType')}</label>
+                <Dropdown clearable selection fluid options={storageTypes} disabled={ edit } defaultValue={1}/>
+            </Form.Field>
             <Field
                 name="storageSizeLimit"
                 label={t('storageSizeLimit')}
@@ -93,7 +104,8 @@ UserForm.propTypes = {
     handleClose: PropTypes.func,
     handleSubmit: PropTypes.func,
     edit: PropTypes.bool,
-    isAdmin: PropTypes.bool
+    isAdmin: PropTypes.bool,
+    pools: PropTypes.array
 };
 
 export default reduxForm({

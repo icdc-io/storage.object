@@ -12,38 +12,38 @@ import UserForm from './userForm';
 
 const mapPropsToApi = (item) => (
     {
-        s3user_name: item.name,
-        s3user_description: item.description,
-        quota_per_s3user: {
-            data_size_mb: item.storageSizeLimit,
-            number_of_buckets: item.bucketsLimit,
-            number_of_objects: item.objectsLimit
-        },
-        default_quota_per_bucket: {
-            data_size_mb: item.storageInBucketLimit,
-            number_of_objects: item.objectsInBucketLimit
-        },
-        owner: item.owner || ''
+        name: item.name,
+        description: item.description,
+        owner: item.owner || '',
+        default_placement: 1,
+        limits: {
+            storage_size: +item.storageSizeLimit,
+            buckets: +item.bucketsLimit,
+            objects: +item.objectsLimit,
+            bucket_storage_size: +item.storageInBucketLimit,
+            bucket_objects: +item.objectsInBucketLimit
+        }        
     }
 );
 
 const mapApiToProps = (item) => (
     {
-        name: item.s3user_name,
-        description: item.s3user_description,
+        name: item.name,
+        description: item.description,
 
-        storageSizeLimit: item.quota_per_s3user.data_size_mb,
-        bucketsLimit: item.quota_per_s3user.number_of_buckets,
-        objectsLimit: item.quota_per_s3user.number_of_objects,
+        storageSizeLimit: item.stats.storage_size.limit,
+        bucketsLimit: item.stats.buckets.limit,
+        objectsLimit: item.stats.objects.limit,
 
-        storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
-        objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects,
+        // storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
+        // objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects,
         owner: item.owner
     }
 );
 
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector(state => state.host.user.role);
+    const pools = useSelector(state => state.AmazonStore.pools);
 
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
@@ -61,7 +61,7 @@ const UserModal = ({ user, edit, t }) => {
             handleClose();
 
             let payload = mapPropsToApi(values);
-
+            console.log(payload)
             if (edit) {
                 dispatch(editS3userAndFetch(user.s3user_name, payload));
             } else {
@@ -90,8 +90,8 @@ const UserModal = ({ user, edit, t }) => {
 
                 {
                     // eslint-disable-next-line max-len
-                    edit ? <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(user)} edit={edit} isAdmin={userRole === 'admin'} /> :
-                        <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} />
+                    edit ? <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(user)} edit={edit} isAdmin={userRole === 'admin'} pools={pools}/> :
+                        <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={pools}/>
                 }
 
             </Modal.Content>

@@ -188,3 +188,14 @@ ul.navigation-secondary {
   background: #f8f8f8;
   cursor: pointer;
 }
+.ui.grid > .row.quotas-description {
+  padding: 0;
+  
+  p {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #767676;
+  }
+}

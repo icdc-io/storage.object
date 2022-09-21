@@ -50,6 +50,11 @@ export const fetchS3Users = (options) => ({
     payload: fetchData(ActionTypes.s3UsersUrl(), {}, options)
 });
 
+export const fetchPools = (options) => ({
+    type: ActionTypes.POOLS_FETCH,
+    payload: fetchData(ActionTypes.poolsUrl(), {}, options)
+});
+
 export const deleteS3user = (name) => ({
     type: ActionTypes.DELETE_S3_USER,
     payload: deleteData(`${ActionTypes.s3UsersUrl()}/${name}`)
@@ -60,9 +65,9 @@ export const editS3user = (name, payload) => ({
     payload: createData(`${ActionTypes.s3UsersUrl()}/${name}`, payload)
 });
 
-export const fetchS3User = (name) => ({
+export const fetchS3User = (user_id) => ({
     type: ActionTypes.S3_USER_FETCH,
-    payload: fetchData(`${ActionTypes.s3UsersUrl()}/${name}`)
+    payload: fetchData(`${ActionTypes.s3UserUrl()}/${user_id}`)
 });
 
 export const clearS3UserFetchStatus = () => ({

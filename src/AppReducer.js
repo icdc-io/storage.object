@@ -7,7 +7,9 @@ import Immutable from 'seamless-immutable';
 const initialState = Immutable({
     info: [],
     iscsi_info: [],
+    pools: [],
     s3users: [],
+    poolsFetchStatus: '',
     s3usersFetchStatus: '',
     s3usersCreateStatus: '',
     s3userFetchStatus: '',
@@ -27,8 +29,20 @@ export const AmazonStore = (state = initialState, action) => {
         return state.set('s3usersFetchStatus', 'pending');
     case `${ActionTypes.S3_USERS_FETCH}_FULFILLED`:
         return Immutable.merge(state, {
-            s3users: action.payload.data,
+            s3users: action.payload,
             s3usersFetchStatus: 'fulfilled'
+        });
+    case `${ActionTypes.S3_USERS_FETCH}_REJECTED`:
+        errorMessage = action.payload.response.data.explanation;
+        return state.set('s3usersFetchStatus', 'rejected');
+
+    // fetch pools
+    case `${ActionTypes.POOLS_FETCH}_PENDING`:
+        return state.set('s3usersFetchStatus', 'pending');
+    case `${ActionTypes.POOLS_FETCH}_FULFILLED`:
+        return Immutable.merge(state, {
+            pools: action.payload,
+            poolsFetchStatus: 'fulfilled'
         });
     case `${ActionTypes.S3_USERS_FETCH}_REJECTED`:
         errorMessage = action.payload.response.data.explanation;

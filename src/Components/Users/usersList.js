@@ -85,6 +85,12 @@ const UsersList = ({ t, items }) => {
                         {t('description')}</Table.HeaderCell>
 
                     <Table.HeaderCell
+                        sorted={column === 'storageType' ? direction : null}
+                        onClick={handleSort('storageType')}
+                    >
+                        {t('storageType')}</Table.HeaderCell>
+
+                    <Table.HeaderCell
                         textAlign='center'
                         sorted={column === 'space' ? direction : null}
                         onClick={handleSort('space')}
@@ -110,12 +116,12 @@ const UsersList = ({ t, items }) => {
 
             <Table.Body>
                 {data && data.map((item, i) => (
-                    <Table.Row key={i} onClick={() => navigate(`/amazon/${item.s3user_name}`)}>
+                    <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
                         <Table.Cell>
-                            { item.s3user_name.slice(0, 20) }
-                            { item.s3user_name.length > 20 && <Popup
+                            { item.name.slice(0, 20) }
+                            { item.name.length > 20 && <Popup
                                 trigger={ <span className='popup-icon'>&nbsp;...&nbsp;</span> }
-                                content={item.s3user_name}
+                                content={item.name}
                                 position='bottom center'
                                 inverted
                             /> }
@@ -125,30 +131,33 @@ const UsersList = ({ t, items }) => {
                             { item.owner || EMPTY_VALUE }
                         </Table.Cell>
                         <Table.Cell>
-                            { item.s3user_description.slice(0, 8) }
-                            { item.s3user_description.length > 8 && <Popup
+                            { item.description.slice(0, 8) }
+                            { item.description.length > 8 && <Popup
                                 trigger={ <span className='popup-icon'>&nbsp;...&nbsp;</span> }
-                                content={item.s3user_description}
+                                content={item.description}
                                 position='bottom center'
                                 inverted
                             /> }
                         </Table.Cell>
-                        <Table.Cell textAlign='center'>
-                            {item.current_actual_usage.data_size_mb} / {item.quota_per_s3user.data_size_mb}
-                            <Bar value={item.current_actual_usage.data_size_mb} total={item.quota_per_s3user.data_size_mb} />
+                        <Table.Cell>
+                            { item.default_placement.class || EMPTY_VALUE }
                         </Table.Cell>
                         <Table.Cell textAlign='center'>
-                            {item.current_actual_usage.number_of_buckets} / {item.quota_per_s3user.number_of_buckets}
-                            <Bar value={item.current_actual_usage.number_of_buckets} total={item.quota_per_s3user.number_of_buckets} />
+                            {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
+                            <Bar value={item.stats.storage_size.actual} total={item.stats.storage_size.limit} />
                         </Table.Cell>
                         <Table.Cell textAlign='center'>
-                            {item.current_actual_usage.number_of_objects} / {item.quota_per_s3user.number_of_objects}
-                            <Bar value={item.current_actual_usage.number_of_objects} total={item.quota_per_s3user.number_of_objects} />
+                            {item.stats.buckets.actual} / {item.stats.buckets.limit}
+                            <Bar value={item.stats.buckets.actual} total={item.stats.buckets.limit} />
+                        </Table.Cell>
+                        <Table.Cell textAlign='center'>
+                            {item.stats.objects.actual} / {item.stats.objects.limit}
+                            <Bar value={item.stats.objects.actual} total={item.stats.objects.limit} />
                         </Table.Cell>
                         { userRole !== BILLING_USER_NAME && <Table.Cell collapsing textAlign='right'>
                             <Dropdown direction='left' icon='ellipsis vertical' className='users-list__actions_dot'>
                                 <Dropdown.Menu >
-                                    <UserModal t={t} key={i} edit user={item}/>
+                                    <UserModal t={t} key={i} edit user={item} />
                                     { item.is_locked ?
                                         <Dropdown.Item
                                             icon='lock open'

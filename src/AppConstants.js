@@ -1,6 +1,8 @@
 export const BILLING_USER_NAME = 'billing';
 export const EMPTY_VALUE = String.fromCharCode(8212);
 
+export const POOLS_FETCH = 'POOLS_FETCH';
+
 export const S3_USERS_FETCH = 'S3_USERS_FETCH';
 export const CREATE_S3_USER = 'CREATE_S3_USER';
 export const DELETE_S3_USER = 'DELETE_S3_USER';
@@ -37,8 +39,12 @@ export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
 export const EDIT_SNAPSHOT = 'EDIT_SNAPSHOT';
 
 export const BASE_URL = '/api/storage/v1';
+export const BASE_URL2 = '/api/storage/v2';
 
-export const s3UsersUrl = () => `${BASE_URL}/s3/{account}/s3users`;
+export const poolsUrl = () => `${BASE_URL2}/pools`;
+export const s3UsersUrl = () => `${BASE_URL2}/accounts/{account}/s3/users`;
+export const s3UserUrl = () => `${BASE_URL2}/s3/users`;
+// export const s3UsersUrl = () => `${BASE_URL}/s3/{account}/s3users`;
 export const infoUrl = () => `${BASE_URL}/s3/{account}/account_quota_info`;
 export const iscsiInfoUrl = () => `${BASE_URL}/iscsi/{account}/account_info`;
 export const iscsiDisksUrl = () => `${BASE_URL}/iscsi/{account}/disks`;

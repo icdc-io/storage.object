@@ -29,8 +29,12 @@ const UserDetails = ({ t }) => {
 
     useEffect(() => {
         dispatch(fetchS3User(name));
-        dispatch(fetchBuckets(name));
-    }, [dispatch, name, user]);
+    }, [dispatch, name, user])
+
+    // useEffect(() => {
+    //     dispatch(fetchS3User(name));
+    //     dispatch(fetchBuckets(name));
+    // }, [dispatch, name, user]);
 
     useEffect(() => {
         if (s3userFetchStatus === 'rejected') {
