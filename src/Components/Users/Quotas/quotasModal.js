@@ -6,23 +6,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Header, Button, Dropdown } from 'semantic-ui-react';
 import { reset } from 'redux-form';
 import PropTypes from 'prop-types';
-import { actionAndFetch, createS3user, editS3userAndFetch } from '../../AppActions';
-import { BILLING_USER_NAME } from '../../AppConstants';
-import UserForm from './userForm';
+import { actionAndFetch, createS3quota, editS3userAndFetch } from '../../../AppActions';
+import { BILLING_USER_NAME } from '../../../AppConstants';
+import QuotasForm from './quotasForm';
+
 
 const mapPropsToApi = (item) => (
     {
-        name: item.name,
-        description: item.description,
-        owner: item.owner || '',
-        default_placement: item.storageType,
-        limits: {
-            storage_size: +item.storageSizeLimit,
-            buckets: +item.bucketsLimit,
-            objects: +item.objectsLimit,
-            bucket_storage_size: +item.storageInBucketLimit,
-            bucket_objects: +item.objectsInBucketLimit
-        }        
+        objects: +item.objects,
+        data_size_mb: +item.space,
+        buckets_per_users: +item.bucketsUser,
+        users: +item.users,
+        pool_id: +item.storageType
     }
 );
 
@@ -41,7 +36,7 @@ const mapApiToProps = (item) => (
     }
 );
 
-const UserModal = ({ user, edit, t }) => {
+const QuotasModal = ({ user, edit, t }) => {
     const userRole = useSelector(state => state.host.user.role);
     const pools = useSelector(state => state.AmazonStore.pools);
 
@@ -51,7 +46,7 @@ const UserModal = ({ user, edit, t }) => {
     const handleClose = useCallback(
         () => {
             setOpen(false);
-            dispatch(reset('createS3user'));
+            dispatch(reset('createS3quota'));
         },
         [setOpen, dispatch]
     );
@@ -65,10 +60,10 @@ const UserModal = ({ user, edit, t }) => {
             if (edit) {
                 dispatch(editS3userAndFetch(user.s3user_name, payload));
             } else {
-                dispatch(actionAndFetch(createS3user, payload));
+                dispatch(actionAndFetch(createS3quota, payload));
             }
 
-            dispatch(reset('createS3user'));
+            dispatch(reset('createS3quota'));
         },
         [handleClose, edit, user, dispatch]
     );
@@ -79,19 +74,19 @@ const UserModal = ({ user, edit, t }) => {
                 <Button
                     onClick={() => setOpen(true)}
                     // disabled={itemsFetchStatus !== 'fulfilled'}
-                    content={t('createS3user')} icon='plus'
+                    content={t('setQuota')} icon='plus'
                     labelPosition='left'
                     primary
                 />
         }
         <Modal open={open} size="tiny" onSubmit={onSubmit}>
-            <Header content={edit ? t('editS3user') : t('createS3user')} />
+            <Header content={edit ? t('editS3user') : t('setQuota')} />
             <Modal.Content>
 
                 {
                     // eslint-disable-next-line max-len
-                    edit ? <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(user)} edit={edit} isAdmin={userRole === 'admin'} pools={pools}/> :
-                        <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={pools}/>
+                    edit ? <QuotasForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(user)} edit={edit} isAdmin={userRole === 'admin'} pools={pools}/> :
+                        <QuotasForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={pools}/>
                 }
 
             </Modal.Content>
@@ -99,10 +94,10 @@ const UserModal = ({ user, edit, t }) => {
     </React.Fragment>;
 };
 
-UserModal.propTypes = {
+QuotasModal.propTypes = {
     user: PropTypes.object,
     edit: PropTypes.bool,
     t: PropTypes.func
 };
 
-export default UserModal;
+export default QuotasModal;

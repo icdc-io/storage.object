@@ -35,10 +35,10 @@ const checkErrorCodes = (item) => {
 
 // s3 users actions
 
-export const fetchInfo = () => ({
-    type: ActionTypes.INFO_FETCH,
-    payload: fetchData(ActionTypes.infoUrl())
-});
+// export const fetchInfo = () => ({
+//     type: ActionTypes.INFO_FETCH,
+//     payload: fetchData(ActionTypes.infoUrl())
+// });
 
 export const createS3user = (payload) => ({
     type: ActionTypes.CREATE_S3_USER,
@@ -53,6 +53,16 @@ export const fetchS3Users = (options) => ({
 export const fetchPools = (options) => ({
     type: ActionTypes.POOLS_FETCH,
     payload: fetchData(ActionTypes.poolsUrl(), {}, options)
+});
+
+export const fetchS3quotas = (options) => ({
+    type: ActionTypes.FETCH_S3_QUOTAS,
+    payload: fetchData(ActionTypes.s3QuotasUrl(), options)
+});
+
+export const createS3quota = (payload) => ({
+    type: ActionTypes.CREATE_S3_QUOTA,
+    payload: createData(ActionTypes.s3QuotasUrl(), payload)
 });
 
 export const deleteS3user = (name) => ({
@@ -95,7 +105,7 @@ export const createS3userAndFetch = (payload) => {
 
         response.then(() => {
             dispatch(fetchS3Users());
-            dispatch(fetchInfo());
+            dispatch(fetchS3quotas());
             successNotification('');
         }, error => errorNotification(error.response.data.explanation));
     };
@@ -107,7 +117,7 @@ export const editS3userAndFetch = (name, payload) => {
 
         response.then(() => {
             dispatch(fetchS3Users());
-            dispatch(fetchInfo());
+            dispatch(fetchS3quotas());
             successNotification('');
         }, error => errorNotification(error.response.data.explanation));
     };
@@ -119,7 +129,7 @@ export const deleteS3userAndFetch = (name) => {
 
         response.then(() => {
             dispatch(fetchS3Users());
-            dispatch(fetchInfo());
+            dispatch(fetchS3quotas());
             successNotification('');
         }, error => errorNotification(error.response.data.explanation));
     };
@@ -131,7 +141,7 @@ export const actionAndFetch = (action, payload) => {
 
         response.then(() => {
             dispatch(fetchS3Users());
-            dispatch(fetchInfo());
+            dispatch(fetchS3quotas());
             successNotification('');
         }, error => errorNotification(error.response.data.explanation));
     };
@@ -143,7 +153,7 @@ export const lockS3userAndFetch = (name) => {
 
         response.then(() => {
             dispatch(fetchS3Users());
-            dispatch(fetchInfo());
+            dispatch(fetchS3quotas());
             dispatch(fetchS3User(name));
             successNotification('');
         }, error => errorNotification(error.response.data.explanation));
@@ -156,7 +166,7 @@ export const unlockS3userAndFetch = (name) => {
 
         response.then(() => {
             dispatch(fetchS3Users());
-            dispatch(fetchInfo());
+            dispatch(fetchS3quotas());
             dispatch(fetchS3User(name));
             successNotification('');
         }, error => errorNotification(error.response.data.explanation));

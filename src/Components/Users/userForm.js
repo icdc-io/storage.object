@@ -1,101 +1,97 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Modal, Form, Button, Label, Dropdown } from 'semantic-ui-react';
+import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { required, number, s3user, email } from '../../Validaions';
-
-const Fld = ({ input, label, meta: { error, touched } }) => {
-    return <React.Fragment>
-        <Form.Field error={(touched && error) ? true : false} >
-            <label>{label}</label>
-            <input {...input}/>
-            {touched && error && <Label basic pointing>{error}</Label>}
-        </Form.Field>
-    </React.Fragment>;
-};
-
-Fld.propTypes = {
-    input: PropTypes.any,
-    label: PropTypes.any,
-    meta: PropTypes.any
-};
+import CustomSelect from '../../Elements/customSelect';
+import CustomField from '../../Elements/customField';
 
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools }) => {
-
     const storageTypes = pools.map((item, index) => ({
         key: index,
         text: item.class,
-        value: item.id
+        value: item.id,
     }));
 
-    return <React.Fragment>
-        <Form>
-            <Field
-                name="name"
-                label={t('name')}
-                component={Fld}
-                type="text"
-                validate={[required, s3user]}
-            />
-            <Field
-                name="description"
-                label={t('description')}
-                component={Fld}
-                type="text"
-                validate={[required]}
-            />
-            {isAdmin && <Field
-                name="owner"
-                label={t('owner')}
-                component={Fld}
-                type="email"
-                validate={edit ? [required, email] : [email]}
-            />}
-            <Form.Field name="storageType">
-                <label>{t('storageType')}</label>
-                <Dropdown clearable selection fluid options={storageTypes} disabled={ edit } defaultValue={1}/>
-            </Form.Field>
-            <Field
-                name="storageSizeLimit"
-                label={t('storageSizeLimit')}
-                component={Fld}
-                type="number"
-                validate={[required, number]}
-            />
-            <Field
-                name="objectsLimit"
-                label={t('objectsLimit')}
-                component={Fld}
-                type="number"
-                validate={[required, number]}
-            />
-            <Field
-                name="bucketsLimit"
-                label={t('bucketsLimit')}
-                component={Fld}
-                type="number"
-                validate={[required, number]}
-            />
-            <Field
-                name="storageInBucketLimit"
-                label={t('storageInBucketLimit')}
-                component={Fld}
-                type="number"
-                validate={[required, number]}
-            />
-            <Field
-                name="objectsInBucketLimit"
-                label={t('objectsInBucketLimit')}
-                component={Fld}
-                type="number"
-                validate={[required, number]}
-            />
-            <Modal.Actions align={'right'}>
-                <Button onClick={handleClose}>{t('cancel')}</Button>
-                <Button onClick={handleSubmit} primary type='submit'>{t('submit')}</Button>
-            </Modal.Actions>
-        </Form>
-    </React.Fragment >;
+    return (
+        <React.Fragment>
+            <Form>
+                <Field
+                    name="name"
+                    label={t('name')}
+                    component={CustomField}
+                    type="text"
+                    validate={[required, s3user]}
+                />
+                <Field
+                    name="description"
+                    label={t('description')}
+                    component={CustomField}
+                    type="text"
+                    validate={[required]}
+                />
+                {isAdmin && (
+                    <Field
+                        name="owner"
+                        label={t('owner')}
+                        component={CustomField}
+                        type="email"
+                        validate={edit ? [required, email] : [email]}
+                    />
+                )}
+                <Field
+                    name="storageType"
+                    label={t('storageType')}
+                    component={CustomSelect}
+                    type="text"
+                    options={storageTypes}
+                    edit={edit}
+                    validate={[required]}
+                />
+                <Field
+                    name="storageSizeLimit"
+                    label={t('storageSizeLimitGb')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    name="objectsLimit"
+                    label={t('objectsLimit')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    name="bucketsLimit"
+                    label={t('bucketsLimit')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    name="storageInBucketLimit"
+                    label={t('storageInBucketLimitGb')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    name="objectsInBucketLimit"
+                    label={t('objectsInBucketLimit')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Modal.Actions align={'right'}>
+                    <Button onClick={handleClose}>{t('cancel')}</Button>
+                    <Button onClick={handleSubmit} primary type="submit">
+                        {t('submit')}
+                    </Button>
+                </Modal.Actions>
+            </Form>
+        </React.Fragment>
+    );
 };
 
 UserForm.propTypes = {
@@ -105,9 +101,9 @@ UserForm.propTypes = {
     handleSubmit: PropTypes.func,
     edit: PropTypes.bool,
     isAdmin: PropTypes.bool,
-    pools: PropTypes.array
+    pools: PropTypes.array,
 };
 
 export default reduxForm({
-    form: 'createS3user'
+    form: 'createS3user',
 })(UserForm);

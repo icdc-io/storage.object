@@ -3,6 +3,9 @@ export const EMPTY_VALUE = String.fromCharCode(8212);
 
 export const POOLS_FETCH = 'POOLS_FETCH';
 
+export const FETCH_S3_QUOTAS = 'FETCH_S3_QUOTAS';
+export const CREATE_S3_QUOTA = 'CREATE_S3_QUOTA';
+
 export const S3_USERS_FETCH = 'S3_USERS_FETCH';
 export const CREATE_S3_USER = 'CREATE_S3_USER';
 export const DELETE_S3_USER = 'DELETE_S3_USER';
@@ -18,8 +21,8 @@ export const CREATE_BUCKET = 'CREATE_BUCKET';
 export const DELETE_BUCKET = 'DELETE_BUCKET';
 export const EDIT_BUCKET = 'EDIT_BUCKET';
 
-export const INFO_FETCH = 'INFO_FETCH';
-export const ISCSI_INFO_FETCH = 'ISCSI_INFO_FETCH';
+// export const INFO_FETCH = 'INFO_FETCH';
+// export const ISCSI_INFO_FETCH = 'ISCSI_INFO_FETCH';
 
 export const ISCSI_DISKS_FETCH = 'ISCSI_DISKS_FETCH';
 export const CREATE_ISCSI_DISK = 'CREATE_ISCSI_DISK';
@@ -44,9 +47,10 @@ export const BASE_URL2 = '/api/storage/v2';
 export const poolsUrl = () => `${BASE_URL2}/pools`;
 export const s3UsersUrl = () => `${BASE_URL2}/accounts/{account}/s3/users`;
 export const s3UserUrl = () => `${BASE_URL2}/s3/users`;
+export const s3QuotasUrl = () => `${BASE_URL2}/accounts/{account}/s3/quotas`;
 // export const s3UsersUrl = () => `${BASE_URL}/s3/{account}/s3users`;
-export const infoUrl = () => `${BASE_URL}/s3/{account}/account_quota_info`;
-export const iscsiInfoUrl = () => `${BASE_URL}/iscsi/{account}/account_info`;
+// export const infoUrl = () => `${BASE_URL}/s3/{account}/account_quota_info`;
+// export const iscsiInfoUrl = () => `${BASE_URL}/iscsi/{account}/account_info`;
 export const iscsiDisksUrl = () => `${BASE_URL}/iscsi/{account}/disks`;
 export const iscsiClientsUrl = () => `${BASE_URL}/iscsi/{account}/clients`;
 export const snapshotsUrl = (disk) => `${BASE_URL}/iscsi/{account}/disks/${disk}/snapshots`;
