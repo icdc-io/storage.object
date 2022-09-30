@@ -10,7 +10,7 @@ import { fetchS3User, fetchBuckets, clearS3UserFetchStatus } from '../../AppActi
 import BucketsList from './Buckets/bucketsList';
 
 const UserDetails = ({ t }) => {
-    const { name } = useParams();
+    const { userId } = useParams();
     const s3user = useSelector(state => state.AmazonStore.s3user);
     const s3userFetchStatus = useSelector(state => state.AmazonStore.s3userFetchStatus);
     const user = useSelector(state => state.host.user);
@@ -28,8 +28,9 @@ const UserDetails = ({ t }) => {
     ];
 
     useEffect(() => {
-        dispatch(fetchS3User(name));
-    }, [dispatch, name, user])
+        dispatch(fetchS3User(userId));
+        dispatch(fetchBuckets(userId));
+    }, [dispatch, userId, user])
 
     // useEffect(() => {
     //     dispatch(fetchS3User(name));
@@ -44,14 +45,14 @@ const UserDetails = ({ t }) => {
     }, [dispatch, s3userFetchStatus, history]);
 
     return <React.Fragment>
-        <Link to="/amazon">
+        <Link to="/amazon" className='back_link'>
             <Button className="back back__top" labelPosition='left' icon='left chevron' content={t('back')} />
         </Link>
 
         {s3userFetchStatus === 'pending' && <Loader active inline='centered' />}
         {s3userFetchStatus === 'fulfilled' && <> <Tab panes={panes} />
 
-            <Link to="/amazon">
+            <Link to="/amazon" className='back_link'>
                 <Button className="back back__bottom" labelPosition='left' icon='left chevron' content={t('back')}></Button>
             </Link>
         </>}

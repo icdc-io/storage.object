@@ -12,8 +12,9 @@ import EditResForm from './editResForm';
 
 const mapPropsToApi = (item) => (
     {
-        s3user_name: item.name,
-        s3user_description: item.description,
+        name: item.name,
+        description: item.description,
+        
         quota_per_s3user: {
             data_size_mb: item.storageSizeLimit,
             number_of_buckets: item.bucketsLimit,
@@ -28,15 +29,15 @@ const mapPropsToApi = (item) => (
 
 const mapApiToProps = (item) => (
     {
-        name: item.s3user_name,
-        description: item.s3user_description,
+        name: item.name,
+        description: item.description,
 
-        storageSizeLimit: item.quota_per_s3user.data_size_mb,
-        bucketsLimit: item.quota_per_s3user.number_of_buckets,
-        objectsLimit: item.quota_per_s3user.number_of_objects,
+        storageSizeLimit: item.stats.storage_size.limit,
+        bucketsLimit: item.stats.buckets.limit,
+        objectsLimit: item.stats.objects.limit,
 
-        storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
-        objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects
+        // storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
+        // objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects
     }
 );
 

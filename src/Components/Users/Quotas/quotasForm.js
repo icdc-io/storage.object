@@ -3,10 +3,10 @@ import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { required, number } from '../../../Validaions';
-import CustomSelect from '../../../Elements/customSelect';
-import CustomField from '../../../Elements/customField';
+import CustomField from '../../GeneralComponents/customField';
+import CustomSelect from '../../GeneralComponents/customSelect';
 
-const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools }) => {
+const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }) => {
     const storageTypes = pools.map((item, index) => ({
         key: index,
         text: item.class,
@@ -17,6 +17,17 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools }) => {
         <React.Fragment>
             <Form>
                 <Field
+                    name="storageType"
+                    label={t('storageType')}
+                    component={CustomSelect}
+                    type="text"
+                    editable
+                    options={storageTypes}
+                    initialValues={initialValues}
+                    edit={edit}
+                    validate={[required]}
+                />
+                <Field
                     name="objects"
                     label={t('objects')}
                     component={CustomField}
@@ -25,7 +36,14 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools }) => {
                 />
                 <Field
                     name="space"
-                    label={t('space')}
+                    label={t('spaceGb')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    name="users"
+                    label={t('s3swiftUsers')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
@@ -36,22 +54,6 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools }) => {
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
-                />
-                <Field
-                    name="users"
-                    label={t('users')}
-                    component={CustomField}
-                    type="number"
-                    validate={[required, number]}
-                />
-                <Field
-                    name="storageType"
-                    label={t('storageType')}
-                    component={CustomSelect}
-                    type="text"
-                    options={storageTypes}
-                    edit={edit}
-                    validate={[required]}
                 />
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>

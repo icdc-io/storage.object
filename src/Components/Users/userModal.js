@@ -10,15 +10,24 @@ import { actionAndFetch, createS3user, editS3userAndFetch } from '../../AppActio
 import { BILLING_USER_NAME } from '../../AppConstants';
 import UserForm from './userForm';
 
-const mapPropsToApi = (item) => (
-    {
+const mapPropsToApi = (item, edit) => (
+    edit ? {
+        description: item.description,
+        owner: item.owner || '',
+        limits: {
+            storage_size: +item.storageSizeLimit,
+            objects: +item.objectsLimit,
+            bucket_storage_size: +item.storageInBucketLimit,
+            bucket_objects: +item.objectsInBucketLimit
+        }        
+    }
+    : {
         name: item.name,
         description: item.description,
         owner: item.owner || '',
         default_placement: item.storageType,
         limits: {
             storage_size: +item.storageSizeLimit,
-            buckets: +item.bucketsLimit,
             objects: +item.objectsLimit,
             bucket_storage_size: +item.storageInBucketLimit,
             bucket_objects: +item.objectsInBucketLimit
@@ -30,10 +39,10 @@ const mapApiToProps = (item) => (
     {
         name: item.name,
         description: item.description,
-
-        storageSizeLimit: item.stats.storage_size.limit,
-        bucketsLimit: item.stats.buckets.limit,
-        objectsLimit: item.stats.objects.limit,
+        default_placement: item.default_placement.id,
+        storageSizeLimit: item.stats.storage_size?.limit || 0,
+        // bucketsLimit: item.stats.buckets?.limit || 0,
+        objectsLimit: item.stats.objects?.limit || 0,
 
         // storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
         // objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects,
@@ -60,10 +69,9 @@ const UserModal = ({ user, edit, t }) => {
         (values) => {
             handleClose();
 
-            let payload = mapPropsToApi(values);
-            console.log(payload)
+            let payload = mapPropsToApi(values, edit);
             if (edit) {
-                dispatch(editS3userAndFetch(user.s3user_name, payload));
+                dispatch(editS3userAndFetch(user.id, payload));
             } else {
                 dispatch(actionAndFetch(createS3user, payload));
             }

@@ -50,10 +50,10 @@ const UsersList = ({ t, items }) => {
     // }, [items]);
 
     const onConfirm = useCallback(
-        (name) => {
+        (userId) => {
             setDeleteConfirm(false);
             setDeleteConfirmI(null);
-            dispatch(actionAndFetch(deleteS3user, name));
+            dispatch(actionAndFetch(deleteS3user, userId));
         },
         [dispatch]
     );
@@ -95,7 +95,7 @@ const UsersList = ({ t, items }) => {
                         sorted={column === 'space' ? direction : null}
                         onClick={handleSort('space')}
                     >
-                        {t('space')}</Table.HeaderCell>
+                        {t('spaceGb')}</Table.HeaderCell>
 
                     <Table.HeaderCell
                         textAlign='center'
@@ -137,23 +137,24 @@ const UsersList = ({ t, items }) => {
                                 content={item.description}
                                 position='bottom center'
                                 inverted
+                                className='popup'
                             /> }
                         </Table.Cell>
                         <Table.Cell>
                             { item.default_placement.class || EMPTY_VALUE }
                         </Table.Cell>
-                        <Table.Cell textAlign='center'>
+                        { Object.keys(item.stats).length > 0 ? <Table.Cell textAlign='center'>
                             {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
                             <Bar value={item.stats.storage_size.actual} total={item.stats.storage_size.limit} />
-                        </Table.Cell>
-                        <Table.Cell textAlign='center'>
+                        </Table.Cell> : <Table.Cell textAlign='center'>{t('notAvailable')}</Table.Cell>}
+                        { Object.keys(item.stats).length > 0 ?  <Table.Cell textAlign='center'>
                             {item.stats.buckets.actual} / {item.stats.buckets.limit}
                             <Bar value={item.stats.buckets.actual} total={item.stats.buckets.limit} />
-                        </Table.Cell>
-                        <Table.Cell textAlign='center'>
+                        </Table.Cell> : <Table.Cell textAlign='center'>{t('notAvailable')}</Table.Cell>}
+                        { Object.keys(item.stats).length > 0 ?  <Table.Cell textAlign='center'>
                             {item.stats.objects.actual} / {item.stats.objects.limit}
                             <Bar value={item.stats.objects.actual} total={item.stats.objects.limit} />
-                        </Table.Cell>
+                        </Table.Cell> : <Table.Cell textAlign='center'>{t('notAvailable')}</Table.Cell>}
                         { userRole !== BILLING_USER_NAME && <Table.Cell collapsing textAlign='right'>
                             <Dropdown direction='left' icon='ellipsis vertical' className='users-list__actions_dot'>
                                 <Dropdown.Menu >
@@ -162,12 +163,12 @@ const UsersList = ({ t, items }) => {
                                         <Dropdown.Item
                                             icon='lock open'
                                             text={t('unlockS3user')}
-                                            onClick={() => dispatch(unlockS3userAndFetch(item.s3user_name))}
+                                            onClick={() => dispatch(lockS3userAndFetch(item.id, { action: 'unlock' }))}
                                         /> :
                                         <Dropdown.Item
                                             icon='lock'
                                             text={t('lockS3user')}
-                                            onClick={() => dispatch(lockS3userAndFetch(item.s3user_name))}
+                                            onClick={() => dispatch(lockS3userAndFetch(item.id, {action: 'lock'}))}
                                         />}
                                     <Dropdown.Item
                                         className="item-red"
@@ -185,11 +186,11 @@ const UsersList = ({ t, items }) => {
                                         header={t('deleteS3userConfirName')}
                                         content={
                                             <div className='content'>
-                                                {t('deleteS3userConfirmMessage', { name: <b>{item.s3user_name}</b> })}
+                                                {t('deleteS3userConfirmMessage', { name: item.s3user_name })}
                                             </div>
                                         }
                                         onCancel={() => { setDeleteConfirm(false); setDeleteConfirmI(null); }}
-                                        onConfirm={() => { onConfirm(item.s3user_name); setDeleteConfirm(false); }}
+                                        onConfirm={() => { onConfirm(item.id); setDeleteConfirm(false); }}
                                         cancelButton={t('no')}
                                         confirmButton={t('yes')}
                                     />

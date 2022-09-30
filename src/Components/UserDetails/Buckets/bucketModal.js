@@ -13,18 +13,16 @@ import BucketForm from './bucketForm';
 const mapPropsToApi = (item) => (
     {
         bucket_name: item.name,
-        quota: {
-            data_size_mb: item.storageSizeLimit,
-            number_of_objects: item.objectsLimit
-        }
+        data_size_mb_quota: +item.storageSizeLimit,
+        number_of_objects_quota: +item.objectsLimit
     }
 );
 
 const mapApiToProps = (item) => (
     {
         name: item.bucket_name,
-        storageSizeLimit: item.quota.data_size_mb,
-        objectsLimit: item.quota.number_of_objects
+        storageSizeLimit: item.data_size_mb_quota,
+        objectsLimit: item.number_of_objects_quota
     }
 );
 
@@ -52,7 +50,7 @@ const BucketModal = ({ t, bucket, edit }) => {
             if (edit) {
                 dispatch(editBucketAndFetch(s3user.s3user_name, payload));
             } else {
-                dispatch(createBucketAndFetch(s3user.s3user_name, payload));
+                dispatch(createBucketAndFetch(s3user.id, payload));
             }
 
             dispatch(reset('createBucket'));
@@ -75,7 +73,7 @@ const BucketModal = ({ t, bucket, edit }) => {
             <Header content={edit ? t('bucketEdit') : t('createBucket')} />
             <Modal.Content>
                 {
-                    edit ? <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(bucket)} /> :
+                    edit ? <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(bucket)} edit={edit}/> :
                         <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} />
                 }
             </Modal.Content>

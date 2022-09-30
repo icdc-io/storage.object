@@ -41,20 +41,21 @@ export const CREATE_SNAPSHOT = 'CREATE_SNAPSHOT';
 export const DELETE_SNAPSHOT = 'DELETE_SNAPSHOT';
 export const EDIT_SNAPSHOT = 'EDIT_SNAPSHOT';
 
-export const BASE_URL = '/api/storage/v1';
-export const BASE_URL2 = '/api/storage/v2';
+// export const BASE_URL = '/api/storage/v1';
+export const BASE_URL = '/api/storage/v2';
 
-export const poolsUrl = () => `${BASE_URL2}/pools`;
-export const s3UsersUrl = () => `${BASE_URL2}/accounts/{account}/s3/users`;
-export const s3UserUrl = () => `${BASE_URL2}/s3/users`;
-export const s3QuotasUrl = () => `${BASE_URL2}/accounts/{account}/s3/quotas`;
+export const poolsUrl = () => `${BASE_URL}/pools`;
+export const s3UsersUrl = () => `${BASE_URL}/accounts/{account}/s3/users`;
+export const s3UserUrl = () => `${BASE_URL}/s3/users`;
+export const s3QuotasUrl = () => `${BASE_URL}/accounts/{account}/s3/quotas`;
+export const bucketsUrl = () => `${BASE_URL}/s3/buckets`;
 // export const s3UsersUrl = () => `${BASE_URL}/s3/{account}/s3users`;
 // export const infoUrl = () => `${BASE_URL}/s3/{account}/account_quota_info`;
 // export const iscsiInfoUrl = () => `${BASE_URL}/iscsi/{account}/account_info`;
-export const iscsiDisksUrl = () => `${BASE_URL}/iscsi/{account}/disks`;
-export const iscsiClientsUrl = () => `${BASE_URL}/iscsi/{account}/clients`;
-export const snapshotsUrl = (disk) => `${BASE_URL}/iscsi/{account}/disks/${disk}/snapshots`;
-export const createDiskFromSnapshotUrl = (disk, snapshot) => `${BASE_URL}/iscsi/{account}/disks/${disk}/snapshots/${snapshot}/create_disk`;
+// export const iscsiDisksUrl = () => `${BASE_URL}/iscsi/{account}/disks`;
+// export const iscsiClientsUrl = () => `${BASE_URL}/iscsi/{account}/clients`;
+// export const snapshotsUrl = (disk) => `${BASE_URL}/iscsi/{account}/disks/${disk}/snapshots`;
+// export const createDiskFromSnapshotUrl = (disk, snapshot) => `${BASE_URL}/iscsi/{account}/disks/${disk}/snapshots/${snapshot}/create_disk`;
 
 export const USER_UPDATE = 'USER_UPDATE';
 export const CHANGE_LANG = 'CHANGE_LANG';

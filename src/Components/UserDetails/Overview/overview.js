@@ -21,7 +21,7 @@ const UserOverview = ({ t, s3user }) => {
 
     const deleteS3user = useCallback(
         () => {
-            dispatch(deleteS3userAndFetch(s3user.s3user_name));
+            dispatch(deleteS3userAndFetch(s3user.id));
             setDeleteConfirm(false);
             history.push('/amazon');
         },
@@ -29,24 +29,24 @@ const UserOverview = ({ t, s3user }) => {
     );
 
     return <React.Fragment>
-        <Header as='h4'>{s3user.s3user_name} {s3user.is_locked && <Icon style={{ fontSize: '15px', position: 'relative', top: '-5px' }} name='lock'
+        <Header as='h4'>{s3user.name} {s3user.is_locked && <Icon style={{ fontSize: '15px', position: 'relative', top: '-5px' }} name='lock'
             title={t('lockedS3user')}/>}</Header>
-        {s3user.s3user_description}
+        {s3user.description}
         <Divider />
 
         <Header as='h4'>{t('s3')}</Header>
         <Grid>
             <Grid.Row>
                 <Grid.Column width={2}>{t('id')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.s3user_name}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys.s3.user}</Grid.Column>
             </Grid.Row>
             <Grid.Row>
                 <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.access_key}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys.s3.access_key}</Grid.Column>
             </Grid.Row>
             <Grid.Row>
                 <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.secret_key}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys.s3.secret_key}</Grid.Column>
             </Grid.Row>
         </Grid>
         <Divider />
@@ -55,11 +55,11 @@ const UserOverview = ({ t, s3user }) => {
         <Grid>
             <Grid.Row>
                 <Grid.Column width={2}>{t('id')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.swift_id}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys.swift.user}</Grid.Column>
             </Grid.Row>
             <Grid.Row>
                 <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.swift_key}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys.swift.secret_key}</Grid.Column>
             </Grid.Row>
         </Grid>
 
@@ -70,9 +70,9 @@ const UserOverview = ({ t, s3user }) => {
                         style={{ width: '270px' }}/>
                     { s3user.is_locked ?
                         <Button content={t('unlockS3user')} style={{ width: '270px' }}
-                            onClick={() => dispatch(unlockS3userAndFetch(s3user.s3user_name))}/> :
+                            onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'unlock' } ))}/> :
                         <Button content={t('lockS3user')} style={{ width: '270px' }}
-                            onClick={() => dispatch(lockS3userAndFetch(s3user.s3user_name))}/>}
+                            onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' } ))}/>}
                     <Button negative onClick={() => setDeleteConfirm(true)} content={t('deleteS3user')}
                         style={{ width: '270px' }} />
                     <Confirm
@@ -80,7 +80,7 @@ const UserOverview = ({ t, s3user }) => {
                         header={t('deleteS3userConfirName')}
                         content={
                             <div className='content'>
-                                {t('deleteS3userConfirmMessage', { name: <b>{s3user.s3user_name}</b> })}
+                                {t('deleteS3userConfirmMessage', { name: s3user.name })}
                             </div>
                         }
                         onCancel={() => setDeleteConfirm(false)}

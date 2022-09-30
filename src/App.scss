@@ -33,7 +33,7 @@ ul.navigation-secondary {
   background: #e0e1e2 none;
 }
 
-.ui.table.users-list {
+.ui.table.users-list, .ui.table.quotas-list {
   border: none;
 
   thead {
@@ -153,6 +153,7 @@ ul.navigation-secondary {
   border-radius: 2px;
   cursor: pointer;
   margin-left: 3px;
+  background: #E8E8E8;
 }
 
 .text_left {
@@ -197,5 +198,27 @@ ul.navigation-secondary {
     font-size: 14px;
     line-height: 16px;
     color: #767676;
+  }
+}
+.back_link {
+  max-width: min-content;
+}
+.uneditable_field {
+  margin-bottom: 14px;
+
+  label {
+    display: block;
+    margin: 0 0 0.28571429rem 0;
+    color: rgba(0,0,0,.87);
+    font-size: .92857143em;
+    font-weight: 700;
+    text-transform: none;
+  }
+  p {
+    font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: #3A383C;
   }
 }

@@ -6,6 +6,7 @@ import { deleteBucketAndFetch } from '../../../AppActions';
 import _ from 'lodash';
 import ConfirmModal from '../../../Elements/confirmModal';
 import BucketModal from './bucketModal';
+import { useParams } from 'react-router-dom';
 
 const Bar = ({ value, total }) =>
     <Progress
@@ -18,9 +19,11 @@ const Bar = ({ value, total }) =>
     />;
 
 const BucketsList = ({ t }) => {
+    const { userId } = useParams();
+
     const dispatch = useDispatch();
 
-    const buckets = useSelector(state => state.AmazonStore.buckets);
+    const buckets = useSelector(state => Object.values(state.AmazonStore.buckets));
     const bucketsFetchStatus = useSelector(state => state.AmazonStore.bucketsFetchStatus);
     const s3user = useSelector(state => state.AmazonStore.s3user);
 
@@ -40,20 +43,20 @@ const BucketsList = ({ t }) => {
         setData(data.reverse());
     };
 
-    useEffect(() => setData(_.sortBy(buckets, [column])), [buckets, column]);
+    // useEffect(() => setData(_.sortBy(buckets, [column])), [buckets, column]);
 
     const onConfirm = useCallback(
         (bucket) => {
-            dispatch(deleteBucketAndFetch(bucket));
+            dispatch(deleteBucketAndFetch(userId, {bucket_name: bucket.bucket_name}));
         },
         [dispatch]
     );
 
     return <React.Fragment>
-        {bucketsFetchStatus === 'pending' && buckets.length === 0 && <Loader active inline='centered' />}
+        {bucketsFetchStatus === 'pending' && Object.keys(buckets).length === 0 && <Loader active inline='centered' />}
 
         {
-            buckets.length === 0 && bucketsFetchStatus === 'fulfilled' &&
+            Object.keys(buckets).length === 0 && bucketsFetchStatus === 'fulfilled' &&
             <Segment placeholder>
                 <Header icon>
                     <Icon name='meh outline' />
@@ -73,7 +76,7 @@ const BucketsList = ({ t }) => {
         }
 
         {
-            buckets.length > 0 && bucketsFetchStatus !== 'rejected' && <React.Fragment>
+            Object.keys(buckets).length > 0 && bucketsFetchStatus !== 'rejected' && <React.Fragment>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column verticalAlign='middle' width={4}><Header as='h4' style={{ marginLeft: '9px' }}>{t('bucketsTab')}
@@ -115,12 +118,12 @@ const BucketsList = ({ t }) => {
                             <Table.Row key={i}>
                                 <Table.Cell>{item.bucket_name}</Table.Cell>
                                 <Table.Cell textAlign='center'>
-                                    {item.actual_usage.data_size_mb} / {item.quota.data_size_mb}
-                                    <Bar value={item.actual_usage.data_size_mb} total={item.quota.data_size_mb} />
+                                    {item.storage_size.actual} / {item.storage_size.limit}
+                                    <Bar value={item.storage_size.actual} total={item.storage_size.limit} />
                                 </Table.Cell>
                                 <Table.Cell textAlign='center'>
-                                    {item.actual_usage.number_of_objects} / {item.quota.number_of_objects}
-                                    <Bar value={item.actual_usage.number_of_objects} total={item.quota.number_of_objects} />
+                                    {item.objects.actual} / {item.objects.limit}
+                                    <Bar value={item.objects.actual} total={item.objects.limit} />
                                 </Table.Cell>
                                 <Table.Cell collapsing textAlign='right'>
                                     <Dropdown direction='left' icon='ellipsis vertical' className='users-list__actions_dot'>
@@ -130,7 +133,7 @@ const BucketsList = ({ t }) => {
                                                 t={t}
                                                 confirm={() => onConfirm(item)}
                                                 name={t('deleteBucketConfirmName')}
-                                                message={t('deleteBucketConfirmMessage', { name: <b>{item.bucket_name}</b> })}
+                                                message={t('deleteBucketConfirmMessage', { name: item.bucket_name })}
                                             />
                                         </Dropdown.Menu>
                                     </Dropdown>

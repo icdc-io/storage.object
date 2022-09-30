@@ -3,10 +3,10 @@ import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { required, number, s3user, email } from '../../Validaions';
-import CustomSelect from '../../Elements/customSelect';
-import CustomField from '../../Elements/customField';
+import CustomField from '../GeneralComponents/customField';
+import CustomSelect from '../GeneralComponents/customSelect';
 
-const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools }) => {
+const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues }) => {
     const storageTypes = pools.map((item, index) => ({
         key: index,
         text: item.class,
@@ -16,13 +16,20 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools }) => {
     return (
         <React.Fragment>
             <Form>
-                <Field
-                    name="name"
-                    label={t('name')}
-                    component={CustomField}
-                    type="text"
-                    validate={[required, s3user]}
-                />
+                {edit ? (
+                    <div className="uneditable_field">
+                        <label>{t('name')}</label>
+                        <p>{initialValues.name}</p>
+                    </div>
+                ) : (
+                    <Field
+                        name="name"
+                        label={t('name')}
+                        component={CustomField}
+                        type="text"
+                        validate={[required, s3user]}
+                    />
+                )}
                 <Field
                     name="description"
                     label={t('description')}
@@ -39,15 +46,28 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools }) => {
                         validate={edit ? [required, email] : [email]}
                     />
                 )}
-                <Field
-                    name="storageType"
-                    label={t('storageType')}
-                    component={CustomSelect}
-                    type="text"
-                    options={storageTypes}
-                    edit={edit}
-                    validate={[required]}
-                />
+                {edit ? (
+                    <div className="uneditable_field">
+                        <label>{t('storageType')}</label>
+                        <p>
+                            {
+                                storageTypes.find((e) => e.value == initialValues.default_placement)
+                                    ?.text
+                            }
+                        </p>
+                    </div>
+                ) : (
+                    <Field
+                        name="storageType"
+                        label={t('storageType')}
+                        component={CustomSelect}
+                        type="text"
+                        options={storageTypes}
+                        edit={edit}
+                        initialValues={initialValues}
+                        validate={!edit ? [required] : []}
+                    />
+                )}
                 <Field
                     name="storageSizeLimit"
                     label={t('storageSizeLimitGb')}
@@ -58,13 +78,6 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools }) => {
                 <Field
                     name="objectsLimit"
                     label={t('objectsLimit')}
-                    component={CustomField}
-                    type="number"
-                    validate={[required, number]}
-                />
-                <Field
-                    name="bucketsLimit"
-                    label={t('bucketsLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}

@@ -104,7 +104,7 @@ export const AmazonStore = (state = initialState, action) => {
         return state.set('bucketsFetchStatus', 'pending');
     case `${ActionTypes.BUCKETS_FETCH}_FULFILLED`:
         return Immutable.merge(state, {
-            buckets: action.payload.data,
+            buckets: action.payload,
             bucketsFetchStatus: 'fulfilled'
         });
     case `${ActionTypes.BUCKETS_FETCH}_REJECTED`:

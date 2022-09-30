@@ -18,9 +18,10 @@ const Quotas = ({ t, quotas }) => {
     const headers = [
         { title: 'storageType', data: 'class' },
         { title: 'objects', data: 'objects' },
-        { title: 'space', data: 'data_size_mb' },
+        { title: 'spaceGb', data: 'data_size_mb' },
         { title: 'bucketsUser', data: 'buckets_per_users' },
         { title: 's3swiftUsers', data: 'users' },
+        { title: '', data: 'edit' },
     ];
 
     return (
@@ -40,7 +41,7 @@ const Quotas = ({ t, quotas }) => {
                     </Grid.Column>
                 </Grid.Row>
 
-                <Table className="users-list">
+                <Table className="quotas-list">
                     <Table.Header>
                         <Table.Row>
                             {headers.map((item, i) => (
@@ -49,15 +50,23 @@ const Quotas = ({ t, quotas }) => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {quotas.map((item, i) =>
-                            headers.map((headerItem, i) => (
-                                <Table.Cell key={i}>
-                                    {headerItem.data === 'class'
-                                        ? item.pool[headerItem.data]
-                                        : item[headerItem.data]}
-                                </Table.Cell>
-                            ))
-                        )}
+                        {quotas.map((item, i) => (
+                            <Table.Row key={i}>
+                                {headers.map((headerItem, i) =>
+                                    headerItem.data === 'edit' ? (
+                                        <Table.Cell key={i} textAlign="right">
+                                            <QuotasModal t={t} key={i} edit quota={item} />
+                                        </Table.Cell>
+                                    ) : (
+                                        <Table.Cell key={i}>
+                                            {headerItem.data === 'class'
+                                                ? item.pool[headerItem.data]
+                                                : item[headerItem.data]}
+                                        </Table.Cell>
+                                    )
+                                )}
+                            </Table.Row>
+                        ))}
                     </Table.Body>
                 </Table>
             </Grid>

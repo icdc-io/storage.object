@@ -24,7 +24,7 @@ const ConfirmModal = ({ t, name, message, confirm }) => {
     );
 
     return <React.Fragment>
-        <Dropdown.Item icon='trash' text={t('remove')}  onClick={() => setOpen(true)} disabled={s3user.is_locked} />
+        <Dropdown.Item icon='trash' className="item-red" text={t('remove')}  onClick={() => setOpen(true)} disabled={s3user.is_locked} />
 
         <Modal open={open} size="tiny">
             <Header content={name} />
