@@ -17,6 +17,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
         <React.Fragment>
             <Form>
                 <Field
+                    placeholder={t('select')}
                     name="storageType"
                     label={t('storageType')}
                     component={CustomSelect}
@@ -28,6 +29,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                     validate={[required]}
                 />
                 <Field
+                    placeholder={t('objPlaceholder')}
                     name="objects"
                     label={t('objects')}
                     component={CustomField}
@@ -35,6 +37,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                     validate={[required, number]}
                 />
                 <Field
+                    placeholder={t('spacePlaceholder')}
                     name="space"
                     label={t('spaceGb')}
                     component={CustomField}
@@ -42,6 +45,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                     validate={[required, number]}
                 />
                 <Field
+                    placeholder={t('usersPlaceholder')}
                     name="users"
                     label={t('s3swiftUsers')}
                     component={CustomField}
@@ -49,6 +53,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                     validate={[required, number]}
                 />
                 <Field
+                    placeholder={t('bucketsPlaceholder')}
                     name="bucketsUser"
                     label={t('bucketsUser')}
                     component={CustomField}
@@ -58,7 +63,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
                     <Button onClick={handleSubmit} primary type="submit">
-                        {t('submit')}
+                        {!edit ? t('add') : t('submit')}
                     </Button>
                 </Modal.Actions>
             </Form>

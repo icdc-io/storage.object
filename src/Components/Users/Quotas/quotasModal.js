@@ -82,7 +82,7 @@ const QuotasModal = ({ quota, edit, t }) => {
                 />
         }
         <Modal open={open} size="tiny" onSubmit={onSubmit}>
-            <Header content={edit ? t('editS3user') : t('addQuota')} />
+            <Header content={edit ? t('editQuota') : t('addQuota')} />
             <Modal.Content>
 
                 {
