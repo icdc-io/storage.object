@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { required, number, bucket } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 
-const BucketForm = ({ t, handleClose, handleSubmit, edit }) => {
+const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
     return (
         <React.Fragment>
             <Form>
@@ -55,6 +55,7 @@ BucketForm.propTypes = {
     handleClose: PropTypes.func,
     handleSubmit: PropTypes.func,
     edit: PropTypes.bool,
+    initialValues: PropTypes.any
 };
 
 export default reduxForm({

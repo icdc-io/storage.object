@@ -29,16 +29,11 @@ const checkErrorCodes = (item) => {
     case 500:
         return errorNotification(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].processError);
     default:
-        return errorNotification(item.data.explanation);
+        return errorNotification(item.data);
     }
 };
 
 // s3 users actions
-
-// export const fetchInfo = () => ({
-//     type: ActionTypes.INFO_FETCH,
-//     payload: fetchData(ActionTypes.infoUrl())
-// });
 
 export const createS3user = (payload) => ({
     type: ActionTypes.CREATE_S3_USER,
@@ -70,9 +65,9 @@ export const deleteS3user = (user_id) => ({
     payload: deleteData(`${ActionTypes.s3UserUrl()}/${user_id}`)
 });
 
-export const editS3user = (name, payload) => ({
+export const editS3user = (user_id, payload) => ({
     type: ActionTypes.EDIT_S3_USER,
-    payload: updateData(`${ActionTypes.s3UserUrl()}/${name}`, payload)
+    payload: updateData(`${ActionTypes.s3UserUrl()}/${user_id}`, payload)
 });
 
 export const fetchS3User = (user_id) => ({
@@ -89,15 +84,19 @@ export const lockS3user = (user_id, payload) => ({
     payload: updateData(`${ActionTypes.s3UserUrl()}/${user_id}/lock`, payload)
 });
 
-// export const unlockS3user = (name) => ({
-//     type: ActionTypes.S3_USER_UNLOCK,
-//     payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/unlock`)
-// });
-
-export const generateKeys = (name) => ({
+const generateKeysAC = (user_id) => ({
     type: ActionTypes.S3_USER_GENERATE_KEYS,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/keys`)
+    payload: createData(`${ActionTypes.s3UserUrl()}/${user_id}/keys`)
 });
+
+export const generateKeys = (user_id) => dispatch => {
+    const response = dispatch(generateKeysAC(user_id))
+
+    response.then(() => {
+        dispatch(fetchS3User(user_id));
+        successNotification('');
+    }, error => errorNotification(error.response.data));
+}
 
 // CREATE_S3_QUOTAS
 export const createS3quotasActionAndFetch = (payload) => {
@@ -120,19 +119,23 @@ export const createS3userAndFetch = (payload) => {
             dispatch(fetchS3Users());
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 
-export const editS3userAndFetch = (name, payload) => {
+export const editS3userAndFetch = (user_id, payload, resourcesTab) => {
     return (dispatch) => {
-        const response = dispatch(editS3user(name, payload));
+        const response = dispatch(editS3user(user_id, payload));
 
         response.then(() => {
-            dispatch(fetchS3Users());
-            dispatch(fetchS3quotas());
+            if(resourcesTab) {
+                dispatch(fetchS3User(user_id))
+            } else {
+                dispatch(fetchS3Users());
+                dispatch(fetchS3quotas());
+            }
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 
@@ -144,7 +147,7 @@ export const deleteS3userAndFetch = (user_id) => {
             dispatch(fetchS3Users());
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 
@@ -156,7 +159,7 @@ export const actionAndFetch = (action, payload) => {
             dispatch(fetchS3Users());
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 
@@ -169,22 +172,9 @@ export const lockS3userAndFetch = (user_id, payload) => {
             dispatch(fetchS3quotas());
             dispatch(fetchS3User(user_id));
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
-
-// export const unlockS3userAndFetch = (name) => {
-//     return (dispatch) => {
-//         const response = dispatch(unlockS3user(name));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             dispatch(fetchS3User(name));
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.explanation));
-//     };
-// };
 
 // buckets actions
 
@@ -198,15 +188,17 @@ export const createBucket = (user_id, payload) => ({
     payload: createData(`${ActionTypes.s3UserUrl()}/${user_id}/buckets`, payload)
 });
 
-export const deleteBucket = (options) => ({
+export const deleteBucket = (bucket_name) => ({
     type: ActionTypes.DELETE_BUCKET,
-    payload: deleteData(`${ActionTypes.bucketsUrl()}`, {}, options)
+    payload: deleteData(`${ActionTypes.bucketsUrl()}?bucket_name=${bucket_name}`, {})
 });
 
-export const editBucket = (name, payload) => ({
+export const editBucket = (payload) => {
+    const { bucket_name, data_size_mb_quota, number_of_objects_quota, user_name } = payload
+    return {
     type: ActionTypes.DELETE_BUCKET,
-    payload: createData(`${ActionTypes.s3UsersUrl()}/${name}/buckets/${payload.bucket_name}`, payload)
-});
+    payload: updateData(`${ActionTypes.bucketsUrl()}?bucket_name=${bucket_name}`, {data_size_mb_quota, number_of_objects_quota, user_name})
+}};
 
 export const createBucketAndFetch = (user_id, payload) => {
     return (dispatch) => {
@@ -215,29 +207,31 @@ export const createBucketAndFetch = (user_id, payload) => {
         response.then(() => {
             dispatch(fetchBuckets(user_id));
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 
-export const editBucketAndFetch = (name, payload) => {
+export const editBucketAndFetch = (user_id, payload) => {
     return (dispatch) => {
-        const response = dispatch(editBucket(name, payload));
+        const response = dispatch(editBucket(payload));
 
         response.then(() => {
-            dispatch(fetchBuckets(name));
+            dispatch(fetchBuckets(user_id));
+            dispatch(fetchS3User(user_id))
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 
-export const deleteBucketAndFetch = (userId, options) => {
+export const deleteBucketAndFetch = (user_id, options) => {
     return (dispatch) => {
         const response = dispatch(deleteBucket(options));
 
         response.then(() => {
-            dispatch(fetchBuckets(userId));
+            dispatch(fetchBuckets(user_id));
+            dispatch(fetchS3User(user_id))
             successNotification('');
-        }, error => errorNotification(error.response.data.explanation));
+        }, error => errorNotification(error.response.data));
     };
 };
 

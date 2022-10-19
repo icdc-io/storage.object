@@ -3,24 +3,25 @@ import PropTypes from 'prop-types';
 import { Grid, Header, List, Table } from 'semantic-ui-react';
 import QuotasModal from './quotasModal';
 import { intersperse } from '../../../AppConstants';
-
-const showEndpoints = (endpointsData) => {
-    const endpoints = endpointsData;
-
-    return endpoints.map((endpoint) => (
-        <span key={endpoint} style={{ color: '#2185d0' }}>
-            {endpoint}
-        </span>
-    ));
-};
+import { useSelector } from 'react-redux';
 
 const Quotas = ({ t, quotas }) => {
+
+    const user = useSelector(state => state.host.user);
+    const userInfo = window.insights.getUserInfo();
+    const pools = useSelector(state => state.AmazonStore.pools);
+
+    let re = new RegExp(`^${user.account}.cloud$`);
+    const check = (groups) => groups.some(group => re.test(group));
+    const quotasLimit = quotas.length <= pools.length;
+
     const headers = [
         { title: 'storageType', data: 'class' },
         { title: 'objects', data: 'objects' },
-        { title: 'spaceGb', data: 'data_size_mb' },
-        { title: 'bucketsUser', data: 'buckets_per_users' },
+        { title: 'space', data: 'storage_mb' },
         { title: 's3swiftUsers', data: 'users' },
+        { title: 'bucketsUser', data: 'buckets_per_users' },
+        { title: 's3Endpoints', data: 'endpoints' },
         { title: '', data: 'edit' },
     ];
 
@@ -32,7 +33,7 @@ const Quotas = ({ t, quotas }) => {
                         <Header as="h4">{t('quotas')}</Header>
                     </Grid.Column>
                     <Grid.Column textAlign="right" width={12}>
-                        <QuotasModal t={t} />
+                        {check(userInfo.groups) && !quotasLimit && <QuotasModal t={t} />}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
@@ -58,17 +59,21 @@ const Quotas = ({ t, quotas }) => {
                                             <QuotasModal t={t} key={i} edit quota={item} />
                                         </Table.Cell>
                                     ) : (
-                                        <Table.Cell key={i}>
+                                        <Table.Cell key={i}  className={headerItem.data !== 'class' ? 'gray-text' : ''}>
                                             {headerItem.data === 'class'
                                                 ? item.pool[headerItem.data]
+                                                : (headerItem.data === 'storage_mb' || headerItem.data === 'objects' || headerItem.data === 'users') 
+                                                ? `${item.stats[headerItem.data].actual} / ${item.stats[headerItem.data].limit}`
                                                 : item[headerItem.data]}
                                         </Table.Cell>
                                     )
                                 )}
                             </Table.Row>
                         ))}
+                        
                     </Table.Body>
                 </Table>
+                {quotas.length === 0 && <span className='s3quotas-empty'>{t('s3QuotasEmpty')}</span>}
             </Grid>
         </section>
     );

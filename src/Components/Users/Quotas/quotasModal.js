@@ -24,11 +24,10 @@ const mapPropsToApi = (item) => (
 const mapApiToProps = (item) => (
     {
         storageType: item.pool.id,
-        space: item.data_size_mb,
+        space: item.stats.storage_mb.limit,
         bucketsUser: item.buckets_per_users,
-        objects: item.objects,
-        users: item.users
-
+        objects: item.stats.objects.limit,
+        users: item.stats.users.limit
     }
 );
 

@@ -23,13 +23,17 @@ const BucketsList = ({ t }) => {
 
     const dispatch = useDispatch();
 
-    const buckets = useSelector(state => Object.values(state.AmazonStore.buckets));
+    const buckets = useSelector(state => state.AmazonStore.buckets);
     const bucketsFetchStatus = useSelector(state => state.AmazonStore.bucketsFetchStatus);
     const s3user = useSelector(state => state.AmazonStore.s3user);
 
     const [column, setColumn] = useState('name');
     const [direction, setDirection] = useState('ascending');
-    const [data, setData] = useState(buckets);
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        setData(Object.values(buckets))
+    }, [buckets])
 
     const handleSort = (clickedColumn) => () => {
         if (column !== clickedColumn) {
@@ -47,7 +51,7 @@ const BucketsList = ({ t }) => {
 
     const onConfirm = useCallback(
         (bucket) => {
-            dispatch(deleteBucketAndFetch(userId, {bucket_name: bucket.bucket_name}));
+            dispatch(deleteBucketAndFetch(userId, bucket.bucket_name));
         },
         [dispatch]
     );

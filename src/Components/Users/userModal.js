@@ -41,11 +41,9 @@ const mapApiToProps = (item) => (
         description: item.description,
         default_placement: item.default_placement.id,
         storageSizeLimit: item.stats.storage_size?.limit || 0,
-        // bucketsLimit: item.stats.buckets?.limit || 0,
         objectsLimit: item.stats.objects?.limit || 0,
-
-        // storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
-        // objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects,
+        storageInBucketLimit: item.stats.storage_bucket_limit,
+        objectsInBucketLimit: item.stats.object_bucket_limit,
         owner: item.owner
     }
 );

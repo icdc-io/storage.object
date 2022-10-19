@@ -95,7 +95,7 @@ const UsersList = ({ t, items }) => {
                         sorted={column === 'space' ? direction : null}
                         onClick={handleSort('space')}
                     >
-                        {t('spaceGb')}</Table.HeaderCell>
+                        {t('space')}</Table.HeaderCell>
 
                     <Table.HeaderCell
                         textAlign='center'

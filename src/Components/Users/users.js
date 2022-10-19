@@ -4,7 +4,7 @@ import { Grid, Loader, Header, Segment, Icon } from 'semantic-ui-react';
 import UsersList from './usersList';
 import PropTypes from 'prop-types';
 import UserModal from './userModal';
-import { fetchS3Users, fetchInfo, fetchPools, fetchS3quotas } from '../../AppActions';
+import { fetchS3Users, fetchPools, fetchS3quotas } from '../../AppActions';
 import { useHistory } from 'react-router-dom';
 import Quotas from './Quotas/quotas';
 
@@ -21,7 +21,6 @@ const Overview = ({ t }) => {
 
     useEffect(() => {
         dispatch(fetchS3Users());
-        // dispatch(fetchInfo());
         dispatch(fetchPools({type: 's3'}))
         dispatch(fetchS3quotas());
     }, [dispatch, user]);
@@ -29,7 +28,7 @@ const Overview = ({ t }) => {
     return <React.Fragment>
         <Quotas t={t} quotas={quotas}/>
 
-        {s3usersFetchStatus === 'pending' && s3users.length === 0 && <Loader active inline='centered' />}
+        {s3usersFetchStatus === 'pending' && <Loader active inline='centered' />}
 
         {
             s3users.length === 0 && s3usersFetchStatus === 'fulfilled' && <Segment placeholder>

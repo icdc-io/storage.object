@@ -14,7 +14,7 @@ const UserOverview = ({ t, s3user }) => {
 
     const generateNewKeys = useCallback(
         () => {
-            dispatch(actionAndFetch(generateKeys, s3user.s3user_name));
+            dispatch(generateKeys(s3user.id));
         },
         [dispatch, s3user]
     );
@@ -38,15 +38,15 @@ const UserOverview = ({ t, s3user }) => {
         <Grid>
             <Grid.Row>
                 <Grid.Column width={2}>{t('id')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys.s3.user}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys?.s3.user}</Grid.Column>
             </Grid.Row>
             <Grid.Row>
                 <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys.s3.access_key}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys?.s3.access_key}</Grid.Column>
             </Grid.Row>
             <Grid.Row>
                 <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys.s3.secret_key}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys?.s3.secret_key}</Grid.Column>
             </Grid.Row>
         </Grid>
         <Divider />
@@ -55,11 +55,11 @@ const UserOverview = ({ t, s3user }) => {
         <Grid>
             <Grid.Row>
                 <Grid.Column width={2}>{t('id')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys.swift.user}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys?.swift.user}</Grid.Column>
             </Grid.Row>
             <Grid.Row>
                 <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys.swift.secret_key}</Grid.Column>
+                <Grid.Column width={4}>{s3user.keys?.swift.secret_key}</Grid.Column>
             </Grid.Row>
         </Grid>
 

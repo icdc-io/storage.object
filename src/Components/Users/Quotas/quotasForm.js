@@ -39,7 +39,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                 <Field
                     placeholder={t('spacePlaceholder')}
                     name="space"
-                    label={t('spaceGb')}
+                    label={t('space')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}

@@ -23,6 +23,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     </div>
                 ) : (
                     <Field
+                        placeholder={t('namePlaceholder')}
                         name="name"
                         label={t('name')}
                         component={CustomField}
@@ -31,6 +32,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     />
                 )}
                 <Field
+                    placeholder={t('descriptPlaceholder')}
                     name="description"
                     label={t('description')}
                     component={CustomField}
@@ -39,6 +41,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 />
                 {isAdmin && (
                     <Field
+                        placeholder={t('emailPlaceholder')}
                         name="owner"
                         label={t('owner')}
                         component={CustomField}
@@ -58,6 +61,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     </div>
                 ) : (
                     <Field
+                        placeholder={t('select')}
                         name="storageType"
                         label={t('storageType')}
                         component={CustomSelect}
@@ -69,13 +73,15 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     />
                 )}
                 <Field
+                    placeholder={t('spacePlaceholder')}
                     name="storageSizeLimit"
-                    label={t('storageSizeLimitGb')}
+                    label={t('storageSizeLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
                 />
                 <Field
+                    placeholder={t('objPlaceholder')}
                     name="objectsLimit"
                     label={t('objectsLimit')}
                     component={CustomField}
@@ -83,13 +89,15 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     validate={[required, number]}
                 />
                 <Field
+                    placeholder={t('storagePlaceholder')}
                     name="storageInBucketLimit"
-                    label={t('storageInBucketLimitGb')}
+                    label={t('storageInBucketLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
                 />
                 <Field
+                    placeholder={t('objPlaceholder')}
                     name="objectsInBucketLimit"
                     label={t('objectsInBucketLimit')}
                     component={CustomField}

@@ -12,32 +12,39 @@ import EditResForm from './editResForm';
 
 const mapPropsToApi = (item) => (
     {
-        name: item.name,
-        description: item.description,
+    description: item.description,
+    owner: item.owner,
+    limits: {
+        storage_size: +item.storageSizeLimit,
+        objects: +item.objectsLimit,
+        bucket_storage_size: +item.storageInBucketLimit,
+        bucket_objects: +item.objectsInBucketLimit
+    }  
+    // {
+    //     name: item.name,
+    //     description: item.description,
         
-        quota_per_s3user: {
-            data_size_mb: item.storageSizeLimit,
-            number_of_buckets: item.bucketsLimit,
-            number_of_objects: item.objectsLimit
-        },
-        default_quota_per_bucket: {
-            data_size_mb: item.storageInBucketLimit,
-            number_of_objects: item.objectsInBucketLimit
-        }
+    //     quota_per_s3user: {
+    //         data_size_mb: item.storageSizeLimit,
+    //         number_of_buckets: item.bucketsLimit,
+    //         number_of_objects: item.objectsLimit
+    //     },
+    //     default_quota_per_bucket: {
+    //         data_size_mb: item.storageInBucketLimit,
+    //         number_of_objects: item.objectsInBucketLimit
+    //     }
     }
 );
 
 const mapApiToProps = (item) => (
     {
         name: item.name,
+        owner: item.owner,
         description: item.description,
-
-        storageSizeLimit: item.stats.storage_size.limit,
-        bucketsLimit: item.stats.buckets.limit,
-        objectsLimit: item.stats.objects.limit,
-
-        // storageInBucketLimit: item.default_quota_per_bucket.data_size_mb,
-        // objectsInBucketLimit: item.default_quota_per_bucket.number_of_objects
+        storageSizeLimit: item.stats?.storage_size.limit,
+        objectsLimit: item.stats?.objects.limit,
+        storageInBucketLimit: item.stats?.storage_bucket_limit,
+        objectsInBucketLimit: item.stats?.object_bucket_limit,
     }
 );
 
@@ -60,7 +67,7 @@ const EditResModal = ({ t, s3user, name, label }) => {
 
             let payload = mapPropsToApi(values);
 
-            dispatch(editS3userAndFetch(s3user.s3user_name, payload));
+            dispatch(editS3userAndFetch(s3user.id, payload, true));
             dispatch(reset('editResForm'));
         },
         [handleClose, dispatch, s3user]

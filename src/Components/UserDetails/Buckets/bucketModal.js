@@ -21,8 +21,8 @@ const mapPropsToApi = (item) => (
 const mapApiToProps = (item) => (
     {
         name: item.bucket_name,
-        storageSizeLimit: item.data_size_mb_quota,
-        objectsLimit: item.number_of_objects_quota
+        storageSizeLimit: item.storage_size.limit,
+        objectsLimit: item.objects.limit
     }
 );
 
@@ -48,7 +48,7 @@ const BucketModal = ({ t, bucket, edit }) => {
             let payload = mapPropsToApi(values);
 
             if (edit) {
-                dispatch(editBucketAndFetch(s3user.s3user_name, payload));
+                dispatch(editBucketAndFetch(s3user.id, { ...payload, user_name: s3user.username } ));
             } else {
                 dispatch(createBucketAndFetch(s3user.id, payload));
             }
