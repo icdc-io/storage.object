@@ -33,7 +33,9 @@ const Quotas = ({ t, quotas }) => {
                         <Header as="h4">{t('quotas')}</Header>
                     </Grid.Column>
                     <Grid.Column textAlign="right" width={12}>
-                        {check(userInfo.groups) && !quotasLimit && <QuotasModal t={t} />}
+                        {/*  !quotasLimit && */}
+                        { check(userInfo.groups) && <QuotasModal t={t} quotasLimit />}
+                        
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
@@ -56,7 +58,7 @@ const Quotas = ({ t, quotas }) => {
                                 {headers.map((headerItem, i) =>
                                     headerItem.data === 'edit' ? (
                                         <Table.Cell key={i} textAlign="right">
-                                            <QuotasModal t={t} key={i} edit quota={item} />
+                                              { check(userInfo.groups) && <QuotasModal t={t} key={i} edit quota={item} /> }
                                         </Table.Cell>
                                     ) : (
                                         <Table.Cell key={i}  className={headerItem.data !== 'class' ? 'gray-text' : ''}>

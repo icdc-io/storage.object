@@ -206,6 +206,7 @@ export const createBucketAndFetch = (user_id, payload) => {
 
         response.then(() => {
             dispatch(fetchBuckets(user_id));
+            dispatch(fetchS3User(user_id))
             successNotification('');
         }, error => errorNotification(error.response.data));
     };

@@ -3,7 +3,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Header, Button, Dropdown } from 'semantic-ui-react';
+import { Modal, Header, Button, Dropdown, Icon, Popup } from 'semantic-ui-react';
 import { reset } from 'redux-form';
 import PropTypes from 'prop-types';
 import { actionAndFetch, createS3quotasActionAndFetch, editS3userAndFetch } from '../../../AppActions';
@@ -31,7 +31,7 @@ const mapApiToProps = (item) => (
     }
 );
 
-const QuotasModal = ({ quota, edit, t }) => {
+const QuotasModal = ({ quota, edit, t, quotasLimit }) => {
     const userRole = useSelector(state => state.host.user.role);
     const pools = useSelector(state => state.AmazonStore.pools);
 
@@ -71,14 +71,22 @@ const QuotasModal = ({ quota, edit, t }) => {
             content={t('edit')}
             primary
             basic
-        /> :
-                <Button
+        /> : !quotasLimit ?  <Button
                     onClick={() => setOpen(true)}
                     // disabled={itemsFetchStatus !== 'fulfilled'}
                     content={t('addQuota')} icon='plus'
                     labelPosition='left'
                     primary
-                />
+                /> 
+                : <Popup
+                    on='hover'
+                    pinned
+                    trigger={<Button className='disabled-btn ' primary size="medium" >
+                        {t('addQuota')}<Icon name='question circle outline' size='large' className='info-icon'/>
+                    </Button>}
+                    inverted
+                    position='left bottom'
+                >{t('noPools')}</Popup>
         }
         <Modal open={open} size="tiny" onSubmit={onSubmit}>
             <Header content={edit ? t('editQuota') : t('addQuota')} />
@@ -98,7 +106,8 @@ const QuotasModal = ({ quota, edit, t }) => {
 QuotasModal.propTypes = {
     user: PropTypes.object,
     edit: PropTypes.bool,
-    t: PropTypes.func
+    t: PropTypes.func,
+    quotasLimit: PropTypes.bool
 };
 
 export default QuotasModal;

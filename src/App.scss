@@ -200,6 +200,17 @@ ul.navigation-secondary {
     color: #767676;
   }
 }
+.row.buckets-description {
+  padding: 0;
+  
+  p {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #767676;
+  }
+}
 .back_link {
   max-width: min-content;
 }
@@ -233,4 +244,45 @@ ul.navigation-secondary {
 }
 div.ui.active.centered.inline.loader {
   margin-top: 20px;
+}
+.disabled-btn {
+  cursor: default;
+  opacity: .45!important;
+  background-image: none!important;
+  box-shadow: none!important;
+  padding-top: 12px!important;
+}
+
+.info-icon {
+  margin: 0px 0px 2px 0px!important;
+  position: relative;
+
+  &:before {
+      position: absolute;
+      bottom: -2px;
+  }
+}
+.ui.grid.buckets-grid {
+  margin: -1rem 0;
+
+  .row .column {
+    padding: 0;
+  }
+
+  p {
+    max-width: 650px;
+  }
+}
+.resources-bottom-panel {
+  display: flex;
+  justify-content: space-between;
+
+  div.resource-action {
+    button {
+    position: absolute;
+    right: 10px;
+    bottom: 4px;
+    width: 100px;
+    }
+  }
 }

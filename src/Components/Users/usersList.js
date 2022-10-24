@@ -131,8 +131,8 @@ const UsersList = ({ t, items }) => {
                             { item.owner || EMPTY_VALUE }
                         </Table.Cell>
                         <Table.Cell>
-                            { item.description.slice(0, 8) }
-                            { item.description.length > 8 && <Popup
+                            { item.description.slice(0, 18) }
+                            { item.description.length > 18 && <Popup
                                 trigger={ <span className='popup-icon'>&nbsp;...&nbsp;</span> }
                                 content={item.description}
                                 position='bottom center'

@@ -81,14 +81,19 @@ const BucketsList = ({ t }) => {
 
         {
             Object.keys(buckets).length > 0 && bucketsFetchStatus !== 'rejected' && <React.Fragment>
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column verticalAlign='middle' width={4}><Header as='h4' style={{ marginLeft: '9px' }}>{t('bucketsTab')}
+                <Grid className='buckets-grid'>
+                    <Grid.Row >
+                        <Grid.Column verticalAlign='middle' width={4}><Header as='h4'>{t('bucketsTab')}
                             {s3user.is_locked && <Icon style={{ fontSize: '15px', position: 'relative', top: '-5px', marginLeft: '4px' }}
                                 name='lock' title={t('lockedS3user')}/>}</Header></Grid.Column>
                         <Grid.Column textAlign='right' width={12}>
                             <BucketModal t={t} />
                         </Grid.Column>
+                    <Grid.Row className="buckets-description">
+                        <Grid.Column verticalAlign="middle" width={16}>
+                            <p>{t('bucketsDescription')}</p>
+                        </Grid.Column>
+                    </Grid.Row>
                     </Grid.Row>
                 </Grid>
                 <Table sortable className="users-list">

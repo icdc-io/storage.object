@@ -10,41 +10,29 @@ import { editS3userAndFetch } from '../../../AppActions';
 import { BILLING_USER_NAME } from '../../../AppConstants';
 import EditResForm from './editResForm';
 
-const mapPropsToApi = (item) => (
+const mapPropsToApi = (item, edit) => (
     {
-    description: item.description,
-    owner: item.owner,
-    limits: {
-        storage_size: +item.storageSizeLimit,
-        objects: +item.objectsLimit,
-        bucket_storage_size: +item.storageInBucketLimit,
-        bucket_objects: +item.objectsInBucketLimit
-    }  
-    // {
-    //     name: item.name,
-    //     description: item.description,
-        
-    //     quota_per_s3user: {
-    //         data_size_mb: item.storageSizeLimit,
-    //         number_of_buckets: item.bucketsLimit,
-    //         number_of_objects: item.objectsLimit
-    //     },
-    //     default_quota_per_bucket: {
-    //         data_size_mb: item.storageInBucketLimit,
-    //         number_of_objects: item.objectsInBucketLimit
-    //     }
+        description: item.description,
+        owner: item.owner || '',
+        limits: {
+            storage_size: +item.storageSizeLimit,
+            objects: +item.objectsLimit,
+            bucket_storage_size: +item.storageInBucketLimit,
+            bucket_objects: +item.objectsInBucketLimit
+        }        
     }
 );
 
 const mapApiToProps = (item) => (
     {
         name: item.name,
-        owner: item.owner,
         description: item.description,
-        storageSizeLimit: item.stats?.storage_size.limit,
-        objectsLimit: item.stats?.objects.limit,
+        default_placement: item.default_placement?.id,
+        storageSizeLimit: item.stats?.storage_size.limit || 0,
+        objectsLimit: item.stats?.objects.limit || 0,
         storageInBucketLimit: item.stats?.storage_bucket_limit,
         objectsInBucketLimit: item.stats?.object_bucket_limit,
+        owner: item.owner
     }
 );
 
@@ -74,7 +62,7 @@ const EditResModal = ({ t, s3user, name, label }) => {
     );
 
     return userRole !== BILLING_USER_NAME && <React.Fragment>
-        <Button icon onClick={() => setOpen(true)} ><Icon name='cog' ></Icon></Button>
+        <Button onClick={() => setOpen(true)} >{t('edit')}</Button>
         <Modal open={open} size="tiny" onSubmit={onSubmit}>
             <Header content={label} />
             <Modal.Content>

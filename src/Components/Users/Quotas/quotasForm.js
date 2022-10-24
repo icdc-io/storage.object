@@ -82,5 +82,5 @@ QuotasForm.propTypes = {
 };
 
 export default reduxForm({
-    form: 'createS3user',
+    form: 'createQuota',
 })(QuotasForm);
