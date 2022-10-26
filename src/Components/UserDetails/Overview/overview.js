@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Header, Divider, Grid, Button, Confirm, Icon } from 'semantic-ui-react';
-import { actionAndFetch, generateKeys, deleteS3userAndFetch, lockS3userAndFetch, unlockS3userAndFetch } from '../../../AppActions';
+import { generateKeys, deleteS3userAndFetch, lockS3userAndFetch } from '../../../AppActions';
+import DangerousHTML from 'react-dangerous-html';
+
 import { BILLING_USER_NAME } from '../../../AppConstants';
 
 const UserOverview = ({ t, s3user }) => {
@@ -80,7 +82,7 @@ const UserOverview = ({ t, s3user }) => {
                         header={t('deleteS3userConfirName')}
                         content={
                             <div className='content'>
-                                {t('deleteS3userConfirmMessage', { name: s3user.name })}
+                                 <DangerousHTML html={t('deleteS3userConfirmMessage', { name: `<b>${s3user.name}</b>` })} />
                             </div>
                         }
                         onCancel={() => setDeleteConfirm(false)}

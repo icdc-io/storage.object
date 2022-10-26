@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { Table, Progress, Dropdown, Icon, Confirm, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 import UserModal from './userModal';
-// import ConfirmModal from '../../Elements/confirmModal';
-import { actionAndFetch, deleteS3user, lockS3userAndFetch, unlockS3userAndFetch } from '../../AppActions';
+import DangerousHTML from 'react-dangerous-html';
+import { actionAndFetch, deleteS3user, lockS3userAndFetch } from '../../AppActions';
 import { BILLING_USER_NAME, EMPTY_VALUE } from '../../AppConstants';
 
 const Bar = ({ value, total }) =>
@@ -175,18 +175,13 @@ const UsersList = ({ t, items }) => {
                                         icon='trash'
                                         text={t('remove')}
                                         onClick={() => { setDeleteConfirm(true); setDeleteConfirmI(i); }} />
-                                    {/* <ConfirmModal
-                                        confirm={() => onConfirm(item.s3user_name)}
-                                        name={t('deleteS3userConfirName)}
-                                        message={t('deleteS3userConfirmMessage, { name: <b>{item.s3user_name}</b> })}
-                                    /> */}
 
                                     <Confirm
                                         open={deleteConfirm && i === deleteConfirmI}
                                         header={t('deleteS3userConfirName')}
                                         content={
                                             <div className='content'>
-                                                {t('deleteS3userConfirmMessage', { name: item.s3user_name })}
+                                                <DangerousHTML html={t('deleteS3userConfirmMessage', { name: `<b>${item.name}</b>` })} />
                                             </div>
                                         }
                                         onCancel={() => { setDeleteConfirm(false); setDeleteConfirmI(null); }}

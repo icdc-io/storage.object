@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Header, Table, Progress, Dropdown, Grid, Segment, Icon, Loader } from 'semantic-ui-react';
+import { Header, Table, Progress, Dropdown, Grid, Segment, Icon, Loader, Confirm } from 'semantic-ui-react';
 import { deleteBucketAndFetch } from '../../../AppActions';
 import _ from 'lodash';
-import ConfirmModal from '../../../Elements/confirmModal';
+import DangerousHTML from 'react-dangerous-html';
 import BucketModal from './bucketModal';
 import { useParams } from 'react-router-dom';
 
@@ -26,6 +26,9 @@ const BucketsList = ({ t }) => {
     const buckets = useSelector(state => state.AmazonStore.buckets);
     const bucketsFetchStatus = useSelector(state => state.AmazonStore.bucketsFetchStatus);
     const s3user = useSelector(state => state.AmazonStore.s3user);
+
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteConfirmI, setDeleteConfirmI] = useState(null);
 
     const [column, setColumn] = useState('name');
     const [direction, setDirection] = useState('ascending');
@@ -138,11 +141,21 @@ const BucketsList = ({ t }) => {
                                     <Dropdown direction='left' icon='ellipsis vertical' className='users-list__actions_dot'>
                                         <Dropdown.Menu >
                                             <BucketModal t={t} edit bucket={item} />
-                                            <ConfirmModal
-                                                t={t}
-                                                confirm={() => onConfirm(item)}
-                                                name={t('deleteBucketConfirmName')}
-                                                message={t('deleteBucketConfirmMessage', { name: item.bucket_name })}
+                                            <Dropdown.Item
+                                        className="item-red"
+                                        icon='trash'
+                                        text={t('remove')}
+                                        onClick={() => { setDeleteConfirm(true); setDeleteConfirmI(i); }} />
+                                            <Confirm
+                                                open={deleteConfirm}
+                                                header={t('deleteBucketConfirmName')}
+                                                content={
+                                                    <div className='content'>
+                                                         <DangerousHTML html={t('deleteBucketConfirmMessage', { name: `<b>${item.bucket_name}</b>` })} />
+                                                    </div>
+                                                }
+                                                onCancel={() => setDeleteConfirm(false)}
+                                                onConfirm={() => onConfirm(item)}
                                             />
                                         </Dropdown.Menu>
                                     </Dropdown>
