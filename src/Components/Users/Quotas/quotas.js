@@ -73,7 +73,6 @@ const Quotas = ({ t, quotas }) => {
                                     headerItem.data === 'edit' ? (
                                         <Table.Cell key={i} textAlign="right">
                                             {check(userInfo.groups) && <QuotasModal t={t} key={i} edit quota={item} />}
-                                            <QuotasModal t={t} key={i} edit quota={item} />
                                         </Table.Cell>
                                     ) : (
                                         <Table.Cell
@@ -97,7 +96,7 @@ const Quotas = ({ t, quotas }) => {
                         ))}
                     </Table.Body>
                 </Table>
-                {quotas.length === 0 && <span className="s3quotas-empty">{t('s3QuotasEmpty')}</span>}
+                {quotas.length === 0 && <span className="s3quotas-empty">{t('quotasEmpty')}</span>}
             </Grid>
         </section>
     );

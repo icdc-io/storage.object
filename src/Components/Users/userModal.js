@@ -17,7 +17,7 @@ const mapPropsToApi = (item, edit) =>
               limits: {
                   storage_size: +item.storageSizeLimit,
                   objects: +item.objectsLimit,
-                  buckets: +item.bucketsLimit,
+                  max_buckets: +item.bucketsLimit,
                   bucket_storage_size: +item.storageInBucketLimit,
                   bucket_objects: +item.objectsInBucketLimit,
               },
