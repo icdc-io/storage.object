@@ -15,13 +15,7 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                         <p>{initialValues.name}</p>
                     </div>
                 ) : (
-                    <Field
-                        name="name"
-                        label={t('name')}
-                        component={CustomField}
-                        type="text"
-                        validate={[required, bucket]}
-                    />
+                    <Field name="name" label={t('name')} component={CustomField} type="text" validate={[required, bucket]} />
                 )}
 
                 <Field
@@ -55,7 +49,7 @@ BucketForm.propTypes = {
     handleClose: PropTypes.func,
     handleSubmit: PropTypes.func,
     edit: PropTypes.bool,
-    initialValues: PropTypes.any
+    initialValues: PropTypes.any,
 };
 
 export default reduxForm({

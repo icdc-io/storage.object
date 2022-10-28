@@ -60,6 +60,11 @@ export const createS3quota = (payload) => ({
     payload: createData(ActionTypes.s3QuotasUrl(), payload)
 });
 
+export const updateS3quota = (quota_id, payload) => ({
+    type: ActionTypes.UPDATE_S3_QUOTA,
+    payload: updateData(`${ActionTypes.s3QuotasUrl()}/${quota_id}`, payload)
+});
+
 export const deleteS3user = (user_id) => ({
     type: ActionTypes.DELETE_S3_USER,
     payload: deleteData(`${ActionTypes.s3UserUrl()}/${user_id}`)
@@ -98,7 +103,7 @@ export const generateKeys = (user_id) => dispatch => {
     }, error => errorNotification(error.response.data));
 }
 
-// CREATE_S3_QUOTAS
+//S3_QUOTAS
 export const createS3quotasActionAndFetch = (payload) => {
     return (dispatch) => {
         const response = dispatch(createS3quota(payload));
@@ -110,7 +115,18 @@ export const createS3quotasActionAndFetch = (payload) => {
     };
 };
 
-//CREATE_S3_USER
+export const editS3quotaAndFetch = (quota_id, payload) => {
+    return (dispatch) => {
+        const response = dispatch(updateS3quota(quota_id, payload));
+
+        response.then(() => {
+            dispatch(fetchS3quotas());
+            successNotification('');
+        }, error => checkErrorCodes(error.response));
+    };
+};
+
+//S3_USER
 export const createS3userAndFetch = (payload) => {
     return (dispatch) => {
         const response = dispatch(createS3user(payload));

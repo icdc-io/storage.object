@@ -9,15 +9,16 @@ import DangerousHTML from 'react-dangerous-html';
 import { actionAndFetch, deleteS3user, lockS3userAndFetch } from '../../AppActions';
 import { BILLING_USER_NAME, EMPTY_VALUE } from '../../AppConstants';
 
-const Bar = ({ value, total }) =>
+const Bar = ({ value, total }) => (
     <Progress
         success={value / total < 0.7 ? true : false}
         error={value / total > 0.9 ? true : false}
-        warning={(value / total > 0.7 && value / total < 0.9) ? true : false}
-        size='small'
+        warning={value / total > 0.7 && value / total < 0.9 ? true : false}
+        size="small"
         value={value}
         total={total}
-    />;
+    />
+);
 
 const UsersList = ({ t, items }) => {
     const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const UsersList = ({ t, items }) => {
     const [column, setColumn] = useState('name');
     const [direction, setDirection] = useState('ascending');
     const [data, setData] = useState(items);
-    const userRole = useSelector(state => state.host.user.role);
+    const userRole = useSelector((state) => state.host.user.role);
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [deleteConfirmI, setDeleteConfirmI] = useState(null);
@@ -45,10 +46,6 @@ const UsersList = ({ t, items }) => {
 
     useEffect(() => setData(_.sortBy(items, [column])), [items, column]);
 
-    // useCallback(() => {
-    //     setData(items);
-    // }, [items]);
-
     const onConfirm = useCallback(
         (userId) => {
             setDeleteConfirm(false);
@@ -62,151 +59,189 @@ const UsersList = ({ t, items }) => {
         history.push(path);
     };
 
-    return <React.Fragment>
-        <Table sortable className="users-list">
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell
-                        sorted={column === 'name' ? direction : null}
-                        onClick={handleSort('name')}
-                    >
-                        {t('name')}</Table.HeaderCell>
+    return (
+        <React.Fragment>
+            <Table sortable className="users-list">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell sorted={column === 'name' ? direction : null} onClick={handleSort('name')}>
+                            {t('name')}
+                        </Table.HeaderCell>
 
-                    <Table.HeaderCell
-                        sorted={column === 'owner' ? direction : null}
-                        onClick={handleSort('owner')}
-                    >
-                        {t('owner')}</Table.HeaderCell>
+                        <Table.HeaderCell sorted={column === 'owner' ? direction : null} onClick={handleSort('owner')}>
+                            {t('owner')}
+                        </Table.HeaderCell>
 
-                    <Table.HeaderCell
-                        sorted={column === 'description' ? direction : null}
-                        onClick={handleSort('description')}
-                    >
-                        {t('description')}</Table.HeaderCell>
+                        <Table.HeaderCell
+                            sorted={column === 'description' ? direction : null}
+                            onClick={handleSort('description')}
+                        >
+                            {t('description')}
+                        </Table.HeaderCell>
 
-                    <Table.HeaderCell
-                        sorted={column === 'storageType' ? direction : null}
-                        onClick={handleSort('storageType')}
-                    >
-                        {t('storageType')}</Table.HeaderCell>
+                        <Table.HeaderCell
+                            sorted={column === 'storageType' ? direction : null}
+                            onClick={handleSort('storageType')}
+                        >
+                            {t('storageType')}
+                        </Table.HeaderCell>
 
-                    <Table.HeaderCell
-                        textAlign='center'
-                        sorted={column === 'space' ? direction : null}
-                        onClick={handleSort('space')}
-                    >
-                        {t('space')}</Table.HeaderCell>
+                        <Table.HeaderCell
+                            textAlign="center"
+                            sorted={column === 'space' ? direction : null}
+                            onClick={handleSort('space')}
+                        >
+                            {t('space')}
+                        </Table.HeaderCell>
 
-                    <Table.HeaderCell
-                        textAlign='center'
-                        sorted={column === 'buckets' ? direction : null}
-                        onClick={handleSort('buckets')}
-                    >
-                        {t('buckets')}</Table.HeaderCell>
+                        <Table.HeaderCell
+                            textAlign="center"
+                            sorted={column === 'buckets' ? direction : null}
+                            onClick={handleSort('buckets')}
+                        >
+                            {t('buckets')}
+                        </Table.HeaderCell>
 
-                    <Table.HeaderCell
-                        textAlign='center'
-                        sorted={column === 'objects' ? direction : null}
-                        onClick={handleSort('objects')}
-                    >
-                        {t('objects')}</Table.HeaderCell>
-                    { userRole !== BILLING_USER_NAME && <Table.HeaderCell />}
-                </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-                {data && data.map((item, i) => (
-                    <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
-                        <Table.Cell>
-                            { item.name.slice(0, 20) }
-                            { item.name.length > 20 && <Popup
-                                trigger={ <span className='popup-icon'>&nbsp;...&nbsp;</span> }
-                                content={item.name}
-                                position='bottom center'
-                                inverted
-                            /> }
-                            {item.is_locked && <Icon name='lock' title={t('lockedS3user')} style={{ marginLeft: '4px' }}/>}
-                        </Table.Cell>
-                        <Table.Cell>
-                            { item.owner || EMPTY_VALUE }
-                        </Table.Cell>
-                        <Table.Cell>
-                            { item.description.slice(0, 18) }
-                            { item.description.length > 18 && <Popup
-                                trigger={ <span className='popup-icon'>&nbsp;...&nbsp;</span> }
-                                content={item.description}
-                                position='bottom center'
-                                inverted
-                                className='popup'
-                            /> }
-                        </Table.Cell>
-                        <Table.Cell>
-                            { item.default_placement.class || EMPTY_VALUE }
-                        </Table.Cell>
-                        { Object.keys(item.stats).length > 0 ? <Table.Cell textAlign='center'>
-                            {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
-                            <Bar value={item.stats.storage_size.actual} total={item.stats.storage_size.limit} />
-                        </Table.Cell> : <Table.Cell textAlign='center'>{t('notAvailable')}</Table.Cell>}
-                        { Object.keys(item.stats).length > 0 ?  <Table.Cell textAlign='center'>
-                            {item.stats.buckets.actual} / {item.stats.buckets.limit}
-                            <Bar value={item.stats.buckets.actual} total={item.stats.buckets.limit} />
-                        </Table.Cell> : <Table.Cell textAlign='center'>{t('notAvailable')}</Table.Cell>}
-                        { Object.keys(item.stats).length > 0 ?  <Table.Cell textAlign='center'>
-                            {item.stats.objects.actual} / {item.stats.objects.limit}
-                            <Bar value={item.stats.objects.actual} total={item.stats.objects.limit} />
-                        </Table.Cell> : <Table.Cell textAlign='center'>{t('notAvailable')}</Table.Cell>}
-                        { userRole !== BILLING_USER_NAME && <Table.Cell collapsing textAlign='right'>
-                            <Dropdown direction='left' icon='ellipsis vertical' className='users-list__actions_dot'>
-                                <Dropdown.Menu >
-                                    <UserModal t={t} key={i} edit user={item} />
-                                    { item.is_locked ?
-                                        <Dropdown.Item
-                                            icon='lock open'
-                                            text={t('unlockS3user')}
-                                            onClick={() => dispatch(lockS3userAndFetch(item.id, { action: 'unlock' }))}
-                                        /> :
-                                        <Dropdown.Item
-                                            icon='lock'
-                                            text={t('lockS3user')}
-                                            onClick={() => dispatch(lockS3userAndFetch(item.id, {action: 'lock'}))}
-                                        />}
-                                    <Dropdown.Item
-                                        className="item-red"
-                                        icon='trash'
-                                        text={t('remove')}
-                                        onClick={() => { setDeleteConfirm(true); setDeleteConfirmI(i); }} />
-
-                                    <Confirm
-                                        open={deleteConfirm && i === deleteConfirmI}
-                                        header={t('deleteS3userConfirName')}
-                                        content={
-                                            <div className='content'>
-                                                <DangerousHTML html={t('deleteS3userConfirmMessage', { name: `<b>${item.name}</b>` })} />
-                                            </div>
-                                        }
-                                        onCancel={() => { setDeleteConfirm(false); setDeleteConfirmI(null); }}
-                                        onConfirm={() => { onConfirm(item.id); setDeleteConfirm(false); }}
-                                        cancelButton={t('no')}
-                                        confirmButton={t('yes')}
-                                    />
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </Table.Cell> }
+                        <Table.HeaderCell
+                            textAlign="center"
+                            sorted={column === 'objects' ? direction : null}
+                            onClick={handleSort('objects')}
+                        >
+                            {t('objects')}
+                        </Table.HeaderCell>
+                        {userRole !== BILLING_USER_NAME && <Table.HeaderCell />}
                     </Table.Row>
-                ))}
-            </Table.Body>
-        </Table>
-    </React.Fragment>;
+                </Table.Header>
+
+                <Table.Body>
+                    {data &&
+                        data.map((item, i) => (
+                            <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
+                                <Table.Cell>
+                                    {item.name.slice(0, 20)}
+                                    {item.name.length > 20 && (
+                                        <Popup
+                                            trigger={<span className="popup-icon">&nbsp;...&nbsp;</span>}
+                                            content={item.name}
+                                            position="bottom center"
+                                            inverted
+                                        />
+                                    )}
+                                    {item.is_locked && (
+                                        <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />
+                                    )}
+                                </Table.Cell>
+                                <Table.Cell>{item.owner || EMPTY_VALUE}</Table.Cell>
+                                <Table.Cell>
+                                    {item.description.slice(0, 18)}
+                                    {item.description.length > 18 && (
+                                        <Popup
+                                            trigger={<span className="popup-icon">&nbsp;...&nbsp;</span>}
+                                            content={item.description}
+                                            position="bottom center"
+                                            inverted
+                                            className="popup"
+                                        />
+                                    )}
+                                </Table.Cell>
+                                <Table.Cell>{item.default_placement.s3_placement_target || EMPTY_VALUE}</Table.Cell>
+                                {Object.keys(item.stats).length > 0 ? (
+                                    <Table.Cell textAlign="center">
+                                        {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
+                                        <Bar value={item.stats.storage_size.actual} total={item.stats.storage_size.limit} />
+                                    </Table.Cell>
+                                ) : (
+                                    <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
+                                )}
+                                {Object.keys(item.stats).length > 0 ? (
+                                    <Table.Cell textAlign="center">
+                                        {item.stats.buckets.actual} / {item.stats.buckets.limit}
+                                        <Bar value={item.stats.buckets.actual} total={item.stats.buckets.limit} />
+                                    </Table.Cell>
+                                ) : (
+                                    <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
+                                )}
+                                {Object.keys(item.stats).length > 0 ? (
+                                    <Table.Cell textAlign="center">
+                                        {item.stats.objects.actual} / {item.stats.objects.limit}
+                                        <Bar value={item.stats.objects.actual} total={item.stats.objects.limit} />
+                                    </Table.Cell>
+                                ) : (
+                                    <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
+                                )}
+                                {userRole !== BILLING_USER_NAME && (
+                                    <Table.Cell collapsing textAlign="right">
+                                        <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">
+                                            <Dropdown.Menu>
+                                                <UserModal t={t} key={i} edit user={item} />
+                                                {item.is_locked ? (
+                                                    <Dropdown.Item
+                                                        icon="lock open"
+                                                        text={t('unlockS3user')}
+                                                        onClick={() =>
+                                                            dispatch(lockS3userAndFetch(item.id, { action: 'unlock' }))
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <Dropdown.Item
+                                                        icon="lock"
+                                                        text={t('lockS3user')}
+                                                        onClick={() => dispatch(lockS3userAndFetch(item.id, { action: 'lock' }))}
+                                                    />
+                                                )}
+                                                <Dropdown.Item
+                                                    className="item-red"
+                                                    icon="trash"
+                                                    text={t('remove')}
+                                                    onClick={() => {
+                                                        setDeleteConfirm(true);
+                                                        setDeleteConfirmI(i);
+                                                    }}
+                                                />
+
+                                                <Confirm
+                                                    open={deleteConfirm && i === deleteConfirmI}
+                                                    header={t('deleteS3userConfirName')}
+                                                    content={
+                                                        <div className="content">
+                                                            <DangerousHTML
+                                                                html={t('deleteS3userConfirmMessage', {
+                                                                    name: `<b>${item.name}</b>`,
+                                                                })}
+                                                            />
+                                                        </div>
+                                                    }
+                                                    onCancel={() => {
+                                                        setDeleteConfirm(false);
+                                                        setDeleteConfirmI(null);
+                                                    }}
+                                                    onConfirm={() => {
+                                                        onConfirm(item.id);
+                                                        setDeleteConfirm(false);
+                                                    }}
+                                                    cancelButton={t('no')}
+                                                    confirmButton={t('yes')}
+                                                />
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </Table.Cell>
+                                )}
+                            </Table.Row>
+                        ))}
+                </Table.Body>
+            </Table>
+        </React.Fragment>
+    );
 };
 
 UsersList.propTypes = {
     t: PropTypes.func,
-    items: PropTypes.array
+    items: PropTypes.array,
 };
 
 Bar.propTypes = {
     value: PropTypes.number,
-    total: PropTypes.number
+    total: PropTypes.number,
 };
 
 export default UsersList;

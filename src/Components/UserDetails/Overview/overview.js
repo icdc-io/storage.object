@@ -12,91 +12,106 @@ const UserOverview = ({ t, s3user }) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const userRole = useSelector(state => state.host.user.role);
+    const userRole = useSelector((state) => state.host.user.role);
 
-    const generateNewKeys = useCallback(
-        () => {
-            dispatch(generateKeys(s3user.id));
-        },
-        [dispatch, s3user]
+    const generateNewKeys = useCallback(() => {
+        dispatch(generateKeys(s3user.id));
+    }, [dispatch, s3user]);
+
+    const deleteS3user = useCallback(() => {
+        dispatch(deleteS3userAndFetch(s3user.id));
+        setDeleteConfirm(false);
+        history.push('/amazon');
+    }, [dispatch, s3user, history]);
+
+    return (
+        <React.Fragment>
+            <Header as="h4">
+                {s3user.name}{' '}
+                {s3user.is_locked && (
+                    <Icon style={{ fontSize: '15px', position: 'relative', top: '-5px' }} name="lock" title={t('lockedS3user')} />
+                )}
+            </Header>
+            {s3user.description}
+            <Divider />
+
+            <Header as="h4">{t('s3')}</Header>
+            <Grid>
+                <Grid.Row>
+                    <Grid.Column width={2}>{t('id')}</Grid.Column>
+                    <Grid.Column width={4}>{s3user.keys?.s3.user}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
+                    <Grid.Column width={4}>{s3user.keys?.s3.access_key}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
+                    <Grid.Column width={4}>{s3user.keys?.s3.secret_key}</Grid.Column>
+                </Grid.Row>
+            </Grid>
+            <Divider />
+
+            <Header as="h4">{t('swift')}</Header>
+            <Grid>
+                <Grid.Row>
+                    <Grid.Column width={2}>{t('id')}</Grid.Column>
+                    <Grid.Column width={4}>{s3user.keys?.swift.user}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
+                    <Grid.Column width={4}>{s3user.keys?.swift.secret_key}</Grid.Column>
+                </Grid.Row>
+            </Grid>
+
+            {userRole !== BILLING_USER_NAME && (
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column textAlign="right" width={16}>
+                            <Button content={t('generatenewKeys')} onClick={generateNewKeys} style={{ width: '270px' }} />
+                            {s3user.is_locked ? (
+                                <Button
+                                    content={t('unlockS3user')}
+                                    style={{ width: '270px' }}
+                                    onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'unlock' }))}
+                                />
+                            ) : (
+                                <Button
+                                    content={t('lockS3user')}
+                                    style={{ width: '270px' }}
+                                    onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
+                                />
+                            )}
+                            <Button
+                                negative
+                                onClick={() => setDeleteConfirm(true)}
+                                content={t('deleteS3user')}
+                                style={{ width: '270px' }}
+                            />
+                            <Confirm
+                                open={deleteConfirm}
+                                header={t('deleteS3userConfirName')}
+                                content={
+                                    <div className="content">
+                                        <DangerousHTML
+                                            html={t('deleteS3userConfirmMessage', { name: `<b>${s3user.name}</b>` })}
+                                        />
+                                    </div>
+                                }
+                                onCancel={() => setDeleteConfirm(false)}
+                                onConfirm={deleteS3user}
+                            />
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+            )}
+        </React.Fragment>
     );
-
-    const deleteS3user = useCallback(
-        () => {
-            dispatch(deleteS3userAndFetch(s3user.id));
-            setDeleteConfirm(false);
-            history.push('/amazon');
-        },
-        [dispatch, s3user, history]
-    );
-
-    return <React.Fragment>
-        <Header as='h4'>{s3user.name} {s3user.is_locked && <Icon style={{ fontSize: '15px', position: 'relative', top: '-5px' }} name='lock'
-            title={t('lockedS3user')}/>}</Header>
-        {s3user.description}
-        <Divider />
-
-        <Header as='h4'>{t('s3')}</Header>
-        <Grid>
-            <Grid.Row>
-                <Grid.Column width={2}>{t('id')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys?.s3.user}</Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-                <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys?.s3.access_key}</Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-                <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys?.s3.secret_key}</Grid.Column>
-            </Grid.Row>
-        </Grid>
-        <Divider />
-
-        <Header as='h4'>{t('swift')}</Header>
-        <Grid>
-            <Grid.Row>
-                <Grid.Column width={2}>{t('id')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys?.swift.user}</Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-                <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                <Grid.Column width={4}>{s3user.keys?.swift.secret_key}</Grid.Column>
-            </Grid.Row>
-        </Grid>
-
-        { userRole !== BILLING_USER_NAME && <Grid>
-            <Grid.Row>
-                <Grid.Column textAlign='right' width={16}>
-                    <Button content={t('generatenewKeys')} onClick={generateNewKeys}
-                        style={{ width: '270px' }}/>
-                    { s3user.is_locked ?
-                        <Button content={t('unlockS3user')} style={{ width: '270px' }}
-                            onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'unlock' } ))}/> :
-                        <Button content={t('lockS3user')} style={{ width: '270px' }}
-                            onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' } ))}/>}
-                    <Button negative onClick={() => setDeleteConfirm(true)} content={t('deleteS3user')}
-                        style={{ width: '270px' }} />
-                    <Confirm
-                        open={deleteConfirm}
-                        header={t('deleteS3userConfirName')}
-                        content={
-                            <div className='content'>
-                                 <DangerousHTML html={t('deleteS3userConfirmMessage', { name: `<b>${s3user.name}</b>` })} />
-                            </div>
-                        }
-                        onCancel={() => setDeleteConfirm(false)}
-                        onConfirm={deleteS3user}
-                    />
-                </Grid.Column>
-            </Grid.Row>
-        </Grid>}
-    </React.Fragment >;
 };
 
 UserOverview.propTypes = {
     t: PropTypes.func,
-    s3user: PropTypes.object
+    s3user: PropTypes.object,
 };
 
 export default UserOverview;

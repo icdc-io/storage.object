@@ -9,7 +9,7 @@ import CustomSelect from '../GeneralComponents/customSelect';
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues }) => {
     const storageTypes = pools.map((item, index) => ({
         key: index,
-        text: item.class,
+        text: item.s3_placement_target,
         value: item.id,
     }));
 
@@ -52,12 +52,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 {edit ? (
                     <div className="uneditable_field">
                         <label>{t('storageType')}</label>
-                        <p>
-                            {
-                                storageTypes.find((e) => e.value == initialValues.default_placement)
-                                    ?.text
-                            }
-                        </p>
+                        <p>{storageTypes.find((e) => e.value == initialValues.default_placement)?.text}</p>
                     </div>
                 ) : (
                     <Field
@@ -84,6 +79,14 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     placeholder={t('objPlaceholder')}
                     name="objectsLimit"
                     label={t('objectsLimit')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    placeholder={t('bucketsPlaceholder')}
+                    name="bucketsLimit"
+                    label={t('bucketsLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}

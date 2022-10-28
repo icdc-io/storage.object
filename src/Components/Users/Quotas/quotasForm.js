@@ -9,25 +9,32 @@ import CustomSelect from '../../GeneralComponents/customSelect';
 const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }) => {
     const storageTypes = pools.map((item, index) => ({
         key: index,
-        text: item.class,
+        text: item.s3_placement_target,
         value: item.id,
     }));
 
     return (
         <React.Fragment>
             <Form>
-                <Field
-                    placeholder={t('select')}
-                    name="storageType"
-                    label={t('storageType')}
-                    component={CustomSelect}
-                    type="text"
-                    editable
-                    options={storageTypes}
-                    initialValues={initialValues}
-                    edit={edit}
-                    validate={[required]}
-                />
+                {edit ? (
+                    <div className="uneditable_field">
+                        <label>{t('storageType')}</label>
+                        <p>{storageTypes.find((e) => e.value == initialValues.storageType)?.text}</p>
+                    </div>
+                ) : (
+                    <Field
+                        placeholder={t('select')}
+                        name="storageType"
+                        label={t('storageType')}
+                        component={CustomSelect}
+                        type="text"
+                        editable
+                        options={storageTypes}
+                        initialValues={initialValues}
+                        edit={edit}
+                        validate={[required]}
+                    />
+                )}
                 <Field
                     placeholder={t('objPlaceholder')}
                     name="objects"
@@ -54,8 +61,8 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                 />
                 <Field
                     placeholder={t('bucketsPlaceholder')}
-                    name="bucketsUser"
-                    label={t('bucketsUser')}
+                    name="buckets"
+                    label={t('buckets')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}

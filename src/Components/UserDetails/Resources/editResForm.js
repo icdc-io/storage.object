@@ -5,16 +5,14 @@ import PropTypes from 'prop-types';
 import CustomField from '../../GeneralComponents/customField';
 import { number, required } from '../../../Validaions';
 
-
 const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
-
     return (
         <React.Fragment>
             <Form>
-                    <div className="uneditable_field">
-                        <label>{t('name')}</label>
-                        <p>{initialValues.name}</p>
-                    </div>
+                <div className="uneditable_field">
+                    <label>{t('name')}</label>
+                    <p>{initialValues.name}</p>
+                </div>
                 <Field
                     placeholder={t('spacePlaceholder')}
                     name="storageSizeLimit"
@@ -27,6 +25,14 @@ const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
                     placeholder={t('objPlaceholder')}
                     name="objectsLimit"
                     label={t('objectsLimit')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number]}
+                />
+                <Field
+                    placeholder={t('bucketsPlaceholder')}
+                    name="bucketsLimit"
+                    label={t('bucketsLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
@@ -62,7 +68,7 @@ EditResForm.propTypes = {
     t: PropTypes.func,
     handleClose: PropTypes.func,
     handleSubmit: PropTypes.func,
-    initialValues: PropTypes.any
+    initialValues: PropTypes.any,
 };
 
 export default reduxForm({
