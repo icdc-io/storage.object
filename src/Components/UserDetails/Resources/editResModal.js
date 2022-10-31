@@ -9,13 +9,13 @@ import { editS3userAndFetch } from '../../../AppActions';
 import { BILLING_USER_NAME } from '../../../AppConstants';
 import EditResForm from './editResForm';
 
-const mapPropsToApi = (item, edit) => ({
+const mapPropsToApi = (item) => ({
     description: item.description,
     owner: item.owner || '',
     limits: {
         storage_size: +item.storageSizeLimit,
         objects: +item.objectsLimit,
-        buckets: +item.bucketsLimit,
+        max_buckets: +item.bucketsLimit,
         bucket_storage_size: +item.storageInBucketLimit,
         bucket_objects: +item.objectsInBucketLimit,
     },
