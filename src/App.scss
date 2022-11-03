@@ -33,7 +33,7 @@ ul.navigation-secondary {
   background: #e0e1e2 none;
 }
 
-.ui.table.users-list {
+.ui.table.users-list, .ui.table.quotas-list {
   border: none;
 
   thead {
@@ -153,6 +153,7 @@ ul.navigation-secondary {
   border-radius: 2px;
   cursor: pointer;
   margin-left: 3px;
+  background: #E8E8E8;
 }
 
 .text_left {
@@ -187,4 +188,110 @@ ul.navigation-secondary {
 .users-list tr:hover {
   background: #f8f8f8;
   cursor: pointer;
+}
+.ui.grid > .row.quotas-description {
+  padding: 0;
+  
+  p {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #767676;
+  }
+}
+.row.buckets-description {
+  padding: 0;
+  
+  p {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #767676;
+  }
+}
+.back_link {
+  max-width: min-content;
+}
+.uneditable_field {
+  margin-bottom: 14px;
+
+  label {
+    display: block;
+    margin: 0 0 0.28571429rem 0;
+    color: rgba(0,0,0,.87);
+    font-size: .92857143em;
+    font-weight: 700;
+    text-transform: none;
+  }
+  p {
+    font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: #3A383C;
+  }
+}
+.quotas-list .gray-text {
+  color: #767676;
+}
+.items-list span.s3quotas-empty {
+  width: 100%;
+  text-align: center;
+  color: #767676;
+  padding: 10px;
+}
+div.ui.active.centered.inline.loader {
+  margin-top: 20px;
+}
+.disabled-btn {
+  cursor: default;
+  opacity: .45!important;
+  background-image: none!important;
+  box-shadow: none!important;
+  padding-top: 12px!important;
+}
+
+.info-icon {
+  margin: 0px 0px 2px 0px!important;
+  position: relative;
+
+  &:before {
+      position: absolute;
+      bottom: -2px;
+  }
+}
+.ui.grid.buckets-grid {
+  margin: -1rem 0;
+
+  .row .column {
+    padding: 0;
+  }
+
+  p {
+    max-width: 650px;
+  }
+}
+.resources-bottom-panel {
+  display: flex;
+  justify-content: space-between;
+
+  div.resource-action {
+    button {
+    position: absolute;
+    right: 10px;
+    bottom: 4px;
+    width: 100px;
+    }
+  }
+}
+
+.quotas-list .endpoint {
+  display: flex;
+  flex-direction: column;
+
+  a {
+    margin-right: 8px;
+  }
 }

@@ -1,54 +1,38 @@
 /* eslint-disable camelcase */
-
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Header, Button, Dropdown } from 'semantic-ui-react';
+import { Modal, Header, Button, Icon, Popup } from 'semantic-ui-react';
 import { reset } from 'redux-form';
 import PropTypes from 'prop-types';
-import { actionAndFetch, createS3user, editS3userAndFetch } from '../../AppActions';
-import { BILLING_USER_NAME } from '../../AppConstants';
-import UserForm from './userForm';
+import { actionAndFetch, createS3quotasActionAndFetch, editS3quotaAndFetch } from '../../../AppActions';
+import { BILLING_USER_NAME } from '../../../AppConstants';
+import QuotasForm from './quotasForm';
 
 const mapPropsToApi = (item, edit) =>
     edit
         ? {
-              description: item.description,
-              owner: item.owner || '',
-              limits: {
-                  storage_size: +item.storageSizeLimit,
-                  objects: +item.objectsLimit,
-                  max_buckets: +item.bucketsLimit,
-                  bucket_storage_size: +item.storageInBucketLimit,
-                  bucket_objects: +item.objectsInBucketLimit,
-              },
+              objects: +item.objects,
+              data_size_mb: +item.space,
+              buckets: +item.buckets,
+              users: +item.users,
           }
         : {
-              name: item.name,
-              description: item.description,
-              owner: item.owner || '',
-              default_placement: item.storageType,
-              limits: {
-                  storage_size: +item.storageSizeLimit,
-                  objects: +item.objectsLimit,
-                  max_buckets: +item.bucketsLimit,
-                  bucket_storage_size: +item.storageInBucketLimit,
-                  bucket_objects: +item.objectsInBucketLimit,
-              },
+              objects: +item.objects,
+              data_size_mb: +item.space,
+              buckets: +item.buckets,
+              users: +item.users,
+              pool_id: +item.storageType,
           };
 
 const mapApiToProps = (item) => ({
-    name: item.name,
-    description: item.description,
-    default_placement: item.default_placement.id,
-    storageSizeLimit: item.stats.storage_size?.limit || 0,
-    objectsLimit: item.stats.objects?.limit || 0,
-    bucketsLimit: +item.stats.buckets?.limit || 0,
-    storageInBucketLimit: item.stats.storage_bucket_limit,
-    objectsInBucketLimit: item.stats.object_bucket_limit,
-    owner: item.owner,
+    storageType: item.pool.id,
+    space: item.stats.storage_mb.limit,
+    buckets: item.buckets,
+    objects: item.stats.objects.limit,
+    users: item.stats.users.limit,
 });
 
-const UserModal = ({ user, edit, t }) => {
+const QuotasModal = ({ quota, edit, t, quotasLimit }) => {
     const userRole = useSelector((state) => state.host.user.role);
     const pools = useSelector((state) => state.AmazonStore.pools);
 
@@ -57,58 +41,77 @@ const UserModal = ({ user, edit, t }) => {
 
     const handleClose = useCallback(() => {
         setOpen(false);
-        dispatch(reset('createS3user'));
+        dispatch(reset('createS3quota'));
     }, [setOpen, dispatch]);
 
     const onSubmit = useCallback(
         (values) => {
             handleClose();
-
             let payload = mapPropsToApi(values, edit);
             if (edit) {
-                dispatch(editS3userAndFetch(user.id, payload));
+                dispatch(editS3quotaAndFetch(quota.id, payload));
             } else {
-                dispatch(actionAndFetch(createS3user, payload));
+                dispatch(actionAndFetch(createS3quotasActionAndFetch, payload));
             }
-
-            dispatch(reset('createS3user'));
+            dispatch(reset('createS3quota'));
         },
-        [handleClose, edit, user, dispatch]
+        [handleClose, edit, quota, dispatch]
     );
 
     return (
         userRole !== BILLING_USER_NAME && (
             <React.Fragment>
                 {edit ? (
-                    <Dropdown.Item icon="pencil alternate" text={t('edit')} onClick={() => setOpen(true)} />
-                ) : (
                     <Button
                         onClick={() => setOpen(true)}
                         // disabled={itemsFetchStatus !== 'fulfilled'}
-                        content={t('createS3user')}
+                        content={t('edit')}
+                        primary
+                        basic
+                    />
+                ) : !quotasLimit ? (
+                    <Button
+                        onClick={() => setOpen(true)}
+                        // disabled={itemsFetchStatus !== 'fulfilled'}
+                        content={t('addQuota')}
                         icon="plus"
                         labelPosition="left"
                         primary
                     />
+                ) : (
+                    <Popup
+                        on="hover"
+                        pinned
+                        trigger={
+                            <Button className="disabled-btn " primary size="medium">
+                                {t('addQuota')}
+                                <Icon name="question circle outline" size="large" className="info-icon" />
+                            </Button>
+                        }
+                        inverted
+                        position="left center"
+                    >
+                        {t('noPools')}
+                    </Popup>
                 )}
                 <Modal open={open} size="tiny" onSubmit={onSubmit}>
-                    <Header content={edit ? t('editS3user') : t('createS3user')} />
+                    <Header content={edit ? t('editQuota') : t('addQuota')} />
                     <Modal.Content>
                         {
                             // eslint-disable-next-line max-len
                             edit ? (
-                                <UserForm
+                                <QuotasForm
                                     t={t}
                                     open={open}
                                     handleClose={handleClose}
                                     onSubmit={onSubmit}
-                                    initialValues={mapApiToProps(user)}
+                                    initialValues={mapApiToProps(quota)}
                                     edit={edit}
                                     isAdmin={userRole === 'admin'}
                                     pools={pools}
                                 />
                             ) : (
-                                <UserForm
+                                <QuotasForm
                                     t={t}
                                     open={open}
                                     handleClose={handleClose}
@@ -125,10 +128,11 @@ const UserModal = ({ user, edit, t }) => {
     );
 };
 
-UserModal.propTypes = {
-    user: PropTypes.object,
+QuotasModal.propTypes = {
+    quota: PropTypes.object,
     edit: PropTypes.bool,
     t: PropTypes.func,
+    quotasLimit: PropTypes.bool,
 };
 
-export default UserModal;
+export default QuotasModal;

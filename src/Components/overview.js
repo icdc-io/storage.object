@@ -8,7 +8,7 @@ const Overview = ({ t }) => {
     return (
         <Switch>
             <Route exact path='/amazon' render={() => <Users t={t} />}/>
-            <Route exact path='/amazon/:name' render={() => <UserDetails t={t} />} />
+            <Route exact path='/amazon/:userId' render={() => <UserDetails t={t} />} />
             <Redirect to='/amazon' />
         </Switch>
     );
