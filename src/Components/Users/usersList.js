@@ -115,8 +115,9 @@ const UsersList = ({ t, items }) => {
 
                 <Table.Body>
                     {data &&
-                        data.map((item, i) => (
-                            <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
+                        data.map((item, i) => { 
+                            const isData = Object.keys(item.stats).length > 0;
+                            return <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
                                 <Table.Cell>
                                     {item.name.slice(0, 20)}
                                     {item.name.length > 20 && (
@@ -145,7 +146,7 @@ const UsersList = ({ t, items }) => {
                                     )}
                                 </Table.Cell>
                                 <Table.Cell>{item.default_placement.s3_placement_target || EMPTY_VALUE}</Table.Cell>
-                                {Object.keys(item.stats).length > 0 ? (
+                                {isData ? (
                                     <Table.Cell textAlign="center">
                                         {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
                                         <Bar value={item.stats.storage_size.actual} total={item.stats.storage_size.limit} />
@@ -153,7 +154,7 @@ const UsersList = ({ t, items }) => {
                                 ) : (
                                     <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
                                 )}
-                                {Object.keys(item.stats).length > 0 ? (
+                                {isData ? (
                                     <Table.Cell textAlign="center">
                                         {item.stats.buckets.actual} / {item.stats.buckets.limit}
                                         <Bar value={item.stats.buckets.actual} total={item.stats.buckets.limit} />
@@ -161,7 +162,7 @@ const UsersList = ({ t, items }) => {
                                 ) : (
                                     <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
                                 )}
-                                {Object.keys(item.stats).length > 0 ? (
+                                {isData ? (
                                     <Table.Cell textAlign="center">
                                         {item.stats.objects.actual} / {item.stats.objects.limit}
                                         <Bar value={item.stats.objects.actual} total={item.stats.objects.limit} />
@@ -226,8 +227,8 @@ const UsersList = ({ t, items }) => {
                                         </Dropdown>
                                     </Table.Cell>
                                 )}
-                            </Table.Row>
-                        ))}
+                            </Table.Row>}
+                        )}
                 </Table.Body>
             </Table>
         </React.Fragment>

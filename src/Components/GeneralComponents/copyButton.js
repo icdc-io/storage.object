@@ -5,16 +5,18 @@ import { Icon, Popup } from 'semantic-ui-react';
 const CopyButton = ({ content }) => {
     const [isOpen, setIsOpen] = useState(false);
 
+    let timer;
+
     const handleOpen = () => {
         setIsOpen(true);
-        setTimeout(() => {
+        timer = setTimeout(() => {
             setIsOpen(false);
         }, 2000);
     };
 
     const handleClose = () => {
         setIsOpen(false);
-        clearTimeout();
+        clearTimeout(timer)
     };
 
     const copyFuncion = (value) => {

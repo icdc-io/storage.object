@@ -52,7 +52,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 {edit ? (
                     <div className="uneditable_field">
                         <label>{t('storageType')}</label>
-                        <p>{storageTypes.find((e) => e.value == initialValues.default_placement)?.text}</p>
+                        <p>{storageTypes.find((e) => e.value === initialValues.default_placement)?.text}</p>
                     </div>
                 ) : (
                     <Field

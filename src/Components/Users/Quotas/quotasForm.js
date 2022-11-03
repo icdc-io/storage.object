@@ -19,7 +19,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                 {edit ? (
                     <div className="uneditable_field">
                         <label>{t('storageType')}</label>
-                        <p>{storageTypes.find((e) => e.value == initialValues.storageType)?.text}</p>
+                        <p>{storageTypes.find((e) => e.value === initialValues.storageType)?.text}</p>
                     </div>
                 ) : (
                     <Field
