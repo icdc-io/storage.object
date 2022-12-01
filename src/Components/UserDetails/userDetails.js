@@ -16,7 +16,7 @@ const UserDetails = ({ t }) => {
     const s3userFetchStatus = useSelector((state) => state.AmazonStore.s3userFetchStatus);
     const user = useSelector((state) => state.host.user);
 
-    const [acticeItem, setActiveItem] = useState(0);
+    const [activeItem, setActiveItem] = useState(0);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -72,7 +72,7 @@ const UserDetails = ({ t }) => {
             {s3userFetchStatus === 'pending' && <Loader active inline="centered" />}
             {s3userFetchStatus === 'fulfilled' && (
                 <>
-                    <Tab panes={panes} defaultActiveIndex={acticeItem}/>
+                    <Tab panes={panes} defaultActiveIndex={activeItem}/>
                     <Link to="/amazon" className="back_link">
                         <Button
                             className="back back__bottom"
