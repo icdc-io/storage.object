@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import { required, number, s3user, email } from '../../Validaions';
+import { required, number, s3user, email, positiveNumber } from '../../Validaions';
 import CustomField from '../GeneralComponents/customField';
 import CustomSelect from '../GeneralComponents/customSelect';
 
@@ -73,7 +73,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     label={t('storageSizeLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('objPlaceholder')}
@@ -81,7 +81,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     label={t('objectsLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('bucketsPlaceholder')}
@@ -89,7 +89,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     label={t('bucketsLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('storagePlaceholder')}
@@ -97,7 +97,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     label={t('storageInBucketLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('objPlaceholder')}
@@ -105,7 +105,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     label={t('objectsInBucketLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>

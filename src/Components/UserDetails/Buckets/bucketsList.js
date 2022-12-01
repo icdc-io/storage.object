@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Header, Table, Progress, Dropdown, Grid, Segment, Icon, Loader, Confirm } from 'semantic-ui-react';
@@ -19,7 +19,7 @@ const Bar = ({ value, total }) => (
     />
 );
 
-const BucketsList = ({ t }) => {
+const BucketsList = ({ t, setActiveItem }) => {
     const { userId } = useParams();
 
     const dispatch = useDispatch();
@@ -29,7 +29,8 @@ const BucketsList = ({ t }) => {
     const s3user = useSelector((state) => state.AmazonStore.s3user);
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [deleteConfirmI, setDeleteConfirmI] = useState(null);
+
+    const [currentItem, setCurrentItem] = useState(null);
 
     const [column, setColumn] = useState('name');
     const [direction, setDirection] = useState('ascending');
@@ -38,6 +39,10 @@ const BucketsList = ({ t }) => {
     useEffect(() => {
         setData(Object.values(buckets));
     }, [buckets]);
+
+    useEffect(() => {
+        return () => setActiveItem(2)
+    }, []);
 
     const handleSort = (clickedColumn) => () => {
         if (column !== clickedColumn) {
@@ -53,12 +58,7 @@ const BucketsList = ({ t }) => {
 
     // useEffect(() => setData(_.sortBy(buckets, [column])), [buckets, column]);
 
-    const onConfirm = useCallback(
-        (bucket) => {
-            dispatch(deleteBucketAndFetch(userId, bucket.bucket_name));
-        },
-        [dispatch]
-    );
+    const onConfirm = (bucket) =>  dispatch(deleteBucketAndFetch(userId, bucket.bucket_name));
 
     return (
         <React.Fragment>
@@ -116,19 +116,11 @@ const BucketsList = ({ t }) => {
                                     {t('name')}
                                 </Table.HeaderCell>
 
-                                <Table.HeaderCell
-                                    textAlign="center"
-                                    sorted={column === 'space' ? direction : null}
-                                    onClick={handleSort('space')}
-                                >
+                                <Table.HeaderCell textAlign="center" sorted={column === 'space' ? direction : null} onClick={handleSort('space')}>
                                     {t('space')}
                                 </Table.HeaderCell>
 
-                                <Table.HeaderCell
-                                    textAlign="center"
-                                    sorted={column === 'objects' ? direction : null}
-                                    onClick={handleSort('objects')}
-                                >
+                                <Table.HeaderCell textAlign="center" sorted={column === 'objects' ? direction : null} onClick={handleSort('objects')}>
                                     {t('objects')}
                                 </Table.HeaderCell>
                                 <Table.HeaderCell />
@@ -149,11 +141,7 @@ const BucketsList = ({ t }) => {
                                             <Bar value={item.objects.actual} total={item.objects.limit} />
                                         </Table.Cell>
                                         <Table.Cell collapsing textAlign="right">
-                                            <Dropdown
-                                                direction="left"
-                                                icon="ellipsis vertical"
-                                                className="users-list__actions_dot"
-                                            >
+                                            <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">
                                                 <Dropdown.Menu>
                                                     <BucketModal t={t} edit bucket={item} />
                                                     <Dropdown.Item
@@ -162,23 +150,8 @@ const BucketsList = ({ t }) => {
                                                         text={t('remove')}
                                                         onClick={() => {
                                                             setDeleteConfirm(true);
-                                                            setDeleteConfirmI(i);
+                                                            setCurrentItem(item);
                                                         }}
-                                                    />
-                                                    <Confirm
-                                                        open={deleteConfirm}
-                                                        header={t('deleteBucketConfirmName')}
-                                                        content={
-                                                            <div className="content">
-                                                                <DangerousHTML
-                                                                    html={t('deleteBucketConfirmMessage', {
-                                                                        name: `<b>${item.bucket_name}</b>`,
-                                                                    })}
-                                                                />
-                                                            </div>
-                                                        }
-                                                        onCancel={() => setDeleteConfirm(false)}
-                                                        onConfirm={() => onConfirm(item)}
                                                     />
                                                 </Dropdown.Menu>
                                             </Dropdown>
@@ -188,6 +161,23 @@ const BucketsList = ({ t }) => {
                         </Table.Body>
                     </Table>
                 </React.Fragment>
+            )}
+            {deleteConfirm && (
+                <Confirm
+                    open={deleteConfirm}
+                    header={t('deleteBucketConfirmName')}
+                    content={
+                        <div className="content">
+                            <DangerousHTML
+                                html={t('deleteBucketConfirmMessage', {
+                                    name: `<b>${currentItem.bucket_name}</b>`,
+                                })}
+                            />
+                        </div>
+                    }
+                    onCancel={() => setDeleteConfirm(false)}
+                    onConfirm={() => onConfirm(currentItem)}
+                />
             )}
         </React.Fragment>
     );

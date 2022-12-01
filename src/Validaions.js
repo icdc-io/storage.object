@@ -23,7 +23,7 @@ const validationMessages = {
         number: 'Must be a number',
         positiveNumber: 'Must be a positive number',
         bucketName: 'Can be between 3 and 63 characters long, and can contain only lower-case characters, numbers, periods, and dashes',
-        s3userName: 'Only numbers, latin letters, hypens, periods, @ signs and underscores are allowed',
+        s3userName: 'Only numbers, latin letters, hyphens, periods, @ signs and underscores are allowed',
         minLength: (min) => `Must be ${min} characters or more`,
         diskName: 'Please type the correct disk’s name',
         diskLength: 'Must be between 1 to 24 charecters',

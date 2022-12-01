@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -8,7 +8,7 @@ import DangerousHTML from 'react-dangerous-html';
 
 import { BILLING_USER_NAME } from '../../../AppConstants';
 
-const UserOverview = ({ t, s3user }) => {
+const UserOverview = ({ t, s3user, setActiveItem }) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -23,6 +23,10 @@ const UserOverview = ({ t, s3user }) => {
         setDeleteConfirm(false);
         history.push('/amazon');
     }, [dispatch, s3user, history]);
+
+    useEffect(() => {
+        return () => setActiveItem(0)
+    }, []);
 
     return (
         <React.Fragment>

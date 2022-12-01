@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import { required, number, bucket } from '../../../Validaions';
+import { required, number, bucket, positiveNumber } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 
 const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
@@ -23,14 +23,14 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                     label={t('storageSizeLimit')}
                     component={CustomField}
                     type="text"
-                    validate={[required, number]}
+                    validate={[required, positiveNumber, number]}
                 />
                 <Field
                     name="objectsLimit"
                     label={t('objectsLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, positiveNumber, number]}
                 />
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>

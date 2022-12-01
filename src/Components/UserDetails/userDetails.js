@@ -8,12 +8,15 @@ import UserOverview from './Overview/overview';
 import Resources from './Resources/resources';
 import { fetchS3User, fetchBuckets, clearS3UserFetchStatus } from '../../AppActions';
 import BucketsList from './Buckets/bucketsList';
+import { useState } from 'react';
 
 const UserDetails = ({ t }) => {
     const { userId } = useParams();
     const s3user = useSelector((state) => state.AmazonStore.s3user);
     const s3userFetchStatus = useSelector((state) => state.AmazonStore.s3userFetchStatus);
     const user = useSelector((state) => state.host.user);
+
+    const [acticeItem, setActiveItem] = useState(0);
 
     const dispatch = useDispatch();
     const history = useHistory();
@@ -26,15 +29,15 @@ const UserDetails = ({ t }) => {
             menuItem: t('overviewTab'),
             render: () => (
                 <Tab.Pane>
-                    <UserOverview t={t} s3user={s3user} />
+                    <UserOverview t={t} s3user={s3user} setActiveItem={setActiveItem}/>
                 </Tab.Pane>
-            ),
+            )
         },
         {
             menuItem: t('resourcesTab'),
             render: () => (
                 <Tab.Pane>
-                    <Resources t={t} s3user={s3user} />
+                    <Resources t={t} s3user={s3user} setActiveItem={setActiveItem}/>
                 </Tab.Pane>
             ),
         },
@@ -42,7 +45,7 @@ const UserDetails = ({ t }) => {
             menuItem: t('bucketsTab'),
             render: () => (
                 <Tab.Pane>
-                    <BucketsList t={t} s3user={s3user} />
+                    <BucketsList t={t} s3user={s3user} setActiveItem={setActiveItem}/>
                 </Tab.Pane>
             ),
         },
@@ -69,8 +72,7 @@ const UserDetails = ({ t }) => {
             {s3userFetchStatus === 'pending' && <Loader active inline="centered" />}
             {s3userFetchStatus === 'fulfilled' && (
                 <>
-                    {' '}
-                    <Tab panes={panes} />
+                    <Tab panes={panes} defaultActiveIndex={acticeItem}/>
                     <Link to="/amazon" className="back_link">
                         <Button
                             className="back back__bottom"
