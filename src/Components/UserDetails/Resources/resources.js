@@ -2,8 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Header, Item, Grid } from 'semantic-ui-react';
 import EditResModal from './editResModal';
+import { useEffect } from 'react';
 
-const Resources = ({ t, s3user }) => {
+const Resources = ({ t, s3user, setActiveItem }) => {
+
+    useEffect(() => {
+        return () => setActiveItem(1)
+    }, []);
+    
     return (
         <React.Fragment>
             <Header as="h4">{t('storageType')}</Header>

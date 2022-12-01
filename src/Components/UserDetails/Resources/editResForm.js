@@ -3,7 +3,7 @@ import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import CustomField from '../../GeneralComponents/customField';
-import { number, required } from '../../../Validaions';
+import { number, positiveNumber, required } from '../../../Validaions';
 
 const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
     return (
@@ -19,7 +19,7 @@ const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
                     label={t('storageSizeLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('objPlaceholder')}
@@ -27,7 +27,7 @@ const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
                     label={t('objectsLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('bucketsPlaceholder')}
@@ -35,7 +35,7 @@ const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
                     label={t('bucketsLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('storagePlaceholder')}
@@ -43,7 +43,7 @@ const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
                     label={t('storageInBucketLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('objPlaceholder')}
@@ -51,7 +51,7 @@ const EditResForm = ({ t, handleClose, handleSubmit, initialValues }) => {
                     label={t('objectsInBucketLimit')}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
