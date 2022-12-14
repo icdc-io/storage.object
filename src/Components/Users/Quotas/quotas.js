@@ -7,11 +7,8 @@ import CopyButton from '../../GeneralComponents/copyButton';
 
 const Quotas = ({ t, quotas }) => {
     const user = useSelector((state) => state.host.user);
-    const userInfo = window.insights.getUserInfo();
     const pools = useSelector((state) => state.AmazonStore.pools);
 
-    let re = new RegExp(`^${user.account}.cloud$`);
-    const check = (groups) => groups.some((group) => re.test(group));
     const quotasLimit = quotas.length >= pools.length;
 
     const headers = [
@@ -49,7 +46,7 @@ const Quotas = ({ t, quotas }) => {
                         <Header as="h4">{t('quotas')}</Header>
                     </Grid.Column>
                     <Grid.Column textAlign="right" width={12}>
-                        {check(userInfo.groups) && <QuotasModal t={t} quotasLimit={quotasLimit} />}
+                        {user.role === 'admin' && <QuotasModal t={t} quotasLimit={quotasLimit} />}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
@@ -72,7 +69,7 @@ const Quotas = ({ t, quotas }) => {
                                 {headers.map((headerItem, i) =>
                                     headerItem.data === 'edit' ? (
                                         <Table.Cell key={i} textAlign="right">
-                                            {check(userInfo.groups) && <QuotasModal t={t} key={i} edit quota={item} />}
+                                            {user.role === 'admin' && <QuotasModal t={t} key={i} edit quota={item} />}
                                         </Table.Cell>
                                     ) : (
                                         <Table.Cell
