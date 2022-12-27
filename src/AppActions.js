@@ -22,16 +22,16 @@ const notificationOptions = { position: 'top-right', hideAfter: 7 };
 const errorNotification = (msg) => cogoToast.error(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].error + msg, notificationOptions);
 const successNotification = (msg) => cogoToast.success(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].success + msg, notificationOptions);
 
-const checkErrorCodes = (item) => {
-    switch (item.status) {
-    case 422:
-        return errorNotification(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].deleteDiskError);
-    case 500:
-        return errorNotification(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].processError);
-    default:
-        return errorNotification(item.data);
-    }
-};
+// const checkErrorCodes = (item) => {
+//     switch (item.status) {
+//     case 422:
+//         return errorNotification(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].deleteDiskError);
+//     case 500:
+//         return errorNotification(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].processError);
+//     default:
+//         return errorNotification(item.data);
+//     }
+// };
 
 // s3 users actions
 
@@ -111,7 +111,7 @@ export const createS3quotasActionAndFetch = (payload) => {
         response.then(() => {
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => checkErrorCodes(error.response));
+        }, error => errorNotification(error.response.data));
     };
 };
 
@@ -122,7 +122,7 @@ export const editS3quotaAndFetch = (quota_id, payload) => {
         response.then(() => {
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => checkErrorCodes(error.response));
+        }, error => errorNotification(error.response.data));
     };
 };
 
