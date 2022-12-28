@@ -9,8 +9,8 @@ import CustomSelect from '../GeneralComponents/customSelect';
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues }) => {
     const storageTypes = pools.map((item, index) => ({
         key: index,
-        text: item.s3_placement_target,
-        value: item.id,
+        text: item.pool.s3_placement_target,
+        value: item.pool.id,
     }));
 
     return (

@@ -11,7 +11,7 @@ import UserForm from './userForm';
 
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
-    const pools = useSelector((state) => state.AmazonStore.pools);
+    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const currentOwner = useSelector((state) => state.host.user.email);
 
     const dispatch = useDispatch();
@@ -105,10 +105,10 @@ const UserModal = ({ user, edit, t }) => {
                                     initialValues={mapApiToProps(user)}
                                     edit={edit}
                                     isAdmin={userRole === 'admin'}
-                                    pools={pools}
+                                    pools={quotas}
                                 />
                             ) : (
-                                <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={pools} />
+                                <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={quotas} />
                             )
                         }
                     </Modal.Content>
