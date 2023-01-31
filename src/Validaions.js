@@ -47,7 +47,7 @@ export const minLength = min => value => (
     value && value.length < min ? validationMessages[localStorage.getItem('icdc-lang') || 'en'].minLength(min) : undefined);
 
 export const bucket = value => (
-    value && !value.match(/^[a-zA-Z0-9_.-]{3,}$/) ?
+    value && !value.match(/^[a-z0-9_.-]{3,}$/) ?
         validationMessages[localStorage.getItem('icdc-lang') || 'en'].bucketName :
         undefined
 );
@@ -107,7 +107,7 @@ export const sizeValue = (value, _allValues, props) => {
 };
 
 export const s3user = value => (
-    value && !value.match(/^[a-zA-Z0-9_.@-]*$/) ?
+    value && !value.match(/^[a-z0-9_.@-]*$/) ?
         validationMessages[localStorage.getItem('icdc-lang') || 'en'].s3userName :
         undefined
 );
