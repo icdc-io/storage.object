@@ -47,7 +47,7 @@ export const minLength = min => value => (
     value && value.length < min ? validationMessages[localStorage.getItem('icdc-lang') || 'en'].minLength(min) : undefined);
 
 export const bucket = value => (
-    value && !value.match(/^[a-z0-9_.-]{3,}$/) ?
+    value && !value.match(/^[a-z0-9.-]{3,}$/) ?
         validationMessages[localStorage.getItem('icdc-lang') || 'en'].bucketName :
         undefined
 );
