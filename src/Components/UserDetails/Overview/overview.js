@@ -7,6 +7,7 @@ import { generateKeys, deleteS3userAndFetch, lockS3userAndFetch } from '../../..
 import DangerousHTML from 'react-dangerous-html';
 
 import { BILLING_USER_NAME } from '../../../AppConstants';
+import CopyButton from '../../GeneralComponents/copyButton';
 
 const UserOverview = ({ t, s3user, setActiveItem }) => {
     const dispatch = useDispatch();
@@ -47,11 +48,11 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                    <Grid.Column width={4}>{s3user.keys?.s3.access_key}</Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.s3.access_key}<CopyButton content={s3user.keys?.s3.access_key} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
-                    <Grid.Column width={4}>{s3user.keys?.s3.secret_key}</Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.s3.secret_key}<CopyButton content={s3user.keys?.s3.secret_key} /></Grid.Column>
                 </Grid.Row>
             </Grid>
             <Divider />
