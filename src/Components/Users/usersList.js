@@ -8,6 +8,7 @@ import UserModal from './userModal';
 import DangerousHTML from 'react-dangerous-html';
 import { actionAndFetch, deleteS3user, lockS3userAndFetch } from '../../AppActions';
 import { BILLING_USER_NAME, EMPTY_VALUE } from '../../AppConstants';
+import CopyButton from '../GeneralComponents/copyButton';
 
 const Bar = ({ value, total }) => (
     <Progress
@@ -132,7 +133,14 @@ const UsersList = ({ t, items }) => {
                                         <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />
                                     )}
                                 </Table.Cell>
-                                <Table.Cell>{item.owner || EMPTY_VALUE}</Table.Cell>
+                                <Table.Cell>
+                                    <div className='flex-inline'>
+                                        {item.owner || EMPTY_VALUE}
+                                        <div className='owner__copy' onClick={(e) => e.stopPropagation()}>
+                                            <CopyButton style={{width: '100%', heigth: '100%}'}} content={item.owner} />
+                                        </div>
+                                    </div>
+                                    </Table.Cell>
                                 <Table.Cell>
                                     {item.description.slice(0, 18)}
                                     {item.description.length > 18 && (

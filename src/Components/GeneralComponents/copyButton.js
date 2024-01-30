@@ -7,7 +7,8 @@ const CopyButton = ({ content }) => {
 
     let timer;
 
-    const handleOpen = () => {
+    const handleOpen = (e) => {
+        // e.stopPropagation()
         setIsOpen(true);
         timer = setTimeout(() => {
             setIsOpen(false);
@@ -27,7 +28,7 @@ const CopyButton = ({ content }) => {
 
     return (
         <Popup
-            trigger={<Icon name="copy" onClick={() => copyFuncion(content)} />}
+            trigger={<Icon name="copy" className='icon-copy__size' onClick={() => copyFuncion(content)} />}
             content="Copied to clipboard"
             inverted
             style={{ fontWeight: 'bold' }}

@@ -303,3 +303,23 @@ div.ui.active.centered.inline.loader {
 .ui.grid>.row>.column.column-copy i {
   margin-left: 4px;
 }
+
+.owner__copy {
+    padding: 0.2em;
+    border-radius: 0.29rem;
+}
+
+.owner__copy:hover {
+    background: #e0e1e2 none;
+}
+
+.flex-inline {
+    display: flex;
+    align-items: center;
+}
+
+i.icon-copy__size {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;	
+}
