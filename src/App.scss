@@ -295,3 +295,11 @@ div.ui.active.centered.inline.loader {
     margin-right: 8px;
   }
 }
+
+.ui.grid>.row>.column.column-copy {
+  display: flex;
+}
+
+.ui.grid>.row>.column.column-copy i {
+  margin-left: 4px;
+}
