@@ -9,39 +9,7 @@ import { useHistory } from 'react-router-dom';
 import Quotas from './Quotas/quotas';
 
 const Overview = ({ t }) => {
-    // const s3users = useSelector((state) => state.AmazonStore.s3users);
-    const s3users = [
-        {
-          default_placement: {
-            class: "legacy", 
-            id: 184, 
-            name: "default.rgw.legacy.data", 
-            s3_placement_target: "legacy", 
-            type: "s3"
-          }, 
-          description: "admin", 
-          id: 1, 
-          is_locked: false, 
-          name: "admin", 
-          owner: "skuzko@ibagroup.eu", 
-          stats: {
-            buckets: {
-              actual: 0, 
-              limit: 5
-            }, 
-            object_bucket_limit: 100, 
-            objects: {
-              actual: 0, 
-              limit: 100
-            }, 
-            storage_bucket_limit: 10, 
-            storage_size: {
-              actual: 0, 
-              limit: 100
-            }
-          }
-        }
-      ]
+    const s3users = useSelector((state) => state.AmazonStore.s3users);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const s3usersFetchStatus = useSelector((state) => state.AmazonStore.s3usersFetchStatus);
     const user = useSelector((state) => state.host.user);

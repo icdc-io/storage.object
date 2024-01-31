@@ -7,8 +7,7 @@ const CopyButton = ({ content }) => {
 
     let timer;
 
-    const handleOpen = (e) => {
-        // e.stopPropagation()
+    const handleOpen = () => {
         setIsOpen(true);
         timer = setTimeout(() => {
             setIsOpen(false);
