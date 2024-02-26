@@ -136,9 +136,7 @@ const UsersList = ({ t, items }) => {
                                 <Table.Cell>
                                     <div className='flex-inline'>
                                         {item.owner || EMPTY_VALUE}
-                                        <div className='owner__copy' onClick={(e) => e.stopPropagation()}>
                                             <CopyButton content={item.owner} />
-                                        </div>
                                     </div>
                                     </Table.Cell>
                                 <Table.Cell>
