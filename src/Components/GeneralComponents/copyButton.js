@@ -8,6 +8,7 @@ const CopyButton = ({ content }) => {
     let timer;
 
     const handleOpen = () => {
+
         setIsOpen(true);
         timer = setTimeout(() => {
             setIsOpen(false);
@@ -19,7 +20,8 @@ const CopyButton = ({ content }) => {
         clearTimeout(timer)
     };
 
-    const copyFuncion = (value) => {
+    const copyFuncion = (e,value) => {
+        e.stopPropagation()
         navigator.clipboard.writeText(value).catch((err) => {
             console.log('Something went wrong', err);
         });
@@ -27,7 +29,7 @@ const CopyButton = ({ content }) => {
 
     return (
         <Popup
-            trigger={<Icon name="copy" onClick={() => copyFuncion(content)} />}
+            trigger={<button className="copy" onClick={(e) => copyFuncion(e,content)}><Icon className='icon-copy__size' name="copy"/></button>}
             content="Copied to clipboard"
             inverted
             style={{ fontWeight: 'bold' }}
