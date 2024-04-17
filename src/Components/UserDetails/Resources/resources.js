@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Header, Item, Grid } from 'semantic-ui-react';
+import { Header, Grid } from 'semantic-ui-react';
 import EditResModal from './editResModal';
 import { useEffect } from 'react';
 
@@ -18,7 +18,7 @@ const Resources = ({ t, s3user, setActiveItem }) => {
                     {s3user.default_placement?.class}
                 </Grid.Column>
             </Grid>
-            <Item.Header as="h4">{t('storageSizeLimit')}</Item.Header>
+            <Header as="h4">{t("storageSizeLimit")}</Header>
             <Grid>
                 <Grid.Column verticalAlign="middle" width={2}>
                     {s3user.stats?.storage_size.actual + ' / ' + s3user.stats?.storage_size.limit}

@@ -31,13 +31,28 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
 
     return (
         <React.Fragment>
-            <Header as="h4">
-                {s3user.name}{' '}
-                {s3user.is_locked && (
-                    <Icon style={{ fontSize: '15px', position: 'relative', top: '-5px' }} name="lock" title={t('lockedS3user')} />
-                )}
-            </Header>
-            {s3user.description}
+            <Grid>
+                <Grid.Row>
+                <Grid.Column width={2}>{t("name")}</Grid.Column>
+                <Grid.Column width={4}>
+                    <Header as="h4">
+                    {s3user.name}{" "}
+                    {s3user.is_locked && (
+                        <Icon
+                        style={{ fontSize: "15px", position: "relative", top: "-5px" }}
+                        name="lock"
+                        title={t("lockedS3user")}
+                        />
+                    )}
+                    </Header>
+                </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                <Grid.Column width={2}>{t("description")}</Grid.Column>
+                <Grid.Column width={4}>{s3user.description}</Grid.Column>
+                </Grid.Row>
+            </Grid>
+
             <Divider />
 
             <Header as="h4">{t('s3')}</Header>

@@ -76,17 +76,17 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     validate={[required, number, positiveNumber]}
                 />
                 <Field
-                    placeholder={t('objPlaceholder')}
-                    name="objectsLimit"
-                    label={t('objectsLimit')}
+                    placeholder={t('bucketsPlaceholder')}
+                    name="bucketsLimit"
+                    label={t('bucketsLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
                 />
                 <Field
-                    placeholder={t('bucketsPlaceholder')}
-                    name="bucketsLimit"
-                    label={t('bucketsLimit')}
+                    placeholder={t('objPlaceholder')}
+                    name="objectsLimit"
+                    label={t('objectsLimit')}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}

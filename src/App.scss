@@ -290,6 +290,13 @@ div.ui.active.centered.inline.loader {
 .quotas-list .endpoint {
   display: flex;
   flex-direction: column;
+  width: fit-content;
+  gap: 4px;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+  }
 
   a {
     margin-right: 8px;
@@ -298,6 +305,7 @@ div.ui.active.centered.inline.loader {
 
 .ui.grid>.row>.column.column-copy {
   display: flex;
+  gap: 4px;
 }
 
 .ui.grid>.row>.column.column-copy i {
@@ -307,6 +315,7 @@ div.ui.active.centered.inline.loader {
 .flex-inline {
     display: flex;
     align-items: center;
+    gap: 4px;
 }
 
 i.icon-copy__size {
@@ -324,5 +333,18 @@ button.copy {
 
   &:hover {
     background: #e0e1e2 none;
+  }
+}
+
+.copy-button {
+  color: #4C4C4C;
+  background-color: #EDEDED;
+  border-radius: 4px;
+  padding: 1px 2px;
+  border: none;
+  cursor: pointer;
+
+  i {
+    margin: 0 !important;
   }
 }
