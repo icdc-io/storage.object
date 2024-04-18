@@ -39,7 +39,7 @@ const validationMessages = {
     }
 };
 
-export const required = value => value ? undefined : validationMessages[localStorage.getItem('icdc-lang') || 'en'].required;
+export const required = value => value === "" || value === undefined || value === null ? validationMessages[localStorage.getItem('icdc-lang') || 'en'].required : undefined;
 export const number = value => value && isNaN(Number(value)) ? validationMessages[localStorage.getItem('icdc-lang') || 'en'].number : undefined;
 export const positiveNumber = value => value && value < 0 ? validationMessages[localStorage.getItem('icdc-lang') || 'en'].positiveNumber : undefined;
 
