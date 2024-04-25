@@ -348,3 +348,21 @@ button.copy {
     margin: 0 !important;
   }
 }
+
+.max-width-column {
+  position: relative;
+}
+
+.max-width-column:before {
+  content: '&nbsp;';
+  visibility: hidden;
+}
+
+.text-overflow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
