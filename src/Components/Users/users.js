@@ -10,10 +10,11 @@ import Quotas from './Quotas/quotas';
 
 const Overview = ({ t }) => {
     const s3users = useSelector((state) => state.AmazonStore.s3users);
-    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const s3usersFetchStatus = useSelector((state) => state.AmazonStore.s3usersFetchStatus);
     const user = useSelector((state) => state.host.user);
-
+    const s3quotasFetchStatus = useSelector((state) => state.AmazonStore.s3quotasFetchStatus);
+    const poolsFetchStatus = useSelector((state) => state.AmazonStore.poolsFetchStatus);
+    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -25,11 +26,13 @@ const Overview = ({ t }) => {
         dispatch(fetchS3quotas());
     }, [dispatch, user]);
 
-    return (
-        <React.Fragment>
-            <Quotas t={t} quotas={quotas} />
+    const statuses = [s3usersFetchStatus, s3quotasFetchStatus, poolsFetchStatus];
 
-            {s3usersFetchStatus === 'pending' && <Loader active inline="centered" />}
+    if (statuses.includes('pending')) return <Loader active inline="centered" />
+
+    return (
+        <div className='page-layout'>
+            <Quotas t={t} quotas={quotas} />
 
             {s3users.length === 0 && s3usersFetchStatus === 'fulfilled' && (
                 <Segment placeholder>
@@ -68,7 +71,7 @@ const Overview = ({ t }) => {
                     </section>
                 </React.Fragment>
             )}
-        </React.Fragment>
+        </div>
     );
 };
 
