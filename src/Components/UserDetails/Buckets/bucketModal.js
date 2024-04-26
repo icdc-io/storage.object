@@ -39,13 +39,8 @@ const BucketModal = ({ t, bucket, edit }) => {
             let payload = mapPropsToApi(values);
 
             if (edit) {
-                console.log('edit')
-                console.log(payload)
-                console.log({ ...payload, user_name: s3user.keys.s3.user, bucket_name: bucket.bucket_name })
                 dispatch(editBucketAndFetch(s3user.id, { ...payload, user_name: s3user.keys.s3.user, bucket_name: bucket.bucket_name }));
             } else {
-                console.log('edit')
-                console.log(payload)
                 dispatch(createBucketAndFetch(s3user.id, payload));
             }
 
