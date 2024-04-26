@@ -209,12 +209,10 @@ export const deleteBucket = (bucket_name) => ({
     payload: deleteData(`${ActionTypes.bucketsUrl()}?bucket_name=${bucket_name}`, {})
 });
 
-export const editBucket = (payload) => {
-    const { bucket_name, data_size_mb_quota, number_of_objects_quota, user_name } = payload
-    return {
+export const editBucket = (payload) => ({
     type: ActionTypes.DELETE_BUCKET,
-    payload: updateData(`${ActionTypes.bucketsUrl()}?bucket_name=${bucket_name}`, {data_size_mb_quota, number_of_objects_quota, user_name})
-}};
+    payload: updateData(`${ActionTypes.bucketsUrl()}?bucket_name=${payload.bucket_name}`, payload)
+});
 
 export const createBucketAndFetch = (user_id, payload) => {
     return (dispatch) => {
