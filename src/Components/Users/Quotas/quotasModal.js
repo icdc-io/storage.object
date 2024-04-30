@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import { actionAndFetch, createS3quotasActionAndFetch, editS3quotaAndFetch } from '../../../AppActions';
 import { BILLING_USER_NAME } from '../../../AppConstants';
 import QuotasForm from './quotasForm';
+import { mapPoolToDiskTypeOptions, mapQuotasToDiskType } from '../../../utils/mappers';
+import { filterFreeDiskTypes } from '../../../utils/filterFreeQuotas';
 
 const mapPropsToApi = (item, edit) =>
     edit
@@ -32,9 +34,15 @@ const mapApiToProps = (item) => ({
     users: item.stats.users.limit,
 });
 
-const QuotasModal = ({ quota, edit, t, quotasLimit }) => {
+const QuotasModal = ({ quota, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
     const pools = useSelector((state) => state.AmazonStore.pools);
+    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+
+    const availableQuotas = pools.map(mapPoolToDiskTypeOptions).map(diskOption => ({
+        ...diskOption,
+        isFree: !quotas.map(mapQuotasToDiskType).includes(diskOption.text)
+    }));
 
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
@@ -69,7 +77,7 @@ const QuotasModal = ({ quota, edit, t, quotasLimit }) => {
                         primary
                         basic
                     />
-                ) : !quotasLimit ? (
+                ) : filterFreeDiskTypes(availableQuotas).length ? (
                     <Button
                         onClick={() => setOpen(true)}
                         // disabled={itemsFetchStatus !== 'fulfilled'}
@@ -108,7 +116,7 @@ const QuotasModal = ({ quota, edit, t, quotasLimit }) => {
                                     initialValues={mapApiToProps(quota)}
                                     edit={edit}
                                     isAdmin={userRole === 'admin'}
-                                    pools={pools}
+                                    availableQuotas={availableQuotas}
                                 />
                             ) : (
                                 <QuotasForm
@@ -117,7 +125,7 @@ const QuotasModal = ({ quota, edit, t, quotasLimit }) => {
                                     handleClose={handleClose}
                                     onSubmit={onSubmit}
                                     isAdmin={userRole === 'admin'}
-                                    pools={pools}
+                                    availableQuotas={availableQuotas}
                                 />
                             )
                         }
@@ -132,7 +140,7 @@ QuotasModal.propTypes = {
     quota: PropTypes.object,
     edit: PropTypes.bool,
     t: PropTypes.func,
-    quotasLimit: PropTypes.bool,
+    availableQuotas: PropTypes.array,
 };
 
 export default QuotasModal;

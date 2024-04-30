@@ -9,6 +9,12 @@ import { actionAndFetch, createS3user, editS3userAndFetch } from '../../AppActio
 import { BILLING_USER_NAME } from '../../AppConstants';
 import UserForm from './userForm';
 
+const initialValues = {
+    objectsInBucketLimit: "5",
+    storageInBucketLimit: "1024",
+    objectsLimit: "5",
+};
+
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
@@ -108,7 +114,7 @@ const UserModal = ({ user, edit, t }) => {
                                     pools={quotas}
                                 />
                             ) : (
-                                <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={quotas} />
+                                <UserForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} isAdmin={userRole === 'admin'} pools={quotas} initialValues={initialValues} />
                             )
                         }
                     </Modal.Content>
