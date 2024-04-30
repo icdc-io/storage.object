@@ -349,6 +349,12 @@ button.copy {
   }
 }
 
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .max-width-column {
   position: relative;
 }

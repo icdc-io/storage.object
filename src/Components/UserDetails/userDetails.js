@@ -6,16 +6,18 @@ import PropTypes from 'prop-types';
 import { Tab, Button, Loader } from 'semantic-ui-react';
 import UserOverview from './Overview/overview';
 import Resources from './Resources/resources';
-import { fetchS3User, fetchBuckets, clearS3UserFetchStatus } from '../../AppActions';
+import { fetchS3User, fetchBuckets, clearS3UserFetchStatus, fetchS3quotas } from '../../AppActions';
 import BucketsList from './Buckets/bucketsList';
 import { useState } from 'react';
+import Quotas from '../Users/Quotas/quotas';
 
 const UserDetails = ({ t }) => {
     const { userId } = useParams();
     const s3user = useSelector((state) => state.AmazonStore.s3user);
     const s3userFetchStatus = useSelector((state) => state.AmazonStore.s3userFetchStatus);
+    const s3quotasFetchStatus = useSelector((state) => state.AmazonStore.s3quotasFetchStatus);
     const user = useSelector((state) => state.host.user);
-
+    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const [activeItem, setActiveItem] = useState(0);
 
     const dispatch = useDispatch();
@@ -54,6 +56,7 @@ const UserDetails = ({ t }) => {
     useEffect(() => {
         dispatch(fetchS3User(userId));
         dispatch(fetchBuckets(userId));
+        dispatch(fetchS3quotas());
     }, [dispatch, userId, user]);
 
     useEffect(() => {
@@ -63,19 +66,24 @@ const UserDetails = ({ t }) => {
         }
     }, [dispatch, s3userFetchStatus, history]);
 
+    const statuses = [s3userFetchStatus, s3quotasFetchStatus];
+
+    if (statuses.includes('pending')) return <Loader active inline="centered" />;
+
     return (
-        <React.Fragment>
+        <div className='page-layout'>
             <Link to="/amazon" className="back_link">
-                <Button className="back back__top" labelPosition="left" icon="left chevron" content={t('back')} />
+                <Button className="back" labelPosition="left" icon="left chevron" content={t('back')} />
             </Link>
 
-            {s3userFetchStatus === 'pending' && <Loader active inline="centered" />}
+            <Quotas t={t} quotas={quotas} />
+
             {s3userFetchStatus === 'fulfilled' && (
                 <>
                     <Tab panes={panes} defaultActiveIndex={activeItem}/>
                     <Link to="/amazon" className="back_link">
                         <Button
-                            className="back back__bottom"
+                            className="back"
                             labelPosition="left"
                             icon="left chevron"
                             content={t('back')}
@@ -83,7 +91,7 @@ const UserDetails = ({ t }) => {
                     </Link>
                 </>
             )}
-        </React.Fragment>
+        </div>
     );
 };
 
