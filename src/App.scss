@@ -349,6 +349,32 @@ button.copy {
   }
 }
 
+.ui.form .field>label .sublabel {
+  color: rgba(94, 94, 94, 0.87);
+}
+
+.add-info-field__container {
+  position: relative;
+}
+
+.ui.form .add-info-field__container .field {
+  margin-bottom: 3rem;
+}
+
+.ui.form .add-info-field__container .field.error {
+  margin-bottom: 1rem;
+}
+
+.add-info-field__container .ui.pointing.basic.label {
+  z-index: 1;
+}
+
+.add-info-field {
+  position: absolute;
+  top: 68px;
+  z-index: 0;
+}
+
 .page-layout {
   display: flex;
   flex-direction: column;

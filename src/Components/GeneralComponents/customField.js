@@ -2,11 +2,11 @@ import React from 'react';
 import { Form, Label } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
-const CustomField = ({ input, label, meta: { error, touched }, placeholder }) => {
+const CustomField = ({ input, label, meta: { error, touched }, placeholder, subLabel }) => {
     return (
         <React.Fragment>
             <Form.Field error={touched && error ? true : false}>
-                <label>{label}</label>
+                <label>{label} <span className='sublabel'>{subLabel}</span></label>
                 <input {...input} placeholder={placeholder} />
                 {touched && error && (
                     <Label basic pointing>

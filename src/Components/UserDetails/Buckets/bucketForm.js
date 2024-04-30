@@ -17,21 +17,27 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                 ) : (
                     <Field name="name" label={t('name')} component={CustomField} type="text" validate={[required, bucket]} />
                 )}
-
-                <Field
-                    name="storageSizeLimit"
-                    label={t('storageSizeLimit')}
-                    component={CustomField}
-                    type="text"
-                    validate={[required, positiveNumber, number]}
-                />
-                <Field
-                    name="objectsLimit"
-                    label={t('objectsLimit')}
-                    component={CustomField}
-                    type="number"
-                    validate={[required, positiveNumber, number]}
-                />
+                <div className="add-info-field__container">
+                    <Field
+                        name="storageSizeLimit"
+                        label={t('storageSizeLimit')}
+                        component={CustomField}
+                        type="text"
+                        validate={[required, positiveNumber, number]}
+                    />
+                    <span className='add-info-field'>{t("max")}. 10000</span>
+                </div>
+                <div className="add-info-field__container">
+                    <Field
+                        name="objectsLimit"
+                        label={t('objectsLimit')}
+                        component={CustomField}
+                        type="number"
+                        validate={[required, number]}
+                        subLabel={t("objectsNoLimit")}
+                    />
+                    <span className='add-info-field'>{t("max")}. 10000</span>
+                </div>
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
                     <Button onClick={handleSubmit} primary type="submit">
