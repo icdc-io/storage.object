@@ -374,3 +374,27 @@ button.copy {
   top: 68px;
   z-index: 0;
 }
+
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.max-width-column {
+  position: relative;
+}
+
+.max-width-column:before {
+  content: '&nbsp;';
+  visibility: hidden;
+}
+
+.text-overflow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

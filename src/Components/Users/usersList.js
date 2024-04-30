@@ -119,16 +119,15 @@ const UsersList = ({ t, items }) => {
                         data.map((item, i) => { 
                             const isData = Object.keys(item.stats).length > 0;
                             return <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
-                                <Table.Cell>
-                                    {item.name.slice(0, 20)}
-                                    {item.name.length > 20 && (
+                                <Table.Cell width={3} className='max-width-column'>
+                                    {item.name.length > 20 ? (
                                         <Popup
-                                            trigger={<span className="popup-icon">&nbsp;...&nbsp;</span>}
+                                            trigger={<span className='text-overflow'>{item.name}</span>}
                                             content={item.name}
                                             position="bottom center"
                                             inverted
                                         />
-                                    )}
+                                    ) : <span className='text-overflow'>{item.name}</span>}
                                     {item.is_locked && (
                                         <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />
                                     )}
@@ -139,17 +138,16 @@ const UsersList = ({ t, items }) => {
                                             <CopyButton content={item.owner} />
                                     </div>
                                     </Table.Cell>
-                                <Table.Cell>
-                                    {item.description.slice(0, 18)}
-                                    {item.description.length > 18 && (
+                                <Table.Cell width={3} className='max-width-column'>
+                                    {item.description.length > 18 ? (
                                         <Popup
-                                            trigger={<span className="popup-icon">&nbsp;...&nbsp;</span>}
+                                            trigger={<span className='text-overflow'>{item.description}</span>}
                                             content={item.description}
                                             position="bottom center"
                                             inverted
                                             className="popup"
                                         />
-                                    )}
+                                    ) : <span className='text-overflow'>{item.description}</span>}
                                 </Table.Cell>
                                 <Table.Cell>{item.default_placement.s3_placement_target || EMPTY_VALUE}</Table.Cell>
                                 {isData ? (
