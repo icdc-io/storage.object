@@ -5,21 +5,16 @@ import PropTypes from 'prop-types';
 import { required, number } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 import CustomSelect from '../../GeneralComponents/customSelect';
+import { filterFreeDiskTypes } from '../../../utils/filterFreeQuotas';
 
-const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }) => {
-    const storageTypes = pools.map((item, index) => ({
-        key: index,
-        text: item.s3_placement_target,
-        value: item.id,
-    }));
-
+const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initialValues }) => {
     return (
         <React.Fragment>
             <Form>
                 {edit ? (
                     <div className="uneditable_field">
                         <label>{t('storageType')}</label>
-                        <p>{storageTypes.find((e) => e.value === initialValues.storageType)?.text}</p>
+                        <p>{availableQuotas.find((e) => e.value === initialValues.storageType)?.text}</p>
                     </div>
                 ) : (
                     <Field
@@ -29,7 +24,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, pools, initialValues }
                         component={CustomSelect}
                         type="text"
                         editable
-                        options={storageTypes}
+                        options={filterFreeDiskTypes(availableQuotas)}
                         initialValues={initialValues}
                         edit={edit}
                         validate={[required]}
@@ -85,7 +80,7 @@ QuotasForm.propTypes = {
     handleSubmit: PropTypes.func,
     edit: PropTypes.bool,
     isAdmin: PropTypes.bool,
-    pools: PropTypes.array,
+    availableQuotas: PropTypes.array,
 };
 
 export default reduxForm({

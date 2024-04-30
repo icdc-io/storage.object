@@ -5,11 +5,10 @@ import QuotasModal from './quotasModal';
 import { useSelector } from 'react-redux';
 import CopyButton from '../../GeneralComponents/copyButton';
 
-const Quotas = ({ t, quotas }) => {
+const Quotas = ({ t }) => {
     const user = useSelector((state) => state.host.user);
     const pools = useSelector((state) => state.AmazonStore.pools);
-
-    const quotasLimit = quotas.length >= pools.length;
+    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 
     const headers = [
         { title: 'storageType', data: 's3_placement_target' },
@@ -46,7 +45,7 @@ const Quotas = ({ t, quotas }) => {
                         <Header as="h4">{t('quotas')}</Header>
                     </Grid.Column>
                     <Grid.Column textAlign="right" width={12}>
-                        {user.role === 'admin' && <QuotasModal t={t} quotasLimit={quotasLimit} />}
+                        {user.role === 'admin' && <QuotasModal t={t} />}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
@@ -101,7 +100,6 @@ const Quotas = ({ t, quotas }) => {
 
 Quotas.propTypes = {
     t: PropTypes.func,
-    quotas: PropTypes.array,
 };
 
 export default Quotas;
