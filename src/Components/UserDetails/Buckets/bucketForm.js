@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import { required, number, bucket, positiveNumber } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 
+const STORAGE_SIZE_MAX = 10_000;
+const OBJECTS_MAX = 100_000;
+
 const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
     return (
         <React.Fragment>
@@ -25,7 +28,7 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                         type="text"
                         validate={[required, positiveNumber, number]}
                     />
-                    <span className='add-info-field'>{t("max")}. 10000</span>
+                    <span className='add-info-field'>{t("max")}. {STORAGE_SIZE_MAX}</span>
                 </div>
                 <div className="add-info-field__container">
                     <Field
@@ -36,7 +39,7 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                         validate={[required, number]}
                         subLabel={t("objectsNoLimit")}
                     />
-                    <span className='add-info-field'>{t("max")}. 10000</span>
+                    <span className='add-info-field'>{t("max")}. {OBJECTS_MAX}</span>
                 </div>
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
