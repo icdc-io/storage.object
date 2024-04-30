@@ -3,9 +3,6 @@ import { Form, Label } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 const CustomField = ({ input, label, meta: { error, touched }, placeholder }) => {
-    console.log('input')
-    console.log(input)
-    console.log('input')
     return (
         <React.Fragment>
             <Form.Field error={touched && error ? true : false}>
