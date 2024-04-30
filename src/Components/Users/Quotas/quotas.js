@@ -4,9 +4,12 @@ import { Grid, Header, Table } from 'semantic-ui-react';
 import QuotasModal from './quotasModal';
 import { useSelector } from 'react-redux';
 import CopyButton from '../../GeneralComponents/copyButton';
+import External from "../../../images/external.svg";
 
 const Quotas = ({ t, quotas }) => {
     const user = useSelector((state) => state.host.user);
+    const vendor = useSelector((state) => state.host.vendor);
+    const lang = useSelector((state) => state.host.lang);
     const pools = useSelector((state) => state.AmazonStore.pools);
 
     const quotasLimit = quotas.length >= pools.length;
@@ -38,6 +41,8 @@ const Quotas = ({ t, quotas }) => {
         );
     };
 
+    const HELP_LINK = `https://help.${vendor}.io/storage/${lang}/s3_swift_object_storage/overview/`;
+
     return (
         <section className="items-list">
             <Grid>
@@ -51,7 +56,7 @@ const Quotas = ({ t, quotas }) => {
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
                     <Grid.Column verticalAlign="middle" width={16}>
-                        <p>{t('quotasDescription')}</p>
+                        <p>{t('quotasDescription')}  <a href={HELP_LINK} target="_blank" rel="noreferrer">{t("howToConnect")} <img src={External} alt="External link" /></a></p>
                     </Grid.Column>
                 </Grid.Row>
 
