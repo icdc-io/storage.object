@@ -67,7 +67,9 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
-                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.s3.secret_key}<CopyButton content={s3user.keys?.s3.secret_key} /></Grid.Column>
+                    <Grid.Column width={5} className='column-copy'>
+                        <span className='secret-key'>{s3user.keys?.s3.secret_key}</span><CopyButton content={s3user.keys?.s3.secret_key} />
+                    </Grid.Column>
                 </Grid.Row>
             </Grid>
             <Divider />
@@ -80,7 +82,9 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                    <Grid.Column width={4}>{s3user.keys?.swift.secret_key}</Grid.Column>
+                    <Grid.Column width={5} className='column-copy'>
+                        <span className='secret-key'>{s3user.keys?.swift.secret_key}</span><CopyButton content={s3user.keys?.swift.secret_key} />
+                    </Grid.Column>
                 </Grid.Row>
             </Grid>
 

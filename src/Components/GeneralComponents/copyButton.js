@@ -19,7 +19,8 @@ const CopyButton = ({ content }) => {
     clearTimeout(timer);
   };
 
-  const copyFuncion = (value) => {
+  const copyFuncion = (value) => (e) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(value).catch((err) => {
       console.log("Something went wrong", err);
     });
@@ -28,7 +29,7 @@ const CopyButton = ({ content }) => {
   return (
     <Popup
       trigger={
-        <button className="copy-button" onClick={() => copyFuncion(content)}>
+        <button className="copy-button" onClick={copyFuncion(content)}>
           <Icon name="copy outline" />
         </button>
       }

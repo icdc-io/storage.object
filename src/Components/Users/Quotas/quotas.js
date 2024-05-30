@@ -28,8 +28,8 @@ const Quotas = ({ t }) => {
         let endpointsArray = endpoints.split(',');
         return (
             <div className="endpoint">
-                {endpointsArray.map((el) => (
-                    <div>
+                {endpointsArray.map((el, index) => (
+                    <div key={index}>
                         <a href={el} target="blank">
                             {el}
                         </a>
