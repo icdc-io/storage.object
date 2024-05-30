@@ -119,35 +119,41 @@ const UsersList = ({ t, items }) => {
                         data.map((item, i) => { 
                             const isData = Object.keys(item.stats).length > 0;
                             return <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
-                                <Table.Cell width={3} className='max-width-column'>
-                                    {item.name.length > 20 ? (
-                                        <Popup
-                                            trigger={<span className='text-overflow'>{item.name}</span>}
-                                            content={item.name}
-                                            position="bottom center"
-                                            inverted
-                                        />
-                                    ) : <span className='text-overflow'>{item.name}</span>}
-                                    {item.is_locked && (
-                                        <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />
-                                    )}
+                                <Table.Cell width={3}>
+                                    <div className='flex-inline'>
+                                        <div>
+                                            {item.name.length > 20 ? (
+                                                <Popup
+                                                    trigger={<span className='text-overflow'>{item.name}</span>}
+                                                    content={item.name}
+                                                    position="bottom center"
+                                                    inverted
+                                                />
+                                            ) : <span className='text-overflow'>{item.name}</span>}
+                                        </div>
+                                        {item.is_locked ? (
+                                            <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />
+                                        ) : <CopyButton content={item.name} />}
+                                    </div>
                                 </Table.Cell>
                                 <Table.Cell>
                                     <div className='flex-inline'>
                                         {item.owner || EMPTY_VALUE}
-                                            <CopyButton content={item.owner} />
+                                        { item.owner && <CopyButton content={item.owner} /> }
                                     </div>
                                     </Table.Cell>
-                                <Table.Cell width={3} className='max-width-column'>
-                                    {item.description.length > 18 ? (
-                                        <Popup
-                                            trigger={<span className='text-overflow'>{item.description}</span>}
-                                            content={item.description}
-                                            position="bottom center"
-                                            inverted
-                                            className="popup"
-                                        />
-                                    ) : <span className='text-overflow'>{item.description}</span>}
+                                <Table.Cell width={3}>
+                                    <div>
+                                        {item.description.length > 18 ? (
+                                            <Popup
+                                                trigger={<span className='text-overflow'>{item.description}</span>}
+                                                content={item.description}
+                                                position="bottom center"
+                                                inverted
+                                                className="popup"
+                                            />
+                                        ) : <span className='text-overflow'>{item.description}</span>}
+                                    </div>
                                 </Table.Cell>
                                 <Table.Cell>{item.default_placement.s3_placement_target || EMPTY_VALUE}</Table.Cell>
                                 {isData ? (
