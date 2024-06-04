@@ -102,11 +102,10 @@ const QuotasModal = ({ quota, edit, t }) => {
                         {t('noPools')}
                     </Popup>
                 )}
-                <Modal open={open} size="tiny" onSubmit={onSubmit}>
+                <Modal open={open} size="tiny" onSubmit={onSubmit} onClose={handleClose}>
                     <Header content={edit ? t('editQuota') : t('addQuota')} />
                     <Modal.Content>
                         {
-                            // eslint-disable-next-line max-len
                             edit ? (
                                 <QuotasForm
                                     t={t}
