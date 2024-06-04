@@ -1,13 +1,15 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Modal, Form, Button } from 'semantic-ui-react';
+import { Modal, Form, Button, Popup, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import { required, number } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 import CustomSelect from '../../GeneralComponents/customSelect';
 import { filterFreeDiskTypes } from '../../../utils/filterFreeQuotas';
+import DangerousHTML from 'react-dangerous-html';
 
 const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initialValues }) => {
+
     return (
         <React.Fragment>
             <Form>
@@ -33,7 +35,11 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                 <Field
                     placeholder={t('objPlaceholder')}
                     name="objects"
-                    label={t('objects')}
+                    label={!edit ? t('objects') : <span>{t('objects')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.objects
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
@@ -41,7 +47,11 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                 <Field
                     placeholder={t('spacePlaceholder')}
                     name="space"
-                    label={t('space')}
+                    label={!edit ? t('space') : <span>{t('space')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.space
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
@@ -49,7 +59,11 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                 <Field
                     placeholder={t('usersPlaceholder')}
                     name="users"
-                    label={t('s3swiftUsers')}
+                    label={!edit ? t('s3swiftUsers') : <span>{t('s3swiftUsers')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.users
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
@@ -57,7 +71,11 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                 <Field
                     placeholder={t('bucketsPlaceholder')}
                     name="buckets"
-                    label={t('buckets')}
+                    label={!edit ? t('bucketsPerS3') : <span>{t('bucketsPerS3')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.buckets
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number]}
