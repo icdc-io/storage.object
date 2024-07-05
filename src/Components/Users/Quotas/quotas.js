@@ -8,7 +8,6 @@ import External from "../../../images/external.svg";
 
 const Quotas = ({ t }) => {
     const user = useSelector((state) => state.host.user);
-    const vendor = useSelector((state) => state.host.vendor);
     const lang = useSelector((state) => state.host.lang);
     const pools = useSelector((state) => state.AmazonStore.pools);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
@@ -40,7 +39,9 @@ const Quotas = ({ t }) => {
         );
     };
 
-    const HELP_LINK = `https://help.${vendor}.io/storage/${lang}/s3_swift_object_storage/overview/`;
+    const vendorDomain = window.location.origin.split(".").slice(-2).join(".");
+
+    const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3_swift_object_storage/overview/`;
 
     return (
         <section className="items-list">
