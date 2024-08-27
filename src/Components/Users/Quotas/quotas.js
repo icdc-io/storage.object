@@ -15,7 +15,7 @@ const Quotas = ({ t }) => {
     const headers = [
         { title: 'storageType', data: 's3_placement_target' },
         { title: 'objects', data: 'objects' },
-        { title: 'space', data: 'storage_mb' },
+        { title: 'space', data: 'data_size_mb' },
         { title: 's3swiftUsers', data: 'users' },
         { title: 'buckets', data: 'buckets' },
         { title: 'publicEndpoints', data: 'public' },
@@ -83,7 +83,7 @@ const Quotas = ({ t }) => {
                                         >
                                             {headerItem.data === 's3_placement_target'
                                                 ? item.pool[headerItem.data]
-                                                : headerItem.data === 'storage_mb' ||
+                                                : headerItem.data === 'data_size_mb' ||
                                                   headerItem.data === 'objects' ||
                                                   headerItem.data === 'users' ||
                                                   headerItem.data === 'buckets'
