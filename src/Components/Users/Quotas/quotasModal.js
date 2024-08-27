@@ -28,7 +28,7 @@ const mapPropsToApi = (item, edit) =>
 
 const mapApiToProps = (item) => ({
     storageType: item.pool.id,
-    space: item.stats.storage_mb.limit,
+    space: item.stats.data_size_mb.limit,
     buckets: item.buckets,
     objects: item.stats.objects.limit,
     users: item.stats.users.limit,
