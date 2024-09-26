@@ -60,6 +60,11 @@ export const AmazonStore = (state = initialState, action) => {
         errorMessage = action.payload.response.data.explanation;
         return state.set('poolsFetchStatus', 'rejected');
 
+    case `${ActionTypes.UPDATE_S3_QUOTA}_FULFILLED`:
+        return Immutable.merge(state, {
+            s3quotas: state.s3quotas.map(el => el.id === action.payload.id ? action.payload : el),
+        });
+            
     // create s3 user
     case `${ActionTypes.CREATE_S3_USER}_PENDING`:
         return state.set('s3usersCreateStatus', 'pending');

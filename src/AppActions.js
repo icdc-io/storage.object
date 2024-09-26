@@ -62,7 +62,7 @@ export const createS3quota = (payload) => ({
 
 export const updateS3quota = (quota_id, payload) => ({
     type: ActionTypes.UPDATE_S3_QUOTA,
-    payload: updateData(`${ActionTypes.s3QuotasUrl()}/${quota_id}`, payload)
+    payload: updateData(ActionTypes.s3QuotaUrl(quota_id), payload)
 });
 
 export const deleteS3user = (user_id) => ({
@@ -120,7 +120,6 @@ export const editS3quotaAndFetch = (quota_id, payload) => {
         const response = dispatch(updateS3quota(quota_id, payload));
 
         response.then(() => {
-            dispatch(fetchS3quotas());
             successNotification('');
         }, error => errorNotification(error.response.data));
     };
