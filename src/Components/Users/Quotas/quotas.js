@@ -9,7 +9,6 @@ import External from "../../../images/external.svg";
 const Quotas = ({ t }) => {
     const user = useSelector((state) => state.host.user);
     const lang = useSelector((state) => state.host.lang);
-    const pools = useSelector((state) => state.AmazonStore.pools);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 
     const headers = [
