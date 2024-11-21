@@ -45,8 +45,8 @@ const UserModal = ({ user, edit, t }) => {
                       storage_size: +item.storageSizeLimit,
                       objects: +item.objectsLimit,
                       max_buckets: +item.bucketsLimit,
-                      bucket_storage_size: +item.storageInBucketLimit,
-                      bucket_objects: +item.objectsInBucketLimit,
+                    //   bucket_storage_size: +item.storageInBucketLimit,
+                    //   bucket_objects: +item.objectsInBucketLimit,
                   },
               };
 
@@ -91,9 +91,7 @@ const UserModal = ({ user, edit, t }) => {
                     <Button
                         onClick={() => setOpen(true)}
                         // disabled={itemsFetchStatus !== 'fulfilled'}
-                        content={t('createS3user')}
-                        icon="plus"
-                        labelPosition="left"
+                        content={t('create')}
                         primary
                     />
                 )}

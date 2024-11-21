@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Table, Progress, Dropdown, Icon, Confirm, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
@@ -121,7 +121,7 @@ const UsersList = ({ t, items }) => {
                             return <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
                                 <Table.Cell width={3}>
                                     <div className='flex-inline'>
-                                        <div>
+                                        <div className='name-cell'>
                                             {item.name.length > 20 ? (
                                                 <Popup
                                                     trigger={<span className='text-overflow'>{item.name}</span>}
@@ -131,9 +131,7 @@ const UsersList = ({ t, items }) => {
                                                 />
                                             ) : <span className='text-overflow'>{item.name}</span>}
                                         </div>
-                                        {item.is_locked ? (
-                                            <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />
-                                        ) : <CopyButton content={item.name} />}
+                                        {item.is_locked && <Icon name="lock" title={t('lockedS3user')} style={{ marginLeft: '4px' }} />}
                                     </div>
                                 </Table.Cell>
                                 <Table.Cell>

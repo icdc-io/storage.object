@@ -16,6 +16,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
     return (
         <React.Fragment>
             <Form>
+                <h4>{t('general')}</h4>
                 {edit ? (
                     <div className="uneditable_field">
                         <label>{t('name')}</label>
@@ -67,18 +68,12 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                         validate={!edit ? [required] : []}
                     />
                 )}
+                <h4>{t('quotas')}</h4>
+
                 <Field
                     placeholder={t('spacePlaceholder')}
                     name="storageSizeLimit"
-                    label={t('storageSizeLimit')}
-                    component={CustomField}
-                    type="number"
-                    validate={[required, number, positiveNumber]}
-                />
-                <Field
-                    placeholder={t('bucketsPlaceholder')}
-                    name="bucketsLimit"
-                    label={t('bucketsLimit')}
+                    label={t('space')}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
@@ -86,12 +81,21 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 <Field
                     placeholder={t('objPlaceholder')}
                     name="objectsLimit"
-                    label={t('objectsLimit')}
+                    label={t('objectsQuota')}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
                 />
                 <Field
+                    placeholder={t('bucketsPlaceholder')}
+                    name="bucketsLimit"
+                    label={t('bucketsQuota')}
+                    component={CustomField}
+                    type="number"
+                    validate={[required, number, positiveNumber]}
+                />
+
+                {/* <Field
                     placeholder={t('storagePlaceholder')}
                     name="storageInBucketLimit"
                     label={t('storageInBucketLimit')}
@@ -106,7 +110,7 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
-                />
+                /> */}
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
                     <Button onClick={handleSubmit} primary type="submit">
