@@ -14,6 +14,15 @@ const EditResModal = ({ t, s3user, name, label }) => {
     const [open, setOpen] = useState(false);
     const userRole = useSelector((state) => state.host.user.role);
     const currentOwner = useSelector((state) => state.host.user.email);
+    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+
+    const userPool = quotas.find((quota) => quota.pool.id === s3user.pool.id);
+
+    const limits = {
+        storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - s3user.usage.data_size_mb,
+        objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - s3user.usage.objects,
+        bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - s3user.usage.buckets,
+    };
 
     const mapPropsToApi = (item) => ({
         description: item.description,
@@ -22,8 +31,8 @@ const EditResModal = ({ t, s3user, name, label }) => {
             storage_size: +item.storageSizeLimit,
             objects: +item.objectsLimit,
             max_buckets: +item.bucketsLimit,
-            bucket_storage_size: +item.storageInBucketLimit,
-            bucket_objects: +item.objectsInBucketLimit,
+            // bucket_storage_size: +item.storageInBucketLimit,
+            // bucket_objects: +item.objectsInBucketLimit,
         },
     });
 
@@ -63,7 +72,7 @@ const EditResModal = ({ t, s3user, name, label }) => {
                 <Modal open={open} size="tiny" onSubmit={onSubmit}>
                     <Header content={label} />
                     <Modal.Content>
-                        <EditResForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} name={name} initialValues={mapApiToProps(s3user)} />
+                        <EditResForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} name={name} initialValues={mapApiToProps(s3user)} limits={limits} />
                     </Modal.Content>
                 </Modal>
             </React.Fragment>

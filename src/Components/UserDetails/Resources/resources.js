@@ -14,39 +14,28 @@ const Resources = ({ t, s3user, setActiveItem }) => {
             <Header as="h4">{t("storageType")}</Header>
             <Grid>
                 <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.default_placement?.class}
+                    {s3user.pool?.klass}
                 </Grid.Column>
             </Grid>
             <Header as="h4">{t("space")}</Header>
             <Grid>
                 <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.stats?.storage_size.actual + " / " + s3user.stats?.storage_size.limit}
+                    {s3user.usage?.data_size_mb + " / " + s3user.user_quota?.data_size_mb}
                 </Grid.Column>
             </Grid>
             <Header as="h4">{t("objectsLimit")}</Header>
             <Grid>
                 <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.stats?.objects.actual + " / " + s3user.stats?.objects.limit}
+                    {s3user.usage?.objects + " / " + s3user.user_quota?.objects}
                 </Grid.Column>
             </Grid>
             <Header as="h4">{t("numberBucketsLimit")}</Header>
             <Grid>
                 <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.stats?.buckets.actual + " / " + s3user.stats?.buckets.limit}
+                    {s3user.usage?.buckets + " / " + s3user.user_quota?.buckets}
                 </Grid.Column>
             </Grid>
-            {/* <Header as="h4">{t('storageInBucketLimit')}</Header>
-            <Grid>
-                <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.stats?.storage_bucket_limit}
-                </Grid.Column>
-            </Grid>
-            <Header as="h4">{t('objectsInBucketLimit')}</Header> */}
-            {/* <EditResModal t={t} s3user={s3user} /> */}
             <Grid className="resources-bottom-panel">
-                {/* <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.stats?.object_bucket_limit}
-                </Grid.Column> */}
                 <Grid.Row verticalAlign="middle" width={2} className="resource-action">
                     <EditResModal t={t} s3user={s3user} />
                 </Grid.Row>

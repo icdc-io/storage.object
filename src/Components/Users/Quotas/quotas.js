@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { Grid, Header, Table } from "semantic-ui-react";
+import { Grid, Header, Loader, Table } from "semantic-ui-react";
 import QuotasModal from "./quotasModal";
 import { useDispatch, useSelector } from "react-redux";
 import CopyButton from "../../GeneralComponents/copyButton";
@@ -13,6 +13,7 @@ const Quotas = ({ t }) => {
     const user = useSelector((state) => state.host.user);
     const lang = useSelector((state) => state.host.lang);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+    const s3quotasFetchStatus = useSelector((state) => state.AmazonStore.s3quotasFetchStatus);
 
     useEffect(() => {
         dispatch(fetchS3quotas());
@@ -108,7 +109,16 @@ const Quotas = ({ t }) => {
                             )}
                         </Table.Row>
                     ))}
-                    {quotas.length === 0 && (
+                    {s3quotasFetchStatus === "pending" && (
+                        <Table.Row>
+                            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
+                                <div className="s3quotas-empty">
+                                    <Loader active inline="centered" />
+                                </div>
+                            </Table.Cell>
+                        </Table.Row>
+                    )}
+                    {s3quotasFetchStatus !== "pending" && quotas.length === 0 && (
                         <Table.Row>
                             <Table.Cell className="s3quotas-empty-cell" colSpan="8">
                                 <div className="s3quotas-empty">

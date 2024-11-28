@@ -57,16 +57,16 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
             <Grid className='userOverview-grid'>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('id')}</Grid.Column>
-                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.s3.user}<CopyButton content={s3user.keys?.s3.user} /></Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys.s3[0]?.user}<CopyButton content={s3user.keys.s3[0].user} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.s3.access_key}<CopyButton content={s3user.keys?.s3.access_key} /></Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys.s3[0]?.access_key}<CopyButton content={s3user.keys.s3[0]?.access_key} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
                     <Grid.Column width={4} className='column-copy'>
-                        <span className='secret-key'>{s3user.keys?.s3.secret_key}</span><CopyButton content={s3user.keys?.s3.secret_key} />
+                        <span className='secret-key'>{s3user.keys.s3[0]?.secret_key}</span><CopyButton content={s3user.keys.s3[0]?.secret_key} />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -76,12 +76,12 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
             <Grid className='userOverview-grid'>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('id')}</Grid.Column>
-                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.swift.user}<CopyButton content={s3user.keys?.swift.user} /></Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys.swift[0]?.user}<CopyButton content={s3user.keys.swift[0]?.user} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
                     <Grid.Column width={4} className='column-copy'>
-                        <span className='secret-key'>{s3user.keys?.swift.secret_key}</span><CopyButton content={s3user.keys?.swift.secret_key} />
+                        <span className='secret-key'>{s3user.keys.swift[0]?.secret_key}</span><CopyButton content={s3user.keys.swift[0]?.secret_key} />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
