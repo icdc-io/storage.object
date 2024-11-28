@@ -20,14 +20,14 @@ const Quotas = ({ t }) => {
     }, [dispatch, user]);
 
     const headers = [
-        { title: "storageType", data: "s3_placement_target" },
-        { title: "objects", data: "objects" },
-        { title: "space", data: "data_size_mb" },
-        { title: "s3swiftUsers", data: "users" },
-        { title: "buckets", data: "buckets" },
-        { title: "publicEndpoints", data: "public" },
-        { title: "privateEndpoints", data: "private" },
-        { title: "", data: "edit" },
+        { title: "storageType", data: "s3_placement_target", width: 2 },
+        { title: "objects", data: "objects", width: 2 },
+        { title: "space", data: "data_size_mb", width: 2 },
+        { title: "s3swiftUsers", data: "users", width: 2 },
+        { title: "buckets", data: "buckets", width: 2 },
+        { title: "publicEndpoints", data: "public", width: 3 },
+        { title: "privateEndpoints", data: "private", width: 3 },
+        { title: "", data: "edit", width: 1 },
     ];
 
     const showEndpoints = (endpoints) => {
@@ -66,7 +66,7 @@ const Quotas = ({ t }) => {
                         <p>
                             {t("quotasDescription")}{" "}
                             <a href={HELP_LINK} target="_blank" rel="noreferrer">
-                                {t("howToConnect")} <img src={External} alt="External link"/>
+                                {t("howToConnect")} <img src={External} alt="External link" />
                             </a>
                         </p>
                     </Grid.Column>
@@ -77,7 +77,9 @@ const Quotas = ({ t }) => {
                 <Table.Header>
                     <Table.Row>
                         {headers.map((item, i) => (
-                            <Table.HeaderCell key={i}>{t(item.title)}</Table.HeaderCell>
+                            <Table.HeaderCell key={i} width={item.width}>
+                                {t(item.title)}
+                            </Table.HeaderCell>
                         ))}
                     </Table.Row>
                 </Table.Header>
@@ -90,7 +92,7 @@ const Quotas = ({ t }) => {
                                         {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={item} />}
                                     </Table.Cell>
                                 ) : (
-                                    <Table.Cell key={i} className={headerItem.data !== "s3_placement_target" ? "gray-text" : ""}>
+                                    <Table.Cell key={i}>
                                         {headerItem.data === "s3_placement_target"
                                             ? item.pool[headerItem.data]
                                             : headerItem.data === "data_size_mb" ||
@@ -106,9 +108,18 @@ const Quotas = ({ t }) => {
                             )}
                         </Table.Row>
                     ))}
+                    {quotas.length === 0 && (
+                        <Table.Row>
+                            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
+                                <div className="s3quotas-empty">
+                                    <p>{t("quotasEmpty")}</p>
+                                    {user.role === "admin" && <QuotasModal t={t} />}
+                                </div>
+                            </Table.Cell>
+                        </Table.Row>
+                    )}
                 </Table.Body>
             </Table>
-            {quotas.length === 0 && <span className="s3quotas-empty">{t("quotasEmpty")}</span>}
         </section>
     );
 };

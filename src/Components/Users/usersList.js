@@ -153,7 +153,7 @@ const UsersList = ({ t, items }) => {
                                         ) : <span className='text-overflow'>{item.description}</span>}
                                     </div>
                                 </Table.Cell>
-                                <Table.Cell>{item.default_placement.s3_placement_target || EMPTY_VALUE}</Table.Cell>
+                                <Table.Cell>{item.pool.s3_placement_target || EMPTY_VALUE}</Table.Cell>
                                 {isData ? (
                                     <Table.Cell textAlign="center">
                                         {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
