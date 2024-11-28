@@ -53,7 +53,7 @@ const UserModal = ({ user, edit, t }) => {
     const mapApiToProps = (item) => ({
         name: item.name,
         description: item.description,
-        default_placement: item.default_placement.id,
+        default_placement: item.pool.id,
         storageSizeLimit: item.stats.storage_size?.limit || 0,
         objectsLimit: item.stats.objects?.limit || 0,
         bucketsLimit: +item.stats.buckets?.limit || 0,
