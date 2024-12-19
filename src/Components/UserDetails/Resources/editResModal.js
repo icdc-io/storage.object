@@ -5,46 +5,48 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Header, Button, Icon } from 'semantic-ui-react';
 import { reset } from 'redux-form';
 import PropTypes from 'prop-types';
-import { editS3userAndFetch } from '../../../AppActions';
+import { actionAndFetch, editS3user } from '../../../AppActions';
 import { BILLING_USER_NAME } from '../../../AppConstants';
 import EditResForm from './editResForm';
 
 const EditResModal = ({ t, s3user, name, label }) => {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
+
     const userRole = useSelector((state) => state.host.user.role);
     const currentOwner = useSelector((state) => state.host.user.email);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 
     const userPool = quotas.find((quota) => quota.pool.id === s3user.pool.id);
 
-    const limits = {
+    const initLimits = {
         storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - s3user.usage.data_size_mb,
         objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - s3user.usage.objects,
         bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - s3user.usage.buckets,
     };
 
+    const [limits, setLimits] = useState(initLimits);
+
+
     const mapPropsToApi = (item) => ({
         description: item.description,
         owner: item.owner || currentOwner,
-        limits: {
-            storage_size: +item.storageSizeLimit,
+        quota: {
+            data_size_mb: +item.storageSizeLimit,
             objects: +item.objectsLimit,
-            max_buckets: +item.bucketsLimit,
-            // bucket_storage_size: +item.storageInBucketLimit,
-            // bucket_objects: +item.objectsInBucketLimit,
+            buckets: +item.bucketsLimit,
         },
     });
+    
+console.log(s3user); //!
 
     const mapApiToProps = (item) => ({
         name: item.name,
         description: item.description,
-        default_placement: item.default_placement?.id,
-        storageSizeLimit: item.stats?.storage_size.limit || 0,
-        objectsLimit: item.stats?.objects.limit || 0,
-        bucketsLimit: +item.stats?.buckets.limit || 0,
-        storageInBucketLimit: item.stats?.storage_bucket_limit,
-        objectsInBucketLimit: item.stats?.object_bucket_limit,
+        default_placement: item.pool.id,
+        storageSizeLimit: item.user_quota.data_size_mb || 0,
+        objectsLimit: item.user_quota.objects || 0,
+        bucketsLimit: +item.user_quota.buckets || 0,
         owner: item.owner,
     });
 
@@ -59,7 +61,7 @@ const EditResModal = ({ t, s3user, name, label }) => {
 
             let payload = mapPropsToApi(values);
 
-            dispatch(editS3userAndFetch(s3user.id, payload, true));
+            dispatch(actionAndFetch(editS3user, {user_id: s3user.id, payload}));
             dispatch(reset('editResForm'));
         },
         [handleClose, dispatch, s3user]

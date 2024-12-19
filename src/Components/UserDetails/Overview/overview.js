@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Header, Divider, Grid, Button, Confirm, Icon } from 'semantic-ui-react';
-import { generateKeys, deleteS3userAndFetch, lockS3userAndFetch } from '../../../AppActions';
+import { generateKeys, deleteS3userAndFetch, lockS3user } from '../../../AppActions';
 import DangerousHTML from 'react-dangerous-html';
 
 import { BILLING_USER_NAME } from '../../../AppConstants';
@@ -95,13 +95,16 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
                                 <Button
                                     content={t('unlockS3user')}
                                     style={{ width: '270px' }}
-                                    onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'unlock' }))}
+                                    onClick={() => dispatch(lockS3user(s3user.id, { is_locked: 'unlock' }))}
                                 />
                             ) : (
                                 <Button
                                     content={t('lockS3user')}
                                     style={{ width: '270px' }}
-                                    onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
+                                    // onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
+                                    onClick={() => dispatch(lockS3user(s3user.id, { is_locked: 'lock' }))}
+                                    
+
                                 />
                             )}
                             <Button

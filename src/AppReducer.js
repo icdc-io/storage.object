@@ -76,6 +76,14 @@ export const AmazonStore = (state = initialState, action) => {
     case `${ActionTypes.CREATE_S3_USER}_REJECTED`:
         return state.set('s3usersCreateStatus', 'rejected');
 
+    //lock editing
+    case `${ActionTypes.S3_USER_LOCK}_FULFILLED`:
+        return Immutable.merge(state, {
+            s3users: state.s3users.map(user => user.id === action.payload.id ? action.payload : user),
+            s3user: state.s3user?.id === action.payload.id ? action.payload : state.s3user
+        });
+
+
     // fetch single s3 user
     case `${ActionTypes.S3_USER_FETCH}_PENDING`:
         return state.set('s3userFetchStatus', 'pending');
@@ -92,12 +100,6 @@ export const AmazonStore = (state = initialState, action) => {
 
     // edit single s3 user
     case `${ActionTypes.EDIT_S3_USER}_FULFILLED`:
-        return Immutable.merge(state, {
-            s3user: action.payload
-        });
-
-    // genereate new keys
-    case `${ActionTypes.S3_USER_GENERATE_KEYS}_FULFILLED`:
         return Immutable.merge(state, {
             s3user: action.payload
         });

@@ -6,7 +6,7 @@ import { Table, Progress, Dropdown, Icon, Confirm, Popup } from 'semantic-ui-rea
 import _ from 'lodash';
 import UserModal from './userModal';
 import DangerousHTML from 'react-dangerous-html';
-import { actionAndFetch, deleteS3user, lockS3userAndFetch } from '../../AppActions';
+import { actionAndFetch, deleteS3user, lockS3user } from '../../AppActions';
 import { BILLING_USER_NAME, EMPTY_VALUE } from '../../AppConstants';
 import CopyButton from '../GeneralComponents/copyButton';
 
@@ -117,7 +117,7 @@ const UsersList = ({ t, items }) => {
                 <Table.Body>
                     {data &&
                         data.map((item, i) => { 
-                            const isData = Object.keys(item.stats).length > 0;
+                            const isData = Object.keys(item.user_quota).length > 0 && Object.keys(item.usage).length > 0;
                             return <Table.Row key={i} onClick={() => navigate(`/amazon/${item.id}`)}>
                                 <Table.Cell width={3}>
                                     <div className='flex-inline'>
@@ -156,24 +156,24 @@ const UsersList = ({ t, items }) => {
                                 <Table.Cell>{item.pool.s3_placement_target || EMPTY_VALUE}</Table.Cell>
                                 {isData ? (
                                     <Table.Cell textAlign="center">
-                                        {item.stats.storage_size.actual} / {item.stats.storage_size.limit}
-                                        <Bar value={item.stats.storage_size.actual} total={item.stats.storage_size.limit} />
+                                        {item.usage.data_size_mb} / {item.user_quota.data_size_mb}
+                                        <Bar value={item.usage.data_size_mb} total={item.user_quota.data_size_mb} />
                                     </Table.Cell>
                                 ) : (
                                     <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
                                 )}
                                 {isData ? (
                                     <Table.Cell textAlign="center">
-                                        {item.stats.buckets.actual} / {item.stats.buckets.limit}
-                                        <Bar value={item.stats.buckets.actual} total={item.stats.buckets.limit} />
+                                        {item.usage.buckets} / {item.user_quota.buckets}
+                                        <Bar value={item.usage.buckets} total={item.user_quota.buckets} />
                                     </Table.Cell>
                                 ) : (
                                     <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
                                 )}
                                 {isData ? (
                                     <Table.Cell textAlign="center">
-                                        {item.stats.objects.actual} / {item.stats.objects.limit}
-                                        <Bar value={item.stats.objects.actual} total={item.stats.objects.limit} />
+                                        {item.usage.objects} / {item.user_quota.objects}
+                                        <Bar value={item.usage.objects} total={item.user_quota.objects} />
                                     </Table.Cell>
                                 ) : (
                                     <Table.Cell textAlign="center">{t('notAvailable')}</Table.Cell>
@@ -188,14 +188,14 @@ const UsersList = ({ t, items }) => {
                                                         icon="lock open"
                                                         text={t('unlockS3user')}
                                                         onClick={() =>
-                                                            dispatch(lockS3userAndFetch(item.id, { action: 'unlock' }))
+                                                            dispatch(lockS3user(item.id, { is_locked: 'unlock' }))
                                                         }
                                                     />
                                                 ) : (
                                                     <Dropdown.Item
                                                         icon="lock"
                                                         text={t('lockS3user')}
-                                                        onClick={() => dispatch(lockS3userAndFetch(item.id, { action: 'lock' }))}
+                                                        onClick={() => dispatch(lockS3user(item.id, { is_locked: 'lock' }))}
                                                     />
                                                 )}
                                                 <Dropdown.Item

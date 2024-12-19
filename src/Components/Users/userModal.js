@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Modal, Header, Button, Dropdown } from "semantic-ui-react";
 import { reset } from "redux-form";
 import PropTypes from "prop-types";
-import { actionAndFetch, createS3user, editS3userAndFetch } from "../../AppActions";
+import { actionAndFetch, createS3user, editS3user, editS3userAndFetch } from "../../AppActions";
 import { BILLING_USER_NAME } from "../../AppConstants";
 import UserForm from "./userForm";
 
@@ -36,9 +36,9 @@ const UserModal = ({ user, edit, t }) => {
         if (edit) {
             const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
             setLimits({
-                storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - user.stats.storage_size.actual,
-                objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - user.stats.objects.actual,
-                bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - user.stats.buckets.actual,
+                storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - user.usage.data_size_mb,
+                objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - user.usage.objects,
+                bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - user.usage.buckets,
             });
         } else {
             setLimits(initLimits);
@@ -50,25 +50,21 @@ const UserModal = ({ user, edit, t }) => {
             ? {
                   description: item.description,
                   owner: item.owner || currentOwner,
-                  limits: {
-                      storage_size: +item.storageSizeLimit,
+                  quota: {
+                      data_size_mb: +item.storageSizeLimit,
                       objects: +item.objectsLimit,
-                      max_buckets: +item.bucketsLimit,
-                    //   bucket_storage_size: +item.storageInBucketLimit,
-                    //   bucket_objects: +item.objectsInBucketLimit,
+                      buckets: +item.bucketsLimit,
                   },
               }
             : {
                   name: item.name,
                   description: item.description,
                   owner: item.owner || currentOwner,
-                  default_placement: item.storageType,
-                  limits: {
-                      storage_size: +item.storageSizeLimit,
+                  pool_id: item.storageType,
+                  quota: {
+                      data_size_mb: +item.storageSizeLimit,
                       objects: +item.objectsLimit,
-                      max_buckets: +item.bucketsLimit,
-                      //   bucket_storage_size: +item.storageInBucketLimit,
-                      //   bucket_objects: +item.objectsInBucketLimit,
+                      buckets: +item.bucketsLimit,
                   },
               };
 
@@ -76,11 +72,9 @@ const UserModal = ({ user, edit, t }) => {
         name: item.name,
         description: item.description,
         default_placement: item.pool.id,
-        storageSizeLimit: item.stats.storage_size?.limit || 0,
-        objectsLimit: item.stats.objects?.limit || 0,
-        bucketsLimit: +item.stats.buckets?.limit || 0,
-        storageInBucketLimit: item.stats.storage_bucket_limit,
-        objectsInBucketLimit: item.stats.object_bucket_limit,
+        storageSizeLimit: item.user_quota.data_size_mb || 0,
+        objectsLimit: item.user_quota.objects || 0,
+        bucketsLimit: item.user_quota.buckets || 0,
         owner: item.owner,
     });
 
@@ -94,7 +88,7 @@ const UserModal = ({ user, edit, t }) => {
             handleClose();
             let payload = mapPropsToApi(values, edit);
             if (edit) {
-                dispatch(editS3userAndFetch(user.id, payload));
+                dispatch(actionAndFetch(editS3user, {user_id: user.id, payload}));
             } else {
                 dispatch(actionAndFetch(createS3user, payload));
             }

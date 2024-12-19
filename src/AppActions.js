@@ -50,6 +50,11 @@ export const fetchPools = (options) => ({
     payload: fetchData(ActionTypes.poolsUrl(), {}, options)
 });
 
+export const fetchS3Limits = (account) => ({
+    type: ActionTypes.FETCH_S3_LIMITS,
+    payload: fetchData(ActionTypes.s3LimitsUrl(account))
+});
+
 export const fetchS3quotas = (options) => ({
     type: ActionTypes.FETCH_S3_QUOTAS,
     payload: fetchData(ActionTypes.s3QuotasUrl(), options)
@@ -70,7 +75,7 @@ export const deleteS3user = (user_id) => ({
     payload: deleteData(`${ActionTypes.s3UserUrl()}/${user_id}`)
 });
 
-export const editS3user = (user_id, payload) => ({
+export const editS3user = ({user_id, payload}) => ({
     type: ActionTypes.EDIT_S3_USER,
     payload: updateData(`${ActionTypes.s3UserUrl()}/${user_id}`, payload)
 });
@@ -84,9 +89,9 @@ export const clearS3UserFetchStatus = () => ({
     type: ActionTypes.CLEAR_S3_USER_FETCH_STATUS
 });
 
-export const lockS3user = (user_id, payload) => ({
+export const lockS3userAC = (user_id, payload) => ({
     type: ActionTypes.S3_USER_LOCK,
-    payload: updateData(`${ActionTypes.s3UserUrl()}/${user_id}/lock`, payload)
+    payload: updateData(`${ActionTypes.s3UserUrl()}/${user_id}`, payload)
 });
 
 const generateKeysAC = (user_id) => ({
@@ -121,38 +126,34 @@ export const editS3quotaAndFetch = (quota_id, payload) => {
 
         response.then(() => {
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, error => errorNotification(error.response.data.message));
     };
 };
 
 //S3_USER
-export const createS3userAndFetch = (payload) => {
-    return (dispatch) => {
-        const response = dispatch(createS3user(payload));
+// export const createS3userAndFetch = (payload) => {
+//     return (dispatch) => {
+//         const response = dispatch(createS3user(payload));
 
-        response.then(() => {
-            dispatch(fetchS3Users());
-            dispatch(fetchS3quotas());
-            successNotification('');
-        }, error => errorNotification(error.response.data));
-    };
-};
+//         response.then(() => {
+//             dispatch(fetchS3Users());
+//             dispatch(fetchS3quotas());
+//             successNotification('');
+//         }, error => errorNotification(error.response.data.message));
+//     };
+// };
 
-export const editS3userAndFetch = (user_id, payload, resourcesTab) => {
-    return (dispatch) => {
-        const response = dispatch(editS3user(user_id, payload));
+// export const editS3userAndFetch = (user_id, payload) => {
+//     return (dispatch) => {
+//         const response = dispatch(editS3user(user_id, payload));
 
-        response.then(() => {
-            if(resourcesTab) {
-                dispatch(fetchS3User(user_id))
-            } else {
-                dispatch(fetchS3Users());
-                dispatch(fetchS3quotas());
-            }
-            successNotification('');
-        }, error => errorNotification(error.response.data));
-    };
-};
+//         response.then(() => {
+//             dispatch(fetchS3Users());
+//             dispatch(fetchS3quotas());
+//             successNotification('');
+//         }, error => errorNotification(error.response.data.message));
+//     };
+// };
 
 export const deleteS3userAndFetch = (user_id) => {
     return (dispatch) => {
@@ -178,16 +179,13 @@ export const actionAndFetch = (action, payload) => {
     };
 };
 
-export const lockS3userAndFetch = (user_id, payload) => {
+export const lockS3user = (user_id, payload) => {
     return (dispatch) => {
-        const response = dispatch(lockS3user(user_id, payload));
+        const response = dispatch(lockS3userAC(user_id, payload));
 
         response.then(() => {
-            dispatch(fetchS3Users());
-            dispatch(fetchS3quotas());
-            dispatch(fetchS3User(user_id));
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, error => errorNotification(error.response.data.message));
     };
 };
 
