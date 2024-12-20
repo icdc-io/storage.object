@@ -5,10 +5,7 @@ import PropTypes from 'prop-types';
 import { required, number, bucket, positiveNumber } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 
-const STORAGE_SIZE_MAX = 10_000;
-const OBJECTS_MAX = 100_000;
-
-const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
+const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues, limits }) => {
     return (
         <React.Fragment>
             <Form>
@@ -18,17 +15,18 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                         <p>{initialValues.name}</p>
                     </div>
                 ) : (
-                    <Field name="name" label={t('name')} component={CustomField} type="text" validate={[required, bucket]} />
+                    <Field name="name" label={t('name')} component={CustomField} type="text" validate={[required, bucket]} placeholder={t("namePlaceholder")}/>
                 )}
                 <div className="add-info-field__container">
                     <Field
                         name="storageSizeLimit"
-                        label={t('storageSizeLimit')}
+                        label={t('space')}
                         component={CustomField}
                         type="text"
-                        validate={[required, positiveNumber, number]}
+                        validate={[positiveNumber, number]}
+                        placeholder={t("bucketParamsPlaceholder")}
+                        limit={limits.space}
                     />
-                    <span className='add-info-field'>{t("max")}. {STORAGE_SIZE_MAX}</span>
                 </div>
                 <div className="add-info-field__container">
                     <Field
@@ -36,10 +34,10 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues }) => {
                         label={t('objectsLimit')}
                         component={CustomField}
                         type="number"
-                        validate={[required, number]}
-                        subLabel={t("objectsNoLimit")}
+                        validate={[number]}
+                        placeholder={t("bucketParamsPlaceholder")}
+                        limit={limits.objects}
                     />
-                    <span className='add-info-field'>{t("max")}. {OBJECTS_MAX}</span>
                 </div>
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>

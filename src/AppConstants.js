@@ -3,6 +3,8 @@ export const EMPTY_VALUE = String.fromCharCode(8212);
 
 export const POOLS_FETCH = 'POOLS_FETCH';
 
+export const FETCH_S3_LIMITS= 'FETCH_S3_LIMITS';
+
 export const FETCH_S3_QUOTAS = 'FETCH_S3_QUOTAS';
 export const CREATE_S3_QUOTA = 'CREATE_S3_QUOTA';
 export const UPDATE_S3_QUOTA = 'UPDATE_S3_QUOTA';
@@ -27,6 +29,7 @@ export const BASE_URL = '/api/storage/v2';
 export const poolsUrl = () => `${BASE_URL}/pools`;
 export const s3UsersUrl = () => `${BASE_URL}/accounts/{account}/s3/users`;
 export const s3UserUrl = () => `${BASE_URL}/s3/users`;
+export const s3LimitsUrl = (account) => `${BASE_URL}/s3/limits`;
 export const s3QuotasUrl = () => `${BASE_URL}/accounts/{account}/s3/quotas`;
 export const s3QuotaUrl = (quota_id) => `${BASE_URL}/s3/quotas/${quota_id}`;
 export const bucketsUrl = () => `${BASE_URL}/s3/buckets`;

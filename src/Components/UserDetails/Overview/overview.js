@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Header, Divider, Grid, Button, Confirm, Icon } from 'semantic-ui-react';
-import { generateKeys, deleteS3userAndFetch, lockS3userAndFetch } from '../../../AppActions';
+import { generateKeys, deleteS3userAndFetch, lockS3user } from '../../../AppActions';
 import DangerousHTML from 'react-dangerous-html';
 
 import { BILLING_USER_NAME } from '../../../AppConstants';
@@ -31,9 +31,8 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
 
     return (
         <React.Fragment>
-            <Grid>
+            <Grid className='userOverview-grid'>
                 <Grid.Row>
-                <Grid.Column width={2}>{t("name")}</Grid.Column>
                 <Grid.Column width={4}>
                     <Header as="h4">
                     {s3user.name}{" "}
@@ -48,7 +47,6 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
                 </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                <Grid.Column width={2}>{t("description")}</Grid.Column>
                 <Grid.Column width={4}>{s3user.description}</Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -56,34 +54,34 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
             <Divider />
 
             <Header as="h4">{t('s3')}</Header>
-            <Grid>
+            <Grid className='userOverview-grid'>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('id')}</Grid.Column>
-                    <Grid.Column width={4}>{s3user.keys?.s3.user}</Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys.s3[0]?.user}<CopyButton content={s3user.keys.s3[0].user} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                    <Grid.Column width={4} className='column-copy'>{s3user.keys?.s3.access_key}<CopyButton content={s3user.keys?.s3.access_key} /></Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys.s3[0]?.access_key}<CopyButton content={s3user.keys.s3[0]?.access_key} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('secretKey')}</Grid.Column>
-                    <Grid.Column width={5} className='column-copy'>
-                        <span className='secret-key'>{s3user.keys?.s3.secret_key}</span><CopyButton content={s3user.keys?.s3.secret_key} />
+                    <Grid.Column width={4} className='column-copy'>
+                        <span className='secret-key'>{s3user.keys.s3[0]?.secret_key}</span><CopyButton content={s3user.keys.s3[0]?.secret_key} />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
             <Divider />
 
             <Header as="h4">{t('swift')}</Header>
-            <Grid>
+            <Grid className='userOverview-grid'>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('id')}</Grid.Column>
-                    <Grid.Column width={4}>{s3user.keys?.swift.user}</Grid.Column>
+                    <Grid.Column width={4} className='column-copy'>{s3user.keys.swift[0]?.user}<CopyButton content={s3user.keys.swift[0]?.user} /></Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={2}>{t('accessKey')}</Grid.Column>
-                    <Grid.Column width={5} className='column-copy'>
-                        <span className='secret-key'>{s3user.keys?.swift.secret_key}</span><CopyButton content={s3user.keys?.swift.secret_key} />
+                    <Grid.Column width={4} className='column-copy'>
+                        <span className='secret-key'>{s3user.keys.swift[0]?.secret_key}</span><CopyButton content={s3user.keys.swift[0]?.secret_key} />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -97,13 +95,16 @@ const UserOverview = ({ t, s3user, setActiveItem }) => {
                                 <Button
                                     content={t('unlockS3user')}
                                     style={{ width: '270px' }}
-                                    onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'unlock' }))}
+                                    onClick={() => dispatch(lockS3user(s3user.id, { is_locked: 'unlock' }))}
                                 />
                             ) : (
                                 <Button
                                     content={t('lockS3user')}
                                     style={{ width: '270px' }}
-                                    onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
+                                    // onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
+                                    onClick={() => dispatch(lockS3user(s3user.id, { is_locked: 'lock' }))}
+                                    
+
                                 />
                             )}
                             <Button

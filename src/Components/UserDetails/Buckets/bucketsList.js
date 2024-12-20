@@ -70,7 +70,7 @@ const BucketsList = ({ t, setActiveItem }) => {
                         <Icon name="meh outline" />
                         {t('noBuckets')}
                     </Header>
-                    <BucketModal t={t} />
+                    <BucketModal t={t} s3user={s3user}/>
                 </Segment>
             )}
 
@@ -100,7 +100,7 @@ const BucketsList = ({ t, setActiveItem }) => {
                                 </Header>
                             </Grid.Column>
                             <Grid.Column textAlign="right" width={12}>
-                                <BucketModal t={t} />
+                                <BucketModal t={t} s3user={s3user}/>
                             </Grid.Column>
                             <Grid.Row className="buckets-description">
                                 <Grid.Column verticalAlign="middle" width={16}>
@@ -131,19 +131,19 @@ const BucketsList = ({ t, setActiveItem }) => {
                             {data &&
                                 data.map((item, i) => (
                                     <Table.Row key={i}>
-                                        <Table.Cell>{item.bucket_name}</Table.Cell>
-                                        <Table.Cell textAlign="center">
+                                        <Table.Cell width={5}>{item.bucket_name}</Table.Cell>
+                                        <Table.Cell width={5}textAlign="center">
                                             {item.storage_size.actual} / {item.storage_size.limit}
                                             <Bar value={item.storage_size.actual} total={item.storage_size.limit} />
                                         </Table.Cell>
-                                        <Table.Cell textAlign="center">
+                                        <Table.Cell width={5} textAlign="center">
                                             {item.objects.actual} / {item.objects.limit}
                                             <Bar value={item.objects.actual} total={item.objects.limit} />
                                         </Table.Cell>
-                                        <Table.Cell collapsing textAlign="right">
+                                        <Table.Cell width={1} collapsing textAlign="right">
                                             <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">
                                                 <Dropdown.Menu>
-                                                    <BucketModal t={t} edit bucket={item} />
+                                                    <BucketModal t={t} edit bucket={item} s3user={s3user}/>
                                                     <Dropdown.Item
                                                         className="item-red"
                                                         icon="trash"

@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button, Popup, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import { required, number } from '../../../Validaions';
+import { required, number, positiveNumber } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 import CustomSelect from '../../GeneralComponents/customSelect';
 import { filterFreeDiskTypes } from '../../../utils/filterFreeQuotas';
@@ -42,7 +42,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     />}/></span>}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('spacePlaceholder')}
@@ -54,7 +54,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     />}/></span>}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('usersPlaceholder')}
@@ -66,7 +66,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     />}/></span>}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Field
                     placeholder={t('bucketsPlaceholder')}
@@ -78,7 +78,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     />}/></span>}
                     component={CustomField}
                     type="number"
-                    validate={[required, number]}
+                    validate={[required, number, positiveNumber]}
                 />
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
