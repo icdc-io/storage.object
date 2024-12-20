@@ -5,7 +5,7 @@ import QuotasModal from "./quotasModal";
 import { useDispatch, useSelector } from "react-redux";
 import CopyButton from "../../GeneralComponents/copyButton";
 import External from "../../../images/external.svg";
-import { fetchPools, fetchS3quotas } from "../../../AppActions";
+import { fetchPools, fetchS3Limits, fetchS3quotas } from "../../../AppActions";
 
 const Quotas = ({ t }) => {
     const dispatch = useDispatch();
@@ -18,8 +18,7 @@ const Quotas = ({ t }) => {
     useEffect(() => {
         dispatch(fetchS3quotas());
         dispatch(fetchPools({ type: "s3" }));
-        //todo add limits
-        // dispatch(fetchS3Limits(user.account))
+        dispatch(fetchS3Limits(user.account))
     }, [dispatch, user]);
 
     const headers = [

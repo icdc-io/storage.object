@@ -131,29 +131,6 @@ export const editS3quotaAndFetch = (quota_id, payload) => {
 };
 
 //S3_USER
-// export const createS3userAndFetch = (payload) => {
-//     return (dispatch) => {
-//         const response = dispatch(createS3user(payload));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.message));
-//     };
-// };
-
-// export const editS3userAndFetch = (user_id, payload) => {
-//     return (dispatch) => {
-//         const response = dispatch(editS3user(user_id, payload));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.message));
-//     };
-// };
 
 export const deleteS3userAndFetch = (user_id) => {
     return (dispatch) => {
