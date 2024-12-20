@@ -27,7 +27,6 @@ const EditResModal = ({ t, s3user, name, label }) => {
 
     const [limits, setLimits] = useState(initLimits);
 
-
     const mapPropsToApi = (item) => ({
         description: item.description,
         owner: item.owner || currentOwner,
@@ -38,8 +37,6 @@ const EditResModal = ({ t, s3user, name, label }) => {
         },
     });
     
-console.log(s3user); //!
-
     const mapApiToProps = (item) => ({
         name: item.name,
         description: item.description,
