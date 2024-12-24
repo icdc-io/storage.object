@@ -9,6 +9,7 @@ import { BILLING_USER_NAME } from "../../../AppConstants";
 import QuotasForm from "./quotasForm";
 import { mapPoolToDiskTypeOptions, mapQuotasToDiskType } from "../../../utils/mappers";
 import { filterFreeDiskTypes } from "../../../utils/filterFreeQuotas";
+import { rolesWithAdminRights } from "container/roles";
 
 const mapPropsToApi = (item, edit) =>
     edit
@@ -111,7 +112,7 @@ const QuotasModal = ({ quota, edit, t }) => {
                                 onSubmit={onSubmit}
                                 initialValues={mapApiToProps(quota)}
                                 edit={edit}
-                                isAdmin={userRole === "admin"}
+                                isAdmin={rolesWithAdminRights.includes(userRole)}
                                 availableQuotas={availableQuotas}
                             />
                         ) : (
@@ -120,7 +121,7 @@ const QuotasModal = ({ quota, edit, t }) => {
                                 open={open}
                                 handleClose={handleClose}
                                 onSubmit={onSubmit}
-                                isAdmin={userRole === "admin"}
+                                isAdmin={rolesWithAdminRights.includes(userRole)}
                                 availableQuotas={availableQuotas}
                             />
                         )}

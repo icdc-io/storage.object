@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CopyButton from "../../GeneralComponents/copyButton";
 import External from "../../../images/external.svg";
 import { fetchPools, fetchS3quotas } from "../../../AppActions";
+import { rolesWithAdminRights } from "container/roles";
 
 const Quotas = ({ t }) => {
     const dispatch = useDispatch();
@@ -61,7 +62,7 @@ const Quotas = ({ t }) => {
                         <Header as="h2">{t("quotas")}</Header>
                     </Grid.Column>
                     <Grid.Column textAlign="right" width={12}>
-                        {user.role === "admin" && <QuotasModal t={t} />}
+                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
@@ -92,7 +93,7 @@ const Quotas = ({ t }) => {
                             {headers.map((headerItem, i) =>
                                 headerItem.data === "edit" ? (
                                     <Table.Cell key={i} textAlign="right">
-                                        {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={item} />}
+                                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={item} />}
                                     </Table.Cell>
                                 ) : (
                                     <Table.Cell key={i}>
@@ -125,7 +126,7 @@ const Quotas = ({ t }) => {
                             <Table.Cell className="s3quotas-empty-cell" colSpan="8">
                                 <div className="s3quotas-empty">
                                     <p>{t("quotasEmpty")}</p>
-                                    {user.role === "admin" && <QuotasModal t={t} />}
+                                    {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
                                 </div>
                             </Table.Cell>
                         </Table.Row>
