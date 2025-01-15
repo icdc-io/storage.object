@@ -8,7 +8,7 @@ import CustomSelect from '../../GeneralComponents/customSelect';
 import { filterFreeDiskTypes } from '../../../utils/filterFreeQuotas';
 import DangerousHTML from 'react-dangerous-html';
 
-const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initialValues }) => {
+const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initialValues, limits, handleChangeStorageType }) => {
 
     return (
         <React.Fragment>
@@ -29,6 +29,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                         options={filterFreeDiskTypes(availableQuotas)}
                         initialValues={initialValues}
                         edit={edit}
+                        onChange={handleChangeStorageType}
                         validate={[required]}
                     />
                 )}
@@ -43,6 +44,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
+                    limit={limits.objects}
                 />
                 <Field
                     placeholder={t('spacePlaceholder')}
@@ -55,6 +57,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
+                    limit={limits.data_size_mb}
                 />
                 <Field
                     placeholder={t('usersPlaceholder')}
@@ -67,6 +70,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
+                    limit={limits.users}
                 />
                 <Field
                     placeholder={t('bucketsPlaceholder')}
@@ -79,6 +83,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
+                    limit={limits.buckets}
                 />
                 <Modal.Actions align={'right'}>
                     <Button onClick={handleClose}>{t('cancel')}</Button>

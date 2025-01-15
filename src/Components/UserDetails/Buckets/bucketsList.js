@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Header, Table, Progress, Dropdown, Grid, Segment, Icon, Loader, Confirm } from 'semantic-ui-react';
-import { deleteBucketAndFetch } from '../../../AppActions';
+import { deleteBucketAndFetch, fetchBuckets } from '../../../AppActions';
 import _ from 'lodash';
 import DangerousHTML from 'react-dangerous-html';
 import BucketModal from './bucketModal';
@@ -19,14 +19,13 @@ const Bar = ({ value, total }) => (
     />
 );
 
-const BucketsList = ({ t, setActiveItem }) => {
+const BucketsList = ({ t, setActiveItem, s3user }) => {
     const { userId } = useParams();
 
     const dispatch = useDispatch();
 
     const buckets = useSelector((state) => state.AmazonStore.buckets);
     const bucketsFetchStatus = useSelector((state) => state.AmazonStore.bucketsFetchStatus);
-    const s3user = useSelector((state) => state.AmazonStore.s3user);
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
 
@@ -36,6 +35,10 @@ const BucketsList = ({ t, setActiveItem }) => {
     const [direction, setDirection] = useState('ascending');
     const [data, setData] = useState([]);
 
+    useEffect(() => {
+        s3user && dispatch(fetchBuckets(s3user.name))
+    }, [s3user]);
+    
     useEffect(() => {
         setData(Object.values(buckets));
     }, [buckets]);

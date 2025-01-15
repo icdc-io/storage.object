@@ -27,10 +27,10 @@ export const EDIT_BUCKET = 'EDIT_BUCKET';
 export const BASE_URL = '/api/storage/v2';
 
 export const poolsUrl = () => `${BASE_URL}/pools`;
-export const s3UsersUrl = () => `${BASE_URL}/accounts/{account}/s3/users`;
+export const s3UsersUrl = () => `${BASE_URL}/s3/users`;
 export const s3UserUrl = () => `${BASE_URL}/s3/users`;
-export const s3LimitsUrl = (account) => `${BASE_URL}/s3/limits`;
-export const s3QuotasUrl = () => `${BASE_URL}/accounts/{account}/s3/quotas`;
+export const s3LimitsUrl = () => `${BASE_URL}/s3/limits`;
+export const s3QuotasUrl = () => `${BASE_URL}/s3/quotas`;
 export const s3QuotaUrl = (quota_id) => `${BASE_URL}/s3/quotas/${quota_id}`;
 export const bucketsUrl = () => `${BASE_URL}/s3/buckets`;
 

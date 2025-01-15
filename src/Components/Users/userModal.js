@@ -11,6 +11,7 @@ import UserForm from "./userForm";
 
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
+    const accountName = useSelector((state) => state.host.user.account);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const currentOwner = useSelector((state) => state.host.user.email);
 
@@ -25,9 +26,9 @@ const UserModal = ({ user, edit, t }) => {
     };
 
     const initLimits = {
-        storageSizeLimit: quotas[0].stats.data_size_mb.limit - quotas[0].stats.data_size_mb.actual,
-        objectsLimit: quotas[0].stats.objects.limit - quotas[0].stats.objects.actual,
-        bucketsLimit: quotas[0].stats.buckets.limit - quotas[0].stats.buckets.actual,
+        storageSizeLimit: quotas[0].limits.data_size_mb - quotas[0].usage.data_size_mb,
+        objectsLimit: quotas[0].limits.objects - quotas[0].usage.objects,
+        bucketsLimit: quotas[0].limits.buckets - quotas[0].usage.buckets,
     };
 
     const [limits, setLimits] = useState(initLimits);
@@ -36,9 +37,9 @@ const UserModal = ({ user, edit, t }) => {
         if (edit) {
             const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
             setLimits({
-                storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - user.usage.data_size_mb,
-                objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - user.usage.objects,
-                bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - user.usage.buckets,
+                storageSizeLimit: userPool.limits.data_size_mb - userPool.usage.data_size_mb - user.usage.data_size_mb,
+                objectsLimit: userPool.limits.objects - userPool.usage.objects - user.usage.objects,
+                bucketsLimit: userPool.limits.buckets - userPool.usage.buckets - user.usage.buckets,
             });
         } else {
             setLimits(initLimits);
@@ -61,6 +62,7 @@ const UserModal = ({ user, edit, t }) => {
                   description: item.description,
                   owner: item.owner || currentOwner,
                   pool_id: item.storageType,
+                  account_name: accountName,
                   quota: {
                       data_size_mb: +item.storageSizeLimit,
                       objects: +item.objectsLimit,
@@ -102,7 +104,7 @@ const UserModal = ({ user, edit, t }) => {
         userRole !== BILLING_USER_NAME && (
             <React.Fragment>
                 {edit ? (
-                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} />
+                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} disabled={user.is_locked}/>
                 ) : (
                     <Button
                         onClick={() => setOpen(true)}

@@ -53,7 +53,6 @@ const UserDetails = ({ t }) => {
 
     useEffect(() => {
         dispatch(fetchS3User(userId));
-        dispatch(fetchBuckets(userId));
     }, [dispatch, userId, user]);
 
     useEffect(() => {

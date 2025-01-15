@@ -86,25 +86,25 @@ const Quotas = ({ t }) => {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {quotas.map((item, i) => (
+                    {quotas.map((quota, i) => (
                         <Table.Row key={i}>
                             {headers.map((headerItem, i) =>
                                 headerItem.data === "edit" ? (
                                     <Table.Cell key={i} textAlign="right">
-                                        {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={item} />}
+                                        {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={quota} />}
                                     </Table.Cell>
                                 ) : (
                                     <Table.Cell key={i}>
                                         {headerItem.data === "s3_placement_target"
-                                            ? item.pool[headerItem.data]
+                                            ? quota.pool[headerItem.data]
                                             : headerItem.data === "data_size_mb" ||
                                               headerItem.data === "objects" ||
                                               headerItem.data === "users" ||
                                               headerItem.data === "buckets"
-                                            ? `${item.stats[headerItem.data].actual} / ${item.stats[headerItem.data].limit}`
+                                            ? `${quota.usage[headerItem.data]} / ${quota.limits[headerItem.data]}`
                                             : headerItem.data === "public" || headerItem.data === "private"
-                                            ? showEndpoints(item.endpoints[headerItem.data])
-                                            : item[headerItem.data]}
+                                            ? showEndpoints(quota.endpoints[headerItem.data])
+                                            : quota[headerItem.data]}
                                     </Table.Cell>
                                 )
                             )}

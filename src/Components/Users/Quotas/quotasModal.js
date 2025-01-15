@@ -28,16 +28,39 @@ const mapPropsToApi = (item, edit) =>
 
 const mapApiToProps = (item) => ({
     storageType: item.pool.id,
-    space: item.stats.data_size_mb.limit,
+    space: item.limits.data_size_mb,
     buckets: item.buckets,
-    objects: item.stats.objects.limit,
-    users: item.stats.users.limit,
+    objects: item.limits.objects,
+    users: item.limits.users,
 });
 
 const QuotasModal = ({ quota, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
     const pools = useSelector((state) => state.AmazonStore.pools);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+    const accountLimits = useSelector((state) => state.AmazonStore.accountLimits);
+
+    const [limits, setLimits] = useState({});
+
+    useEffect( () => {
+        const storageLimits = accountLimits.find(limit => limit.pool.id === quota.pool.id);
+        edit && setLimits({
+            objects: storageLimits.objects,
+            data_size_mb: storageLimits.data_size_mb,
+            users: storageLimits.users,
+            buckets: storageLimits.buckets,
+        })
+    }, [edit]);
+
+    const handleChangeStorageType = (event, newValue) => {
+        const storageLimits = accountLimits.find(limit => limit.pool.id === newValue);
+        setLimits({
+            objects: storageLimits.objects,
+            data_size_mb: storageLimits.data_size_mb,
+            users: storageLimits.users,
+            buckets: storageLimits.buckets,
+        })
+    }
 
     const availableQuotas = pools.map(mapPoolToDiskTypeOptions).map((diskOption) => ({
         ...diskOption,
@@ -50,6 +73,7 @@ const QuotasModal = ({ quota, edit, t }) => {
     const handleClose = useCallback(() => {
         setOpen(false);
         dispatch(reset("createS3quota"));
+        setLimits({});
     }, [setOpen, dispatch]);
 
     const onSubmit = useCallback(
@@ -113,6 +137,8 @@ const QuotasModal = ({ quota, edit, t }) => {
                                 edit={edit}
                                 isAdmin={userRole === "admin"}
                                 availableQuotas={availableQuotas}
+                                limits={limits}
+                                handleChangeStorageType={handleChangeStorageType}
                             />
                         ) : (
                             <QuotasForm
@@ -122,6 +148,8 @@ const QuotasModal = ({ quota, edit, t }) => {
                                 onSubmit={onSubmit}
                                 isAdmin={userRole === "admin"}
                                 availableQuotas={availableQuotas}
+                                limits={limits}
+                                handleChangeStorageType={handleChangeStorageType}
                             />
                         )}
                     </Modal.Content>
