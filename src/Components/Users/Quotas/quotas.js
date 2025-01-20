@@ -18,7 +18,7 @@ const Quotas = ({ t }) => {
     useEffect(() => {
         dispatch(fetchS3quotas());
         dispatch(fetchPools({ type: "s3" }));
-        dispatch(fetchS3Limits(user.account))
+        dispatch(fetchS3Limits(user.account));
     }, [dispatch, user]);
 
     const headers = [
@@ -101,7 +101,7 @@ const Quotas = ({ t }) => {
                                               headerItem.data === "objects" ||
                                               headerItem.data === "users" ||
                                               headerItem.data === "buckets"
-                                            ? `${quota.usage[headerItem.data]} / ${quota.limits[headerItem.data]}`
+                                            ? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
                                             : headerItem.data === "public" || headerItem.data === "private"
                                             ? showEndpoints(quota.endpoints[headerItem.data])
                                             : quota[headerItem.data]}

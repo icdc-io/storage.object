@@ -38,7 +38,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     name="objects"
                     label={!edit ? t('objects') : <span>{t('objects')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
                         html={t('cannotBeLess', {
-                            value: initialValues.objects
+                            value: initialValues.usage.objects
                         })}
                     />}/></span>}
                     component={CustomField}
@@ -51,7 +51,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     name="space"
                     label={!edit ? t('space') : <span>{t('space')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
                         html={t('cannotBeLess', {
-                            value: initialValues.space
+                            value: initialValues.usage.data_size_mb
                         })}
                     />}/></span>}
                     component={CustomField}
@@ -64,7 +64,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     name="users"
                     label={!edit ? t('s3swiftUsers') : <span>{t('s3swiftUsers')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
                         html={t('cannotBeLess', {
-                            value: initialValues.users
+                            value: initialValues.usage.users
                         })}
                     />}/></span>}
                     component={CustomField}
@@ -77,7 +77,7 @@ const QuotasForm = ({ t, handleClose, handleSubmit, edit, availableQuotas, initi
                     name="buckets"
                     label={!edit ? t('bucketsPerS3') : <span>{t('bucketsPerS3')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
                         html={t('cannotBeLess', {
-                            value: initialValues.buckets
+                            value: initialValues.usage.buckets
                         })}
                     />}/></span>}
                     component={CustomField}

@@ -10,65 +10,70 @@ import QuotasForm from "./quotasForm";
 import { mapPoolToDiskTypeOptions, mapQuotasToDiskType } from "../../../utils/mappers";
 import { filterFreeDiskTypes } from "../../../utils/filterFreeQuotas";
 
-const mapPropsToApi = (item, edit) =>
-    edit
-        ? {
-              objects: +item.objects,
-              data_size_mb: +item.space,
-              buckets: +item.buckets,
-              users: +item.users,
-          }
-        : {
-              objects: +item.objects,
-              data_size_mb: +item.space,
-              buckets: +item.buckets,
-              users: +item.users,
-              pool_id: +item.storageType,
-          };
-
 const mapApiToProps = (item) => ({
     storageType: item.pool.id,
-    space: item.limits.data_size_mb,
+    space: item.data_size_mb,
     buckets: item.buckets,
-    objects: item.limits.objects,
-    users: item.limits.users,
+    objects: item.objects,
+    users: item.users,
+    usage: item.usage
 });
 
 const QuotasModal = ({ quota, edit, t }) => {
+    const dispatch = useDispatch();
+
     const userRole = useSelector((state) => state.host.user.role);
+    const userAccount = useSelector((state) => state.host.user.account);
     const pools = useSelector((state) => state.AmazonStore.pools);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const accountLimits = useSelector((state) => state.AmazonStore.accountLimits);
 
+    const [open, setOpen] = useState(false);
     const [limits, setLimits] = useState({});
 
-    useEffect( () => {
-        const storageLimits = accountLimits.find(limit => limit.pool.id === quota.pool.id);
-        edit && setLimits({
-            objects: storageLimits.objects,
-            data_size_mb: storageLimits.data_size_mb,
-            users: storageLimits.users,
-            buckets: storageLimits.buckets,
-        })
-    }, [edit]);
+    const mapPropsToApi = (item, edit) =>
+        edit
+            ? {
+                  objects: +item.objects,
+                  data_size_mb: +item.space,
+                  buckets: +item.buckets,
+                  users: +item.users,
+              }
+            : {
+                  objects: +item.objects,
+                  data_size_mb: +item.space,
+                  buckets: +item.buckets,
+                  users: +item.users,
+                  pool_id: +item.storageType,
+                  account_name: userAccount,
+              };
+
+    useEffect(() => {
+        if (edit && open) {
+            const storageLimits = accountLimits.find((limit) => limit.pool.id === quota.pool.id);
+            setLimits({
+                objects: storageLimits?.objects,
+                data_size_mb: storageLimits?.data_size_mb,
+                users: storageLimits?.users,
+                buckets: storageLimits?.buckets,
+            });
+        }
+    }, [edit, open]);
 
     const handleChangeStorageType = (event, newValue) => {
-        const storageLimits = accountLimits.find(limit => limit.pool.id === newValue);
+        const storageLimits = accountLimits.find((limit) => limit.pool.id === newValue);
         setLimits({
             objects: storageLimits.objects,
             data_size_mb: storageLimits.data_size_mb,
             users: storageLimits.users,
             buckets: storageLimits.buckets,
-        })
-    }
+        });
+    };
 
     const availableQuotas = pools.map(mapPoolToDiskTypeOptions).map((diskOption) => ({
         ...diskOption,
         isFree: !quotas.map(mapQuotasToDiskType).includes(diskOption.text),
     }));
-
-    const dispatch = useDispatch();
-    const [open, setOpen] = useState(false);
 
     const handleClose = useCallback(() => {
         setOpen(false);
@@ -96,7 +101,6 @@ const QuotasModal = ({ quota, edit, t }) => {
                 {edit ? (
                     <Button
                         onClick={() => setOpen(true)}
-                        // disabled={itemsFetchStatus !== 'fulfilled'}
                         content={t("edit")}
                         primary
                         basic
@@ -104,7 +108,6 @@ const QuotasModal = ({ quota, edit, t }) => {
                 ) : filterFreeDiskTypes(availableQuotas).length ? (
                     <Button
                         onClick={() => setOpen(true)}
-                        // disabled={itemsFetchStatus !== 'fulfilled'}
                         content={t("addQuota")}
                         primary
                     />

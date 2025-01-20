@@ -22,16 +22,10 @@ const UserModal = ({ user, edit, t }) => {
         storageSizeLimit: "1024",
         bucketsLimit: "5",
         objectsLimit: "5",
-        storageType: quotas[0].pool.id,
+        storageType: "",
     };
 
-    const initLimits = {
-        storageSizeLimit: quotas[0].limits.data_size_mb - quotas[0].usage.data_size_mb,
-        objectsLimit: quotas[0].limits.objects - quotas[0].usage.objects,
-        bucketsLimit: quotas[0].limits.buckets - quotas[0].usage.buckets,
-    };
-
-    const [limits, setLimits] = useState(initLimits);
+    const [limits, setLimits] = useState({});
 
     useEffect(() => {
         if (edit) {
@@ -41,8 +35,6 @@ const UserModal = ({ user, edit, t }) => {
                 objectsLimit: userPool.limits.objects - userPool.usage.objects - user.usage.objects,
                 bucketsLimit: userPool.limits.buckets - userPool.usage.buckets - user.usage.buckets,
             });
-        } else {
-            setLimits(initLimits);
         }
     }, [edit]);
 
@@ -78,11 +70,13 @@ const UserModal = ({ user, edit, t }) => {
         objectsLimit: item.user_quota.objects || 0,
         bucketsLimit: item.user_quota.buckets || 0,
         owner: item.owner,
+        user: user,
     });
 
     const handleClose = useCallback(() => {
         setOpen(false);
         dispatch(reset("createS3user"));
+        setLimits({});
     }, [setOpen, dispatch]);
 
     const onSubmit = useCallback(
@@ -90,7 +84,7 @@ const UserModal = ({ user, edit, t }) => {
             handleClose();
             let payload = mapPropsToApi(values, edit);
             if (edit) {
-                dispatch(actionAndFetch(editS3user, {user_id: user.id, payload}));
+                dispatch(actionAndFetch(editS3user, { user_id: user.id, payload }));
             } else {
                 dispatch(actionAndFetch(createS3user, payload));
             }
@@ -104,7 +98,7 @@ const UserModal = ({ user, edit, t }) => {
         userRole !== BILLING_USER_NAME && (
             <React.Fragment>
                 {edit ? (
-                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} disabled={user.is_locked}/>
+                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} disabled={user.is_locked} />
                 ) : (
                     <Button
                         onClick={() => setOpen(true)}
