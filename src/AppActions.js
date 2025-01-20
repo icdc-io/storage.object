@@ -131,29 +131,6 @@ export const editS3quotaAndFetch = (quota_id, payload) => {
 };
 
 //S3_USER
-// export const createS3userAndFetch = (payload) => {
-//     return (dispatch) => {
-//         const response = dispatch(createS3user(payload));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.message));
-//     };
-// };
-
-// export const editS3userAndFetch = (user_id, payload) => {
-//     return (dispatch) => {
-//         const response = dispatch(editS3user(user_id, payload));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.message));
-//     };
-// };
 
 export const deleteS3userAndFetch = (user_id) => {
     return (dispatch) => {
@@ -191,9 +168,9 @@ export const lockS3user = (user_id, payload) => {
 
 // buckets actions
 
-export const fetchBuckets = (user_id) => ({
+export const fetchBuckets = (username) => ({
     type: ActionTypes.BUCKETS_FETCH,
-    payload: fetchData(`${ActionTypes.s3UserUrl()}/${user_id}/buckets`)
+    payload: fetchData(`${ActionTypes.bucketsUrl()}?user_name=${username}`)
 });
 
 export const createBucket = (user_id, payload) => ({
