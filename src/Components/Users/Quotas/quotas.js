@@ -50,7 +50,7 @@ const Quotas = ({ t }) => {
 
     const vendorDomain = window.location.origin.split(".").slice(-2).join(".");
 
-    const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3_swift_object_storage/overview/`;
+    const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3/overview/`;
 
     return (
         <section className="s3quotas-list">
