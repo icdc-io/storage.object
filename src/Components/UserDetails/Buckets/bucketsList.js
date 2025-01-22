@@ -26,6 +26,7 @@ const BucketsList = ({ t, setActiveItem, s3user }) => {
 
     const buckets = useSelector((state) => state.AmazonStore.buckets);
     const bucketsFetchStatus = useSelector((state) => state.AmazonStore.bucketsFetchStatus);
+    const user = useSelector((state) => state.host.user);
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
 
@@ -59,9 +60,7 @@ const BucketsList = ({ t, setActiveItem, s3user }) => {
         setData(data.reverse());
     };
 
-    // useEffect(() => setData(_.sortBy(buckets, [column])), [buckets, column]);
-
-    const onConfirm = (bucket) =>  dispatch(deleteBucketAndFetch(userId, bucket.bucket_name));
+    const onConfirm = (bucket) =>  dispatch(deleteBucketAndFetch(userId, `${user.account}/${bucket.name}`));
 
     return (
         <React.Fragment>
@@ -134,14 +133,14 @@ const BucketsList = ({ t, setActiveItem, s3user }) => {
                             {data &&
                                 data.map((item, i) => (
                                     <Table.Row key={i}>
-                                        <Table.Cell width={5}>{item.bucket_name}</Table.Cell>
+                                        <Table.Cell width={5}>{item.name}</Table.Cell>
                                         <Table.Cell width={5}textAlign="center">
-                                            {item.storage_size.actual} / {item.storage_size.limit}
-                                            <Bar value={item.storage_size.actual} total={item.storage_size.limit} />
+                                            {item.usage.data_size_mb} / {item.quota.data_size_mb}
+                                            <Bar value={item.usage.data_size_mb} total={item.quota.data_size_mb} />
                                         </Table.Cell>
                                         <Table.Cell width={5} textAlign="center">
-                                            {item.objects.actual} / {item.objects.limit}
-                                            <Bar value={item.objects.actual} total={item.objects.limit} />
+                                            {item.usage.objects} / {item.quota.objects}
+                                            <Bar value={item.usage.objects} total={item.quota.objects} />
                                         </Table.Cell>
                                         <Table.Cell width={1} collapsing textAlign="right">
                                             <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">
@@ -173,7 +172,7 @@ const BucketsList = ({ t, setActiveItem, s3user }) => {
                         <div className="content">
                             <DangerousHTML
                                 html={t('deleteBucketConfirmMessage', {
-                                    name: `<b>${currentItem.bucket_name}</b>`,
+                                    name: `<b>${currentItem.name}</b>`,
                                 })}
                             />
                         </div>

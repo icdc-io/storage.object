@@ -8,21 +8,16 @@ import { createBucketAndFetch, editBucketAndFetch } from "../../../AppActions";
 import { BILLING_USER_NAME } from "../../../AppConstants";
 import BucketForm from "./bucketForm";
 
-const mapPropsToApi = (item) => ({
-    bucket_name: item.name,
-    data_size_mb_quota: +item.storageSizeLimit,
-    number_of_objects_quota: +item.objectsLimit,
-});
-
 const mapApiToProps = (item) => ({
-    name: item.bucket_name,
-    storageSizeLimit: item.storage_size.limit,
-    objectsLimit: item.objects.limit,
+    name: item.name,
+    storageSizeLimit: item.quota.data_size_mb,
+    objectsLimit: item.quota.objects,
 });
 
 const BucketModal = ({ t, bucket, edit, s3user }) => {
     const dispatch = useDispatch();
     const userRole = useSelector((state) => state.host.user.role);
+    const userAccount = useSelector((state) => state.host.user.account);
 
     const [open, setOpen] = useState(false);
 
@@ -30,6 +25,14 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
         space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
         objects: s3user.user_quota.objects - s3user.usage.objects,
     };
+
+    const mapPropsToApi = (item) => ({
+        quota: {
+            data_size_mb: +item.storageSizeLimit,
+            objects: +item.objectsLimit,
+        },
+        user_name: s3user.name,
+    });
 
     const handleClose = useCallback(() => {
         setOpen(false);
@@ -43,7 +46,9 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
             let payload = mapPropsToApi(values);
 
             if (edit) {
-                dispatch(editBucketAndFetch(s3user.id, { ...payload, user_name: s3user.keys.s3.user, bucket_name: bucket.bucket_name }));
+                dispatch(
+                    editBucketAndFetch(s3user.id, `${userAccount}/${bucket.name}`, payload)
+                );
             } else {
                 dispatch(createBucketAndFetch(s3user.id, payload));
             }
@@ -65,9 +70,17 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
                     <Header content={edit ? t("bucketEdit") : t("createBucket")} />
                     <Modal.Content>
                         {edit ? (
-                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(bucket)} edit={edit} limits={limits}/>
+                            <BucketForm
+                                t={t}
+                                open={open}
+                                handleClose={handleClose}
+                                onSubmit={onSubmit}
+                                initialValues={mapApiToProps(bucket)}
+                                edit={edit}
+                                limits={limits}
+                            />
                         ) : (
-                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} limits={limits}/>
+                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} limits={limits} />
                         )}
                     </Modal.Content>
                 </Modal>
