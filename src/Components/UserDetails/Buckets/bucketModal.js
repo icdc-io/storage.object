@@ -42,7 +42,7 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
     const onSubmit = useCallback(
         (values) => {
             handleClose();
-
+            
             let payload = mapPropsToApi(values);
 
             if (edit) {
@@ -50,7 +50,7 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
                     editBucketAndFetch(s3user.id, `${userAccount}/${bucket.name}`, payload)
                 );
             } else {
-                dispatch(createBucketAndFetch(s3user.id, payload));
+                dispatch(createBucketAndFetch(s3user.id, {...payload, name: values.name}));
             }
 
             dispatch(reset("createBucket"));
