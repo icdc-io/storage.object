@@ -11,7 +11,7 @@ const Amazon = ({ t, store }) => {
   }, []);
 
   return <Provider store={store}>
-    <Router basename={process.env.NODE_ENV === 'production' ? '/storage2' : ''}>
+    <Router basename={process.env.NODE_ENV === 'production' ? '/storage' : ''}>
       <Overview t={t} />
     </Router>
   </Provider>
