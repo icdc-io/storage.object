@@ -26,13 +26,22 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
         objects: s3user.user_quota.objects - s3user.usage.objects,
     };
 
-    const mapPropsToApi = (item) => ({
-        quota: {
-            data_size_mb: +item.storageSizeLimit,
-            objects: +item.objectsLimit,
-        },
-        user_name: s3user.name,
-    });
+    const mapPropsToApi = (item) => {
+        const quota = {};
+        
+        if (item.storageSizeLimit !== null && item.storageSizeLimit !== "") {
+            quota.data_size_mb = +item.storageSizeLimit;
+        }
+        
+        if (item.objectsLimit !== null && item.objectsLimit !== "") {
+            quota.objects = +item.objectsLimit;
+        }
+    
+        return {
+            quota,
+            user_name: s3user.name,
+        };
+    };
 
     const handleClose = useCallback(() => {
         setOpen(false);

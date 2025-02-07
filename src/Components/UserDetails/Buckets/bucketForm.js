@@ -33,8 +33,8 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues, limits 
                         name="objectsLimit"
                         label={t('objectsLimit')}
                         component={CustomField}
-                        type="number"
-                        validate={[number]}
+                        type="text"
+                        validate={[number, positiveNumber]}
                         placeholder={t("bucketParamsPlaceholder")}
                         limit={limits.objects}
                     />
