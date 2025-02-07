@@ -29,11 +29,11 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
     const mapPropsToApi = (item) => {
         const quota = {};
         
-        if (item.storageSizeLimit !== null && item.storageSizeLimit !== "") {
+        if (item.storageSizeLimit && item.storageSizeLimit !== null && item.storageSizeLimit !== "") {
             quota.data_size_mb = +item.storageSizeLimit;
         }
         
-        if (item.objectsLimit !== null && item.objectsLimit !== "") {
+        if (item.objectsLimit && item.storageSizeLimit !== null && item.storageSizeLimit !== "") {
             quota.objects = +item.objectsLimit;
         }
     
