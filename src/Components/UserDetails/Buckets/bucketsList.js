@@ -135,12 +135,12 @@ const BucketsList = ({ t, setActiveItem, s3user }) => {
                                     <Table.Row key={i}>
                                         <Table.Cell width={5}>{item.name}</Table.Cell>
                                         <Table.Cell width={5}textAlign="center">
-                                            {item.usage.data_size_mb} / {item.quota.data_size_mb}
-                                            <Bar value={item.usage.data_size_mb} total={item.quota.data_size_mb} />
+                                            {item.usage.data_size_mb} / {item.quota.data_size_mb >= 0 ? item.quota.data_size_mb : "∞"}
+                                            {item.quota.data_size_mb >= 0 && <Bar value={item.usage.data_size_mb} total={item.quota.data_size_mb} />}
                                         </Table.Cell>
                                         <Table.Cell width={5} textAlign="center">
-                                            {item.usage.objects} / {item.quota.objects}
-                                            <Bar value={item.usage.objects} total={item.quota.objects} />
+                                            {item.usage.objects} / {item.quota.objects >= 0 ? item.quota.objects : "∞"}
+                                            {item.quota.objects >= 0 && <Bar value={item.usage.objects} total={item.quota.objects} />}
                                         </Table.Cell>
                                         <Table.Cell width={1} collapsing textAlign="right">
                                             <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">

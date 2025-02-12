@@ -2,7 +2,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Modal, Form, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import { required, number, bucket, positiveNumber } from '../../../Validaions';
+import { required, number, bucket } from '../../../Validaions';
 import CustomField from '../../GeneralComponents/customField';
 
 const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues, limits }) => {
@@ -23,7 +23,7 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues, limits 
                         label={t('space')}
                         component={CustomField}
                         type="text"
-                        validate={[positiveNumber, number]}
+                        validate={[number]}
                         placeholder={t("bucketParamsPlaceholder")}
                         limit={limits.space}
                     />
@@ -34,7 +34,7 @@ const BucketForm = ({ t, handleClose, handleSubmit, edit, initialValues, limits 
                         label={t('objectsLimit')}
                         component={CustomField}
                         type="text"
-                        validate={[number, positiveNumber]}
+                        validate={[number]}
                         placeholder={t("bucketParamsPlaceholder")}
                         limit={limits.objects}
                     />

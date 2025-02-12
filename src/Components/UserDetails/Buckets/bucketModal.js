@@ -10,8 +10,8 @@ import BucketForm from "./bucketForm";
 
 const mapApiToProps = (item) => ({
     name: item.name,
-    storageSizeLimit: item.quota.data_size_mb,
-    objectsLimit: item.quota.objects,
+    storageSizeLimit: item.quota.data_size_mb < 0 ? "" : item.quota.data_size_mb,
+    objectsLimit: item.quota.objects < 0 ? "" : item.quota.objects,
 });
 
 const BucketModal = ({ t, bucket, edit, s3user }) => {
@@ -26,22 +26,13 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
         objects: s3user.user_quota.objects - s3user.usage.objects,
     };
 
-    const mapPropsToApi = (item) => {
-        const quota = {};
-        
-        if (item.storageSizeLimit && item.storageSizeLimit !== null && item.storageSizeLimit !== "") {
-            quota.data_size_mb = +item.storageSizeLimit;
-        }
-        
-        if (item.objectsLimit && item.storageSizeLimit !== null && item.storageSizeLimit !== "") {
-            quota.objects = +item.objectsLimit;
-        }
-    
-        return {
-            quota,
-            user_name: s3user.name,
-        };
-    };
+    const mapPropsToApi = (item) => ({
+        quota: {
+            data_size_mb: !item.storageSizeLimit ? -1 : +item.storageSizeLimit,
+            objects: !item.objectsLimit ? -1 : +item.objectsLimit,
+        },
+        user_name: s3user.name,
+    });
 
     const handleClose = useCallback(() => {
         setOpen(false);
