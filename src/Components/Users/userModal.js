@@ -26,17 +26,18 @@ const UserModal = ({ user, edit, t }) => {
     };
 
     const [limits, setLimits] = useState({});
+console.log(user);
 
     useEffect(() => {
         if (edit) {
             const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
             setLimits({
-                storageSizeLimit: userPool.limits.data_size_mb - userPool.usage.data_size_mb - user.usage.data_size_mb,
-                objectsLimit: userPool.limits.objects - userPool.usage.objects - user.usage.objects,
-                bucketsLimit: userPool.limits.buckets - userPool.usage.buckets - user.usage.buckets,
+                storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + user.user_quota.data_size_mb,
+                objectsLimit: userPool.objects - userPool.usage.objects + user.user_quota.objects,
+                bucketsLimit: userPool.buckets - userPool.usage.buckets + user.user_quota.buckets,
             });
         }
-    }, [edit]);
+    }, [edit, user, open]);
 
     const mapPropsToApi = (item, edit) =>
         edit
