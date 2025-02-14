@@ -58,7 +58,7 @@ const QuotasModal = ({ quota, edit, t }) => {
                 buckets: storageLimits?.buckets,
             });
         }
-    }, [edit, open]);
+    }, [edit, open, quota]);
 
     const handleChangeStorageType = (event, newValue) => {
         const storageLimits = accountLimits.find((limit) => limit.pool.id === newValue);

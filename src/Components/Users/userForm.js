@@ -17,9 +17,9 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
     const handleStorageTypeChange = (e, newValue) => {
         const checkedPool = pools.find((quota) => quota.pool.id === newValue);
         const newLimits = {
-            storageSizeLimit: checkedPool.limits.data_size_mb - checkedPool.usage.data_size_mb,
-            objectsLimit: checkedPool.limits.objects - checkedPool.usage.objects,
-            bucketsLimit: checkedPool.limits.buckets - checkedPool.usage.buckets,
+            storageSizeLimit: checkedPool.data_size_mb - checkedPool.usage.data_size_mb,
+            objectsLimit: checkedPool.objects - checkedPool.usage.objects,
+            bucketsLimit: checkedPool.buckets - checkedPool.usage.buckets,
         };
         setLimits(newLimits);
     };
