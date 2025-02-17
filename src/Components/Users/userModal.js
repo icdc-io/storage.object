@@ -26,7 +26,6 @@ const UserModal = ({ user, edit, t }) => {
     };
 
     const [limits, setLimits] = useState({});
-console.log(user);
 
     useEffect(() => {
         if (edit) {
