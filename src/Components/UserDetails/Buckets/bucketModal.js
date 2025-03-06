@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, Header, Button, Dropdown } from "semantic-ui-react";
 import { reset } from "redux-form";
@@ -20,11 +20,17 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
     const userAccount = useSelector((state) => state.host.user.account);
 
     const [open, setOpen] = useState(false);
+    const [limits, setLimits] = useState({});
 
-    const limits = {
-        space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
-        objects: s3user.user_quota.objects - s3user.usage.objects,
-    };
+    useEffect(() => {
+        setLimits(edit ? {
+            space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb + bucket.usage.data_size_mb,
+            objects: s3user.user_quota.objects - s3user.usage.objects + bucket.usage.objects,  
+        } : {
+            space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
+            objects: s3user.user_quota.objects - s3user.usage.objects,
+        })
+    }, [edit, open, s3user, bucket])
 
     const mapPropsToApi = (item) => ({
         quota: {
@@ -37,6 +43,7 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
     const handleClose = useCallback(() => {
         setOpen(false);
         dispatch(reset("createBucket"));
+        setLimits({})
     }, [setOpen, dispatch]);
 
     const onSubmit = useCallback(
