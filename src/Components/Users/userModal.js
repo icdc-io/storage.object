@@ -8,6 +8,7 @@ import { Button, Dropdown, Header, Modal } from "semantic-ui-react";
 import { actionAndFetch, createS3user, editS3user, editS3userAndFetch } from "../../AppActions";
 import { BILLING_USER_NAME } from "../../AppConstants";
 import UserForm from "./userForm";
+import { rolesWithAdminRights } from "container/roles";
 
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
@@ -121,7 +122,7 @@ const UserModal = ({ user, edit, t }) => {
                                     onSubmit={onSubmit}
                                     initialValues={mapApiToProps(user)}
                                     edit={edit}
-                                    isAdmin={userRole === "admin"}
+                                    isAdmin={rolesWithAdminRights.includes(userRole)}
                                     pools={quotas}
                                     limits={limits}
                                     setLimits={setLimits}
@@ -132,7 +133,7 @@ const UserModal = ({ user, edit, t }) => {
                                     open={open}
                                     handleClose={handleClose}
                                     onSubmit={onSubmit}
-                                    isAdmin={userRole === "admin"}
+                                    isAdmin={rolesWithAdminRights.includes(userRole)}
                                     pools={quotas}
                                     initialValues={initialValues}
                                     limits={limits}

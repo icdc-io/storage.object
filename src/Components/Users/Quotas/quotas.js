@@ -1,3 +1,4 @@
+import { rolesWithAdminRights } from "container/roles";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,7 +79,7 @@ const Quotas = ({ t }) => {
             <Table.Cell className="s3quotas-empty-cell" colSpan="8">
                 <div className="s3quotas-empty">
                     <p>{t("quotasEmpty")}</p>
-                    {user.role === "admin" && <QuotasModal t={t} />}
+                    {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
                 </div>
             </Table.Cell>
         </Table.Row>
@@ -89,7 +90,7 @@ const Quotas = ({ t }) => {
             {headers.map((headerItem, i) =>
                 headerItem.data === "edit" ? (
                     <Table.Cell key={i} textAlign="right">
-                        {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={quota} />}
+                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={quota} />}
                     </Table.Cell>
                 ) : (
                     <Table.Cell key={i}>
@@ -118,7 +119,7 @@ const Quotas = ({ t }) => {
                         <Header as="h2">{t("quotas")}</Header>
                     </Grid.Column>
                     <Grid.Column textAlign="right" width={12}>
-                        {user.role === "admin" && <QuotasModal t={t} />}
+                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="quotas-description">
