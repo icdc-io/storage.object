@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
 
+import PropTypes from "prop-types";
 import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal, Header, Button, Dropdown } from "semantic-ui-react";
 import { reset } from "redux-form";
-import PropTypes from "prop-types";
+import { Button, Dropdown, Header, Modal } from "semantic-ui-react";
 import { actionAndFetch, createS3user, editS3user, editS3userAndFetch } from "../../AppActions";
 import { BILLING_USER_NAME } from "../../AppConstants";
 import UserForm from "./userForm";
@@ -30,6 +30,7 @@ const UserModal = ({ user, edit, t }) => {
     useEffect(() => {
         if (edit) {
             const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
+            if (!userPool) return
             setLimits({
                 storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + user.user_quota.data_size_mb,
                 objectsLimit: userPool.objects - userPool.usage.objects + user.user_quota.objects,
@@ -82,7 +83,7 @@ const UserModal = ({ user, edit, t }) => {
     const onSubmit = useCallback(
         (values) => {
             handleClose();
-            let payload = mapPropsToApi(values, edit);
+            const payload = mapPropsToApi(values, edit);
             if (edit) {
                 dispatch(actionAndFetch(editS3user, { user_id: user.id, payload }));
             } else {

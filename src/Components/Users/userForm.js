@@ -1,16 +1,16 @@
-import React from "react";
-import { Field, reduxForm } from "redux-form";
-import { Modal, Form, Button, Popup, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
-import { required, number, s3user, email, positiveNumber } from "../../Validaions";
+import React from "react";
+import DangerousHTML from 'react-dangerous-html';
+import { Field, reduxForm } from "redux-form";
+import { Button, Form, Icon, Modal, Popup } from "semantic-ui-react";
+import { email, number, positiveNumber, required, s3user } from "../../Validaions";
 import CustomField from "../GeneralComponents/customField";
 import CustomSelect from "../GeneralComponents/customSelect";
-import DangerousHTML from 'react-dangerous-html';
 
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues, limits, setLimits }) => {
     const storageTypes = pools.map((item, index) => ({
         key: index,
-        text: item.pool.s3_placement_target,
+        text: item.pool.name,
         value: item.pool.id,
     }));
 
