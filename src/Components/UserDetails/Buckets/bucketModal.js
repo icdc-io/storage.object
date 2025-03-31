@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, Header, Button, Dropdown } from "semantic-ui-react";
 import { reset } from "redux-form";
@@ -8,44 +8,56 @@ import { createBucketAndFetch, editBucketAndFetch } from "../../../AppActions";
 import { BILLING_USER_NAME } from "../../../AppConstants";
 import BucketForm from "./bucketForm";
 
-const mapPropsToApi = (item) => ({
-    bucket_name: item.name,
-    data_size_mb_quota: +item.storageSizeLimit,
-    number_of_objects_quota: +item.objectsLimit,
-});
-
 const mapApiToProps = (item) => ({
-    name: item.bucket_name,
-    storageSizeLimit: item.storage_size.limit,
-    objectsLimit: item.objects.limit,
+    name: item.name,
+    storageSizeLimit: item.quota.data_size_mb < 0 ? "" : item.quota.data_size_mb,
+    objectsLimit: item.quota.objects < 0 ? "" : item.quota.objects,
 });
 
 const BucketModal = ({ t, bucket, edit, s3user }) => {
     const dispatch = useDispatch();
     const userRole = useSelector((state) => state.host.user.role);
+    const userAccount = useSelector((state) => state.host.user.account);
 
     const [open, setOpen] = useState(false);
+    const [limits, setLimits] = useState({});
 
-    const limits = {
-        space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
-        objects: s3user.user_quota.objects - s3user.usage.objects,
-    };
+    useEffect(() => {
+        setLimits(edit ? {
+            space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb + bucket.usage.data_size_mb,
+            objects: s3user.user_quota.objects - s3user.usage.objects + bucket.usage.objects,  
+        } : {
+            space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
+            objects: s3user.user_quota.objects - s3user.usage.objects,
+        })
+    }, [edit, open, s3user, bucket])
+
+    const mapPropsToApi = (item) => ({
+        quota: {
+            data_size_mb: !item.storageSizeLimit ? -1 : +item.storageSizeLimit,
+            objects: !item.objectsLimit ? -1 : +item.objectsLimit,
+        },
+        user_name: s3user.name,
+    });
 
     const handleClose = useCallback(() => {
         setOpen(false);
         dispatch(reset("createBucket"));
+        setLimits({})
     }, [setOpen, dispatch]);
 
     const onSubmit = useCallback(
         (values) => {
             handleClose();
-
+            
             let payload = mapPropsToApi(values);
 
             if (edit) {
-                dispatch(editBucketAndFetch(s3user.id, { ...payload, user_name: s3user.keys.s3.user, bucket_name: bucket.bucket_name }));
+                dispatch(
+                    editBucketAndFetch(s3user.id, `${userAccount}/${bucket.name}`, payload)
+                );
             } else {
-                dispatch(createBucketAndFetch(s3user.id, payload));
+                dispatch(createBucketAndFetch(s3user.id, {...payload, name: values.name}));
             }
 
             dispatch(reset("createBucket"));
@@ -65,9 +77,17 @@ const BucketModal = ({ t, bucket, edit, s3user }) => {
                     <Header content={edit ? t("bucketEdit") : t("createBucket")} />
                     <Modal.Content>
                         {edit ? (
-                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} initialValues={mapApiToProps(bucket)} edit={edit} limits={limits}/>
+                            <BucketForm
+                                t={t}
+                                open={open}
+                                handleClose={handleClose}
+                                onSubmit={onSubmit}
+                                initialValues={mapApiToProps(bucket)}
+                                edit={edit}
+                                limits={limits}
+                            />
                         ) : (
-                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} limits={limits}/>
+                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} limits={limits} />
                         )}
                     </Modal.Content>
                 </Modal>

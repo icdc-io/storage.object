@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Header, Table, Progress, Dropdown, Grid, Segment, Icon, Loader, Confirm } from 'semantic-ui-react';
-import { deleteBucketAndFetch } from '../../../AppActions';
+import { deleteBucketAndFetch, fetchBuckets } from '../../../AppActions';
 import _ from 'lodash';
 import DangerousHTML from 'react-dangerous-html';
 import BucketModal from './bucketModal';
@@ -19,14 +19,14 @@ const Bar = ({ value, total }) => (
     />
 );
 
-const BucketsList = ({ t, setActiveItem }) => {
+const BucketsList = ({ t, setActiveItem, s3user }) => {
     const { userId } = useParams();
 
     const dispatch = useDispatch();
 
     const buckets = useSelector((state) => state.AmazonStore.buckets);
     const bucketsFetchStatus = useSelector((state) => state.AmazonStore.bucketsFetchStatus);
-    const s3user = useSelector((state) => state.AmazonStore.s3user);
+    const user = useSelector((state) => state.host.user);
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
 
@@ -36,6 +36,10 @@ const BucketsList = ({ t, setActiveItem }) => {
     const [direction, setDirection] = useState('ascending');
     const [data, setData] = useState([]);
 
+    useEffect(() => {
+        s3user && dispatch(fetchBuckets(s3user.name))
+    }, [s3user]);
+    
     useEffect(() => {
         setData(Object.values(buckets));
     }, [buckets]);
@@ -56,9 +60,7 @@ const BucketsList = ({ t, setActiveItem }) => {
         setData(data.reverse());
     };
 
-    // useEffect(() => setData(_.sortBy(buckets, [column])), [buckets, column]);
-
-    const onConfirm = (bucket) =>  dispatch(deleteBucketAndFetch(userId, bucket.bucket_name));
+    const onConfirm = (bucket) =>  dispatch(deleteBucketAndFetch(userId, `${user.account}/${bucket.name}`));
 
     return (
         <React.Fragment>
@@ -131,14 +133,14 @@ const BucketsList = ({ t, setActiveItem }) => {
                             {data &&
                                 data.map((item, i) => (
                                     <Table.Row key={i}>
-                                        <Table.Cell width={5}>{item.bucket_name}</Table.Cell>
+                                        <Table.Cell width={5}>{item.name}</Table.Cell>
                                         <Table.Cell width={5}textAlign="center">
-                                            {item.storage_size.actual} / {item.storage_size.limit}
-                                            <Bar value={item.storage_size.actual} total={item.storage_size.limit} />
+                                            {item.usage.data_size_mb} / {item.quota.data_size_mb >= 0 ? item.quota.data_size_mb : "∞"}
+                                            {item.quota.data_size_mb >= 0 && <Bar value={item.usage.data_size_mb} total={item.quota.data_size_mb} />}
                                         </Table.Cell>
                                         <Table.Cell width={5} textAlign="center">
-                                            {item.objects.actual} / {item.objects.limit}
-                                            <Bar value={item.objects.actual} total={item.objects.limit} />
+                                            {item.usage.objects} / {item.quota.objects >= 0 ? item.quota.objects : "∞"}
+                                            {item.quota.objects >= 0 && <Bar value={item.usage.objects} total={item.quota.objects} />}
                                         </Table.Cell>
                                         <Table.Cell width={1} collapsing textAlign="right">
                                             <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">
@@ -170,7 +172,7 @@ const BucketsList = ({ t, setActiveItem }) => {
                         <div className="content">
                             <DangerousHTML
                                 html={t('deleteBucketConfirmMessage', {
-                                    name: `<b>${currentItem.bucket_name}</b>`,
+                                    name: `<b>${currentItem.name}</b>`,
                                 })}
                             />
                         </div>

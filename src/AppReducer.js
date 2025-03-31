@@ -13,6 +13,8 @@ const initialState = Immutable({
     s3usersFetchStatus: '',
     s3usersCreateStatus: '',
     s3userFetchStatus: '',
+    accountLimitsFetchStatus: '',
+    accountLimits: [],
     s3user: {},
     bucketsFetchStatus: '',
     buckets: [],
@@ -45,9 +47,23 @@ export const AmazonStore = (state = initialState, action) => {
             s3quotasFetchStatus: 'fulfilled'
         });
     case `${ActionTypes.FETCH_S3_QUOTAS}_REJECTED`:
-        errorMessage = action.payload.response.data.explanation;
+        errorMessage = action.payload.response.data?.explanation;
         return state.set('s3quotasFetchStatus', 'rejected');
 
+    //fetch account quotas limits
+    case `${ActionTypes.FETCH_S3_LIMITS}_PENDING`:
+        return state.set('accountLimitsFetchStatus', 'pending');
+    case `${ActionTypes.FETCH_S3_LIMITS}_FULFILLED`:
+        return Immutable.merge(state, {
+            accountLimits: action.payload,
+            accountLimitsFetchStatus: 'fulfilled'
+        });
+    case `${ActionTypes.FETCH_S3_LIMITS}_REJECTED`:
+        errorMessage = action.payload.response.data?.explanation;
+        return state.set('accountLimitsFetchStatus', 'rejected');
+
+            
+        
     // fetch pools
     case `${ActionTypes.POOLS_FETCH}_PENDING`:
         return state.set('poolsFetchStatus', 'pending');

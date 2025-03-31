@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { Field, reduxForm } from "redux-form";
-import { Modal, Form, Button } from "semantic-ui-react";
+import { Modal, Form, Button, Popup, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { required, number, s3user, email, positiveNumber } from "../../Validaions";
 import CustomField from "../GeneralComponents/customField";
 import CustomSelect from "../GeneralComponents/customSelect";
+import DangerousHTML from 'react-dangerous-html';
 
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues, limits, setLimits }) => {
     const storageTypes = pools.map((item, index) => ({
@@ -16,9 +17,9 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
     const handleStorageTypeChange = (e, newValue) => {
         const checkedPool = pools.find((quota) => quota.pool.id === newValue);
         const newLimits = {
-            storageSizeLimit: checkedPool.stats.data_size_mb.limit - checkedPool.stats.data_size_mb.actual,
-            objectsLimit: checkedPool.stats.objects.limit - checkedPool.stats.objects.actual,
-            bucketsLimit: checkedPool.stats.buckets.limit - checkedPool.stats.buckets.actual,
+            storageSizeLimit: checkedPool.data_size_mb - checkedPool.usage.data_size_mb,
+            objectsLimit: checkedPool.objects - checkedPool.usage.objects,
+            bucketsLimit: checkedPool.buckets - checkedPool.usage.buckets,
         };
         setLimits(newLimits);
     };
@@ -77,7 +78,11 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 <Field
                     placeholder={t("spacePlaceholder")}
                     name="storageSizeLimit"
-                    label={t("space")}
+                    label={!edit ? t('space') : <span>{t('space')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.user.usage.data_size_mb
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
@@ -86,7 +91,11 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 <Field
                     placeholder={t("objPlaceholder")}
                     name="objectsLimit"
-                    label={t("objectsQuota")}
+                    label={!edit ? t('objectsQuota') : <span>{t('objectsQuota')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.user.usage.objects
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}
@@ -95,7 +104,11 @@ const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialV
                 <Field
                     placeholder={t("bucketsPlaceholder")}
                     name="bucketsLimit"
-                    label={t("bucketsQuota")}
+                    label={!edit ? t('bucketsQuota') : <span>{t('bucketsQuota')} <Popup inverted trigger={<Icon color='grey' name='exclamation circle' />} content={<DangerousHTML
+                        html={t('cannotBeLess', {
+                            value: initialValues.user.usage.buckets
+                        })}
+                    />}/></span>}
                     component={CustomField}
                     type="number"
                     validate={[required, number, positiveNumber]}

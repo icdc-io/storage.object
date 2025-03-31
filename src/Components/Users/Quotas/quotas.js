@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import { Grid, Header, Loader, Table } from "semantic-ui-react";
-import QuotasModal from "./quotasModal";
-import { useDispatch, useSelector } from "react-redux";
-import CopyButton from "../../GeneralComponents/copyButton";
-import External from "../../../images/external.svg";
-import { fetchPools, fetchS3quotas } from "../../../AppActions";
 import { rolesWithAdminRights } from "container/roles";
+import PropTypes from "prop-types";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Grid, Header, Loader, Table } from "semantic-ui-react";
+import { fetchPools, fetchS3Limits, fetchS3quotas } from "../../../AppActions";
+import External from "../../../images/external.svg";
+import CopyButton from "../../GeneralComponents/copyButton";
+import QuotasModal from "./quotasModal";
 
 const Quotas = ({ t }) => {
     const dispatch = useDispatch();
@@ -19,8 +19,7 @@ const Quotas = ({ t }) => {
     useEffect(() => {
         dispatch(fetchS3quotas());
         dispatch(fetchPools({ type: "s3" }));
-        //todo add limits
-        // dispatch(fetchS3Limits(user.account))
+        dispatch(fetchS3Limits(user.account));
     }, [dispatch, user]);
 
     const headers = [
@@ -35,7 +34,7 @@ const Quotas = ({ t }) => {
     ];
 
     const showEndpoints = (endpoints) => {
-        let endpointsArray = endpoints.split(",");
+        const endpointsArray = endpoints.split(",");
         return (
             <div className="endpoint">
                 {endpointsArray.map((el, index) => (
@@ -52,7 +51,7 @@ const Quotas = ({ t }) => {
 
     const vendorDomain = window.location.origin.split(".").slice(-2).join(".");
 
-    const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3_swift_object_storage/overview/`;
+    const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3/overview/`;
 
     return (
         <section className="s3quotas-list">
@@ -88,25 +87,25 @@ const Quotas = ({ t }) => {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {quotas.map((item, i) => (
+                    {quotas.map((quota, i) => (
                         <Table.Row key={i}>
                             {headers.map((headerItem, i) =>
                                 headerItem.data === "edit" ? (
                                     <Table.Cell key={i} textAlign="right">
-                                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={item} />}
+                                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={quota} />}
                                     </Table.Cell>
                                 ) : (
                                     <Table.Cell key={i}>
                                         {headerItem.data === "s3_placement_target"
-                                            ? item.pool[headerItem.data]
+                                            ? quota.pool[headerItem.data]
                                             : headerItem.data === "data_size_mb" ||
                                               headerItem.data === "objects" ||
                                               headerItem.data === "users" ||
                                               headerItem.data === "buckets"
-                                            ? `${item.stats[headerItem.data].actual} / ${item.stats[headerItem.data].limit}`
+                                            ? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
                                             : headerItem.data === "public" || headerItem.data === "private"
-                                            ? showEndpoints(item.endpoints[headerItem.data])
-                                            : item[headerItem.data]}
+                                            ? showEndpoints(quota.endpoints[headerItem.data])
+                                            : quota[headerItem.data]}
                                     </Table.Cell>
                                 )
                             )}

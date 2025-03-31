@@ -19,13 +19,11 @@ const EditResModal = ({ t, s3user, name, label }) => {
 
     const userPool = quotas.find((quota) => quota.pool.id === s3user.pool.id);
 
-    const initLimits = {
-        storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - s3user.usage.data_size_mb,
-        objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - s3user.usage.objects,
-        bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - s3user.usage.buckets,
+    const limits = {
+        storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + s3user.user_quota.data_size_mb,
+        objectsLimit: userPool.objects - userPool.usage.objects + s3user.user_quota.objects,
+        bucketsLimit: userPool.buckets - userPool.usage.buckets + s3user.user_quota.buckets,
     };
-
-    const [limits, setLimits] = useState(initLimits);
 
     const mapPropsToApi = (item) => ({
         description: item.description,
@@ -67,7 +65,7 @@ const EditResModal = ({ t, s3user, name, label }) => {
     return (
         userRole !== BILLING_USER_NAME && (
             <React.Fragment>
-                <Button onClick={() => setOpen(true)}>{t('edit')}</Button>
+                <Button onClick={() => setOpen(true)} disabled={s3user.is_locked}>{t('edit')}</Button>
                 <Modal open={open} size="tiny" onSubmit={onSubmit}>
                     <Header content={label} />
                     <Modal.Content>

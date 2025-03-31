@@ -22,6 +22,17 @@ const notificationOptions = { position: 'top-right', hideAfter: 7 };
 const errorNotification = (msg) => cogoToast.error(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].error + msg, notificationOptions);
 const successNotification = (msg) => cogoToast.success(notificationMessages[localStorage.getItem('icdc-lang') || 'en'].success + msg, notificationOptions);
 
+const handleErrorsMessages = error => {
+    let errorMessage = error.response.data.message;
+    const errors = error.response.data.errors;
+
+    if(errors && Object.keys(errors).length > 0) {
+
+        errorMessage = Object.values(errors).join(" ")
+    }
+    errorNotification(errorMessage)};
+
+
 // const checkErrorCodes = (item) => {
 //     switch (item.status) {
 //     case 422:
@@ -105,7 +116,7 @@ export const generateKeys = (user_id) => dispatch => {
     response.then(() => {
         dispatch(fetchS3User(user_id));
         successNotification('');
-    }, error => errorNotification(error.response.data));
+    }, handleErrorsMessages);
 }
 
 //S3_QUOTAS
@@ -116,7 +127,7 @@ export const createS3quotasActionAndFetch = (payload) => {
         response.then(() => {
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, handleErrorsMessages);
     };
 };
 
@@ -126,34 +137,11 @@ export const editS3quotaAndFetch = (quota_id, payload) => {
 
         response.then(() => {
             successNotification('');
-        }, error => errorNotification(error.response.data.message));
+        }, handleErrorsMessages);
     };
 };
 
 //S3_USER
-// export const createS3userAndFetch = (payload) => {
-//     return (dispatch) => {
-//         const response = dispatch(createS3user(payload));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.message));
-//     };
-// };
-
-// export const editS3userAndFetch = (user_id, payload) => {
-//     return (dispatch) => {
-//         const response = dispatch(editS3user(user_id, payload));
-
-//         response.then(() => {
-//             dispatch(fetchS3Users());
-//             dispatch(fetchS3quotas());
-//             successNotification('');
-//         }, error => errorNotification(error.response.data.message));
-//     };
-// };
 
 export const deleteS3userAndFetch = (user_id) => {
     return (dispatch) => {
@@ -163,7 +151,7 @@ export const deleteS3userAndFetch = (user_id) => {
             dispatch(fetchS3Users());
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, handleErrorsMessages);
     };
 };
 
@@ -175,7 +163,7 @@ export const actionAndFetch = (action, payload) => {
             dispatch(fetchS3Users());
             dispatch(fetchS3quotas());
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, handleErrorsMessages);
     };
 };
 
@@ -185,65 +173,62 @@ export const lockS3user = (user_id, payload) => {
 
         response.then(() => {
             successNotification('');
-        }, error => errorNotification(error.response.data.message));
+        }, handleErrorsMessages);
     };
 };
 
 // buckets actions
 
-export const fetchBuckets = (user_id) => ({
+export const fetchBuckets = (username) => ({
     type: ActionTypes.BUCKETS_FETCH,
-    payload: fetchData(`${ActionTypes.s3UserUrl()}/${user_id}/buckets`)
+    payload: fetchData(`${ActionTypes.bucketsUrl()}?user_name=${username}`)
 });
 
-export const createBucket = (user_id, payload) => ({
+export const createBucket = (payload) => ({
     type: ActionTypes.CREATE_BUCKET,
-    payload: createData(`${ActionTypes.s3UserUrl()}/${user_id}/buckets`, payload)
+    payload: createData(ActionTypes.bucketsUrl(), payload)
 });
 
-export const deleteBucket = (bucket_name) => ({
+export const deleteBucket = (path) => ({
     type: ActionTypes.DELETE_BUCKET,
-    payload: deleteData(`${ActionTypes.bucketsUrl()}?bucket_name=${bucket_name}`, {})
+    payload: deleteData(`${ActionTypes.bucketsUrl()}/${path}`, {})
 });
 
-export const editBucket = (payload) => ({
-    type: ActionTypes.DELETE_BUCKET,
-    payload: updateData(`${ActionTypes.bucketsUrl()}?bucket_name=${payload.bucket_name}`, payload)
+export const editBucket = (path, payload) => ({
+    type: ActionTypes.EDIT_BUCKET,
+    payload: updateData(`${ActionTypes.bucketsUrl()}/${path}`, payload)
 });
 
 export const createBucketAndFetch = (user_id, payload) => {
     return (dispatch) => {
-        const response = dispatch(createBucket(user_id, payload));
+        const response = dispatch(createBucket(payload));
 
         response.then(() => {
-            dispatch(fetchBuckets(user_id));
             dispatch(fetchS3User(user_id))
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, handleErrorsMessages);
     };
 };
 
-export const editBucketAndFetch = (user_id, payload) => {
+export const editBucketAndFetch = (user_id, path, payload) => {
     return (dispatch) => {
-        const response = dispatch(editBucket(payload));
+        const response = dispatch(editBucket(path, payload));
 
         response.then(() => {
-            dispatch(fetchBuckets(user_id));
             dispatch(fetchS3User(user_id))
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, handleErrorsMessages);
     };
 };
 
-export const deleteBucketAndFetch = (user_id, options) => {
+export const deleteBucketAndFetch = (user_id, path) => {
     return (dispatch) => {
-        const response = dispatch(deleteBucket(options));
+        const response = dispatch(deleteBucket(path));
 
         response.then(() => {
-            dispatch(fetchBuckets(user_id));
             dispatch(fetchS3User(user_id))
             successNotification('');
-        }, error => errorNotification(error.response.data));
+        }, handleErrorsMessages);
     };
 };
 

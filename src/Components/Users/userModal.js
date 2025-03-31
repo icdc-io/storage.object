@@ -12,6 +12,7 @@ import { rolesWithAdminRights } from "container/roles";
 
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
+    const accountName = useSelector((state) => state.host.user.account);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const currentOwner = useSelector((state) => state.host.user.email);
 
@@ -22,29 +23,21 @@ const UserModal = ({ user, edit, t }) => {
         storageSizeLimit: "1024",
         bucketsLimit: "5",
         objectsLimit: "5",
-        storageType: quotas[0].pool.id,
+        storageType: "",
     };
 
-    const initLimits = {
-        storageSizeLimit: quotas[0].stats.data_size_mb.limit - quotas[0].stats.data_size_mb.actual,
-        objectsLimit: quotas[0].stats.objects.limit - quotas[0].stats.objects.actual,
-        bucketsLimit: quotas[0].stats.buckets.limit - quotas[0].stats.buckets.actual,
-    };
-
-    const [limits, setLimits] = useState(initLimits);
+    const [limits, setLimits] = useState({});
 
     useEffect(() => {
         if (edit) {
             const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
             setLimits({
-                storageSizeLimit: userPool.stats.data_size_mb.limit - userPool.stats.data_size_mb.actual - user.usage.data_size_mb,
-                objectsLimit: userPool.stats.objects.limit - userPool.stats.objects.actual - user.usage.objects,
-                bucketsLimit: userPool.stats.buckets.limit - userPool.stats.buckets.actual - user.usage.buckets,
+                storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + user.user_quota.data_size_mb,
+                objectsLimit: userPool.objects - userPool.usage.objects + user.user_quota.objects,
+                bucketsLimit: userPool.buckets - userPool.usage.buckets + user.user_quota.buckets,
             });
-        } else {
-            setLimits(initLimits);
         }
-    }, [edit]);
+    }, [edit, user, open]);
 
     const mapPropsToApi = (item, edit) =>
         edit
@@ -62,6 +55,7 @@ const UserModal = ({ user, edit, t }) => {
                   description: item.description,
                   owner: item.owner || currentOwner,
                   pool_id: item.storageType,
+                  account_name: accountName,
                   quota: {
                       data_size_mb: +item.storageSizeLimit,
                       objects: +item.objectsLimit,
@@ -77,11 +71,13 @@ const UserModal = ({ user, edit, t }) => {
         objectsLimit: item.user_quota.objects || 0,
         bucketsLimit: item.user_quota.buckets || 0,
         owner: item.owner,
+        user: user,
     });
 
     const handleClose = useCallback(() => {
         setOpen(false);
         dispatch(reset("createS3user"));
+        setLimits({});
     }, [setOpen, dispatch]);
 
     const onSubmit = useCallback(
@@ -89,7 +85,7 @@ const UserModal = ({ user, edit, t }) => {
             handleClose();
             let payload = mapPropsToApi(values, edit);
             if (edit) {
-                dispatch(actionAndFetch(editS3user, {user_id: user.id, payload}));
+                dispatch(actionAndFetch(editS3user, { user_id: user.id, payload }));
             } else {
                 dispatch(actionAndFetch(createS3user, payload));
             }
@@ -103,7 +99,7 @@ const UserModal = ({ user, edit, t }) => {
         userRole !== BILLING_USER_NAME && (
             <React.Fragment>
                 {edit ? (
-                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} />
+                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} disabled={user.is_locked} />
                 ) : (
                     <Button
                         onClick={() => setOpen(true)}
