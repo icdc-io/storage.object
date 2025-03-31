@@ -1,6 +1,6 @@
 export const mapPoolToDiskTypeOptions = (poolsInfo) => ({
   key: poolsInfo.id,
-  text: poolsInfo.s3_placement_target,
+  text: poolsInfo.name,
   value: poolsInfo.id,
 });
 

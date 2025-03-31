@@ -23,7 +23,7 @@ const Quotas = ({ t }) => {
     }, [dispatch, user]);
 
     const headers = [
-        { title: "storageType", data: "s3_placement_target", width: 2 },
+        { title: "storageType", data: "name", width: 2 },
         { title: "objects", data: "objects", width: 2 },
         { title: "space", data: "data_size_mb", width: 2 },
         { title: "s3swiftUsers", data: "users", width: 2 },
@@ -52,6 +52,64 @@ const Quotas = ({ t }) => {
     const vendorDomain = window.location.origin.split(".").slice(-2).join(".");
 
     const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3/overview/`;
+
+    const getContent = () => {
+      if (s3quotasFetchStatus === "pending") return (
+          <Table.Row>
+              <Table.Cell className="s3quotas-empty-cell" colSpan="8">
+                  <div className="s3quotas-empty">
+                      <Loader active inline="centered" />
+                  </div>
+              </Table.Cell>
+          </Table.Row>
+      )
+
+      if (s3quotasFetchStatus === "rejected") return (
+        <Table.Row>
+            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
+                <div className="s3quotas-empty">
+                  <p>{t("wrong")}</p>
+                </div>
+            </Table.Cell>
+        </Table.Row>
+      )
+
+      if (quotas.length === 0) return (
+        <Table.Row>
+            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
+                <div className="s3quotas-empty">
+                    <p>{t("quotasEmpty")}</p>
+                    {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
+                </div>
+            </Table.Cell>
+        </Table.Row>
+      )
+
+      return quotas.map((quota, i) => (
+        <Table.Row key={i}>
+            {headers.map((headerItem, i) =>
+                headerItem.data === "edit" ? (
+                    <Table.Cell key={i} textAlign="right">
+                        {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={quota} />}
+                    </Table.Cell>
+                ) : (
+                    <Table.Cell key={i}>
+                        {headerItem.data === "name"
+                            ? quota.pool[headerItem.data]
+                            : headerItem.data === "data_size_mb" ||
+                              headerItem.data === "objects" ||
+                              headerItem.data === "users" ||
+                              headerItem.data === "buckets"
+                            ? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
+                            : headerItem.data === "public" || headerItem.data === "private"
+                            ? showEndpoints(quota.endpoints[headerItem.data])
+                            : quota[headerItem.data]}
+                    </Table.Cell>
+                )
+            )}
+        </Table.Row>
+      ))
+    };
 
     return (
         <section className="s3quotas-list">
@@ -87,49 +145,7 @@ const Quotas = ({ t }) => {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {quotas.map((quota, i) => (
-                        <Table.Row key={i}>
-                            {headers.map((headerItem, i) =>
-                                headerItem.data === "edit" ? (
-                                    <Table.Cell key={i} textAlign="right">
-                                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={quota} />}
-                                    </Table.Cell>
-                                ) : (
-                                    <Table.Cell key={i}>
-                                        {headerItem.data === "s3_placement_target"
-                                            ? quota.pool[headerItem.data]
-                                            : headerItem.data === "data_size_mb" ||
-                                              headerItem.data === "objects" ||
-                                              headerItem.data === "users" ||
-                                              headerItem.data === "buckets"
-                                            ? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
-                                            : headerItem.data === "public" || headerItem.data === "private"
-                                            ? showEndpoints(quota.endpoints[headerItem.data])
-                                            : quota[headerItem.data]}
-                                    </Table.Cell>
-                                )
-                            )}
-                        </Table.Row>
-                    ))}
-                    {s3quotasFetchStatus === "pending" && (
-                        <Table.Row>
-                            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
-                                <div className="s3quotas-empty">
-                                    <Loader active inline="centered" />
-                                </div>
-                            </Table.Cell>
-                        </Table.Row>
-                    )}
-                    {s3quotasFetchStatus !== "pending" && quotas.length === 0 && (
-                        <Table.Row>
-                            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
-                                <div className="s3quotas-empty">
-                                    <p>{t("quotasEmpty")}</p>
-                                    {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
-                                </div>
-                            </Table.Cell>
-                        </Table.Row>
-                    )}
+                  {getContent()}
                 </Table.Body>
             </Table>
         </section>

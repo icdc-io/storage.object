@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { Table, Progress, Dropdown, Icon, Confirm, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
-import UserModal from './userModal';
+import PropTypes from 'prop-types';
+import React, { useState, useCallback, useEffect } from 'react';
 import DangerousHTML from 'react-dangerous-html';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
+import { Confirm, Dropdown, Icon, Popup, Progress, Table } from 'semantic-ui-react';
 import { actionAndFetch, deleteS3user, lockS3user } from '../../AppActions';
 import { BILLING_USER_NAME, EMPTY_VALUE } from '../../AppConstants';
 import CopyButton from '../GeneralComponents/copyButton';
+import UserModal from './userModal';
 
 const Bar = ({ value, total }) => (
     <Progress
@@ -153,7 +153,7 @@ const UsersList = ({ t, items }) => {
                                         ) : <span className='text-overflow'>{item.description}</span>}
                                     </div>
                                 </Table.Cell>
-                                <Table.Cell>{item.pool.s3_placement_target || EMPTY_VALUE}</Table.Cell>
+                                <Table.Cell>{item.pool.name || EMPTY_VALUE}</Table.Cell>
                                 {isData ? (
                                     <Table.Cell textAlign="center">
                                         {item.usage.data_size_mb} / {item.user_quota.data_size_mb}
