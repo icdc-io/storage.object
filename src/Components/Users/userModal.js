@@ -30,7 +30,6 @@ const UserModal = ({ user, edit, t }) => {
     useEffect(() => {
         if (edit) {
             const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
-            console.log(userPool)
             if (!userPool) return
             setLimits({
                 storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + user.user_quota.data_size_mb,
