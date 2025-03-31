@@ -90,7 +90,7 @@ const Quotas = ({ t }) => {
             {headers.map((headerItem, i) =>
                 headerItem.data === "edit" ? (
                     <Table.Cell key={i} textAlign="right">
-                        {user.role === "admin" && <QuotasModal t={t} key={i} edit quota={quota} />}
+                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={quota} />}
                     </Table.Cell>
                 ) : (
                     <Table.Cell key={i}>
