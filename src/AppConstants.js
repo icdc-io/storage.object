@@ -42,7 +42,5 @@ export const intersperse = (arr, sep) => {
         return [];
     }
 
-    return arr.slice(1).reduce(function(xs, x) {
-        return xs.concat([sep, x]);
-    }, [arr[0]]);
+    return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
 };
