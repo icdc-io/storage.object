@@ -1,4 +1,4 @@
-import { rolesWithAdminRights } from "container/roles";
+import { OPERATOR, rolesWithAdminRights } from "container/roles";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +24,7 @@ const Quotas = ({ t }) => {
 
     const headers = [
         { title: "storageType", data: "name", width: 2 },
+        user.role === OPERATOR && { title: "account", data: "account_name", width: 1 },
         { title: "objects", data: "objects", width: 2 },
         { title: "space", data: "data_size_mb", width: 2 },
         { title: "s3swiftUsers", data: "users", width: 2 },
@@ -31,7 +32,7 @@ const Quotas = ({ t }) => {
         { title: "publicEndpoints", data: "public", width: 3 },
         { title: "privateEndpoints", data: "private", width: 3 },
         { title: "", data: "edit", width: 1 },
-    ];
+    ].filter(Boolean);
 
     const showEndpoints = (endpoints) => {
         const endpointsArray = endpoints.split(",");
