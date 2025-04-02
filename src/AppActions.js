@@ -181,7 +181,7 @@ export const lockS3user = (user_id, payload) => {
 
 export const fetchBuckets = (username) => ({
     type: ActionTypes.BUCKETS_FETCH,
-    payload: fetchData(`${ActionTypes.bucketsUrl()}?filter[user_name]=${username}`)
+    payload: fetchData(`${ActionTypes.bucketsUrl()}?filter[user.name]=${username}`)
 });
 
 export const createBucket = (payload) => ({
