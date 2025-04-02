@@ -1,6 +1,6 @@
-import * as ActionTypes from './AppConstants';
-import { fetchData, createData, deleteData, updateData } from 'container/Api';
 import cogoToast from 'cogo-toast';
+import { createData, deleteData, fetchData, updateData } from 'container/Api';
+import * as ActionTypes from './AppConstants';
 
 const notificationMessages = {
     ru: {
@@ -181,7 +181,7 @@ export const lockS3user = (user_id, payload) => {
 
 export const fetchBuckets = (username) => ({
     type: ActionTypes.BUCKETS_FETCH,
-    payload: fetchData(`${ActionTypes.bucketsUrl()}?user_name=${username}`)
+    payload: fetchData(`${ActionTypes.bucketsUrl()}?filter[user_name]=${username}`)
 });
 
 export const createBucket = (payload) => ({
