@@ -8,6 +8,11 @@ import External from "../../../images/external.svg";
 import CopyButton from "../../GeneralComponents/copyButton";
 import QuotasModal from "./quotasModal";
 
+const getPropByString = (obj, path) => {
+  if (!obj || !path) return null;
+  return path.split(".").reduce((acc, key) => acc?.[key], obj)
+}
+
 const Quotas = ({ t }) => {
     const dispatch = useDispatch();
 
@@ -23,8 +28,8 @@ const Quotas = ({ t }) => {
     }, [dispatch, user]);
 
     const headers = [
-        { title: "storageType", data: "name", width: 2 },
-        user.role === OPERATOR && { title: "account", data: "account_name", width: 1 },
+        { title: "storageType", data: "pool.name", width: 2 },
+        user.role === OPERATOR && { title: "account", data: "account.name", width: 1 },
         { title: "objects", data: "objects", width: 2 },
         { title: "space", data: "data_size_mb", width: 2 },
         { title: "s3swiftUsers", data: "users", width: 2 },
@@ -95,16 +100,14 @@ const Quotas = ({ t }) => {
                     </Table.Cell>
                 ) : (
                     <Table.Cell key={i}>
-                        {headerItem.data === "name"
-                            ? quota.pool[headerItem.data]
-                            : headerItem.data === "data_size_mb" ||
+                        {headerItem.data === "data_size_mb" ||
                               headerItem.data === "objects" ||
                               headerItem.data === "users" ||
                               headerItem.data === "buckets"
                             ? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
                             : headerItem.data === "public" || headerItem.data === "private"
                             ? showEndpoints(quota.endpoints[headerItem.data])
-                            : quota[headerItem.data]}
+                            : getPropByString(quota, headerItem.data)}
                     </Table.Cell>
                 )
             )}
