@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import DangerousHTML from 'react-dangerous-html';
+import { useSelector } from "react-redux";
 import { Field, reduxForm } from "redux-form";
 import { Button, Form, Icon, Modal, Popup } from "semantic-ui-react";
 import { email, number, positiveNumber, required, s3user } from "../../Validaions";
@@ -8,7 +9,9 @@ import CustomField from "../GeneralComponents/customField";
 import CustomSelect from "../GeneralComponents/customSelect";
 
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues, limits, setLimits }) => {
-    const storageTypes = pools.map((item, index) => ({
+    const currentAccount = useSelector((state) => state.host.user.account);
+  
+    const storageTypes = pools.filter(item => item.account.name === currentAccount).map((item, index) => ({
         key: index,
         text: item.pool.name,
         value: item.pool.id,
