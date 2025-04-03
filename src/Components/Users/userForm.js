@@ -10,15 +10,16 @@ import CustomSelect from "../GeneralComponents/customSelect";
 
 const UserForm = ({ t, handleClose, handleSubmit, edit, isAdmin, pools, initialValues, limits, setLimits }) => {
     const currentAccount = useSelector((state) => state.host.user.account);
+    const currentPool = pools.filter(item => item.account.name === currentAccount);
   
-    const storageTypes = pools.filter(item => item.account.name === currentAccount).map((item, index) => ({
+    const storageTypes = currentPool.map((item, index) => ({
         key: index,
         text: item.pool.name,
         value: item.pool.id,
     }));
 
     const handleStorageTypeChange = (e, newValue) => {
-        const checkedPool = pools.find((quota) => quota.pool.id === newValue);
+        const checkedPool = currentPool.find((quota) => quota.pool.id === newValue);
         const newLimits = {
             storageSizeLimit: checkedPool.data_size_mb - checkedPool.usage.data_size_mb,
             objectsLimit: checkedPool.objects - checkedPool.usage.objects,

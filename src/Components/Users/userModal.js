@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 
+import { rolesWithAdminRights } from "container/roles";
 import PropTypes from "prop-types";
 import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,13 +9,13 @@ import { Button, Dropdown, Header, Modal } from "semantic-ui-react";
 import { actionAndFetch, createS3user, editS3user, editS3userAndFetch } from "../../AppActions";
 import { BILLING_USER_NAME } from "../../AppConstants";
 import UserForm from "./userForm";
-import { rolesWithAdminRights } from "container/roles";
 
 const UserModal = ({ user, edit, t }) => {
     const userRole = useSelector((state) => state.host.user.role);
     const accountName = useSelector((state) => state.host.user.account);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
     const currentOwner = useSelector((state) => state.host.user.email);
+    const currentPool = quotas.filter(item => item.account.name === accountName);
 
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
@@ -30,7 +31,7 @@ const UserModal = ({ user, edit, t }) => {
 
     useEffect(() => {
         if (edit) {
-            const userPool = quotas.find((quota) => quota.pool.id === user.pool.id);
+            const userPool = currentPool.find((quota) => quota.pool.id === user.pool.id);
             if (!userPool) return
             setLimits({
                 storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + user.user_quota.data_size_mb,
