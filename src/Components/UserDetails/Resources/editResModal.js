@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
 
+import PropTypes from 'prop-types';
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Modal, Header, Button, Icon } from 'semantic-ui-react';
 import { reset } from 'redux-form';
-import PropTypes from 'prop-types';
+import { Button, Header, Icon, Modal } from 'semantic-ui-react';
 import { actionAndFetch, editS3user } from '../../../AppActions';
 import { BILLING_USER_NAME } from '../../../AppConstants';
 import EditResForm from './editResForm';
@@ -14,10 +14,11 @@ const EditResModal = ({ t, s3user, name, label }) => {
     const [open, setOpen] = useState(false);
 
     const userRole = useSelector((state) => state.host.user.role);
+    const userAccount = useSelector((state) => state.host.user.account);
     const currentOwner = useSelector((state) => state.host.user.email);
     const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 
-    const userPool = quotas.find((quota) => quota.pool.id === s3user.pool.id);
+    const userPool = quotas.filter(quota => quota.account.name === userAccount).find((quota) => quota.pool.id === s3user.pool.id);
 
     const limits = {
         storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + s3user.user_quota.data_size_mb,
@@ -54,7 +55,7 @@ const EditResModal = ({ t, s3user, name, label }) => {
         (values) => {
             handleClose();
 
-            let payload = mapPropsToApi(values);
+            const payload = mapPropsToApi(values);
 
             dispatch(actionAndFetch(editS3user, {user_id: s3user.id, payload}));
             dispatch(reset('editResForm'));
