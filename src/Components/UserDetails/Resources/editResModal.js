@@ -20,10 +20,14 @@ const EditResModal = ({ t, s3user, name, label }) => {
 
     const userPool = quotas.filter(quota => quota.account.name === userAccount).find((quota) => quota.pool.id === s3user.pool.id);
 
-    const limits = {
+    const limits = userPool ? {
         storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + s3user.user_quota.data_size_mb,
         objectsLimit: userPool.objects - userPool.usage.objects + s3user.user_quota.objects,
         bucketsLimit: userPool.buckets - userPool.usage.buckets + s3user.user_quota.buckets,
+    } : {
+      storageSizeLimit: 0,
+      objectsLimit: 0,
+      bucketsLimit: 0,
     };
 
     const mapPropsToApi = (item) => ({
