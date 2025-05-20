@@ -1,106 +1,112 @@
-/* eslint-disable camelcase */
-import React, { useState, useCallback, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Modal, Header, Button, Dropdown } from "semantic-ui-react";
-import { reset } from "redux-form";
-import PropTypes from "prop-types";
+import { Button } from "container/Button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "container/Modal";
+import React, {
+	useState,
+	useEffect,
+	useImperativeHandle,
+	forwardRef,
+} from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { createBucketAndFetch, editBucketAndFetch } from "../../../AppActions";
-import { BILLING_USER_NAME } from "../../../AppConstants";
 import BucketForm from "./bucketForm";
 
 const mapApiToProps = (item) => ({
-    name: item.name,
-    storageSizeLimit: item.quota.data_size_mb < 0 ? "" : item.quota.data_size_mb,
-    objectsLimit: item.quota.objects < 0 ? "" : item.quota.objects,
+	name: item.name,
+	data_size_mb: item.quota.data_size_mb < 0 ? "" : item.quota.data_size_mb,
+	objects: item.quota.objects < 0 ? "" : item.quota.objects,
 });
 
-const BucketModal = ({ t, bucket, edit, s3user }) => {
-    const dispatch = useDispatch();
-    const userRole = useSelector((state) => state.host.user.role);
-    const userAccount = useSelector((state) => state.host.user.account);
+const BucketModal = (_props, ref) => {
+	const { t } = useTranslation();
+	const dispatch = useDispatch();
+	const userAccount = useSelector((state) => state.host.user.account);
+	const s3user = useSelector((state) => state.AmazonStore.s3user);
 
-    const [open, setOpen] = useState(false);
-    const [limits, setLimits] = useState({});
+	const [limits, setLimits] = useState({});
+	const [bucket, setBucket] = useState();
+	const [open, setOpen] = useState(false);
+	const edit = !!bucket;
 
-    useEffect(() => {
-        setLimits(edit ? {
-            space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb + bucket.usage.data_size_mb,
-            objects: s3user.user_quota.objects - s3user.usage.objects + bucket.usage.objects,  
-        } : {
-            space: s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
-            objects: s3user.user_quota.objects - s3user.usage.objects,
-        })
-    }, [edit, open, s3user, bucket])
+	useImperativeHandle(ref, () => ({
+		handleClick: (instance) => {
+			setBucket(instance);
+			setOpen(true);
+		},
+	}));
 
-    const mapPropsToApi = (item) => ({
-        quota: {
-            data_size_mb: !item.storageSizeLimit ? -1 : +item.storageSizeLimit,
-            objects: !item.objectsLimit ? -1 : +item.objectsLimit,
-        },
-        user_name: s3user.name,
-    });
+	useEffect(() => {
+		setLimits(
+			bucket
+				? {
+						data_size_mb:
+							s3user.user_quota.data_size_mb -
+							s3user.usage.data_size_mb +
+							bucket.usage.data_size_mb,
+						objects:
+							s3user.user_quota.objects -
+							s3user.usage.objects +
+							bucket.usage.objects,
+					}
+				: {
+						data_size_mb:
+							s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
+						objects: s3user.user_quota.objects - s3user.usage.objects,
+					},
+		);
+	}, [s3user, bucket]);
 
-    const handleClose = useCallback(() => {
-        setOpen(false);
-        dispatch(reset("createBucket"));
-        setLimits({})
-    }, [setOpen, dispatch]);
+	const mapPropsToApi = (item) => ({
+		quota: {
+			data_size_mb: !item.data_size_mb ? -1 : +item.data_size_mb,
+			objects: !item.objects ? -1 : +item.objects,
+		},
+		user_name: s3user.name,
+	});
 
-    const onSubmit = useCallback(
-        (values) => {
-            handleClose();
-            
-            let payload = mapPropsToApi(values);
+	const handleClose = () => {
+		setOpen(false);
+		// dispatch(reset("createBucket"));
+		setLimits({});
+	};
 
-            if (edit) {
-                dispatch(
-                    editBucketAndFetch(s3user.id, `${userAccount}/${bucket.name}`, payload)
-                );
-            } else {
-                dispatch(createBucketAndFetch(s3user.id, {...payload, name: values.name}));
-            }
+	const onSubmit = (values) => {
+		const payload = mapPropsToApi(values);
+		if (edit) {
+			dispatch(
+				editBucketAndFetch(s3user.id, `${userAccount}/${bucket.name}`, payload),
+			).then(handleClose);
+		} else {
+			dispatch(
+				createBucketAndFetch(s3user.id, { ...payload, name: values.name }),
+			).then(handleClose);
+		}
 
-            dispatch(reset("createBucket"));
-        },
-        [handleClose, edit, s3user, dispatch]
-    );
+		// dispatch(reset("createBucket"));
+	};
 
-    return (
-        userRole !== BILLING_USER_NAME && (
-            <React.Fragment>
-                {edit ? (
-                    <Dropdown.Item icon="pencil alternate" text={t("edit")} onClick={() => setOpen(true)} disabled={s3user.is_locked} />
-                ) : (
-                    <Button onClick={() => setOpen(true)} content={t("addBucket")} icon="plus" labelPosition="left" primary disabled={s3user.is_locked} />
-                )}
-                <Modal open={open} size="tiny" onSubmit={onSubmit}>
-                    <Header content={edit ? t("bucketEdit") : t("createBucket")} />
-                    <Modal.Content>
-                        {edit ? (
-                            <BucketForm
-                                t={t}
-                                open={open}
-                                handleClose={handleClose}
-                                onSubmit={onSubmit}
-                                initialValues={mapApiToProps(bucket)}
-                                edit={edit}
-                                limits={limits}
-                            />
-                        ) : (
-                            <BucketForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} limits={limits} />
-                        )}
-                    </Modal.Content>
-                </Modal>
-            </React.Fragment>
-        )
-    );
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>
+						{edit ? t("bucketEdit") : t("createBucket")}
+					</DialogTitle>
+				</DialogHeader>
+				<BucketForm
+					handleClose={handleClose}
+					onSubmit={onSubmit}
+					initialValues={edit ? mapApiToProps(bucket) : undefined}
+					limits={limits}
+				/>
+			</DialogContent>
+		</Dialog>
+	);
 };
 
-BucketModal.propTypes = {
-    bucket: PropTypes.object,
-    edit: PropTypes.bool,
-    t: PropTypes.func,
-    s3user: PropTypes.object,
-};
-
-export default BucketModal;
+export default forwardRef(BucketModal);

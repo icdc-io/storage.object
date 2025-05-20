@@ -1,163 +1,220 @@
-import { OPERATOR, rolesWithAdminRights } from "container/roles";
-import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import { Button } from "container/Button";
+import CopyButton from "container/CopyButton";
+import ErrorScreen from "container/ErrorScreen";
+import Loader from "container/Loader";
+import Popup from "container/Popup";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "container/Table";
+import { OPERATOR, isAdminRights } from "container/roleUtils";
+import { CircleHelp } from "lucide-react";
+import React, { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Grid, Header, Loader, Table } from "semantic-ui-react";
 import { fetchPools, fetchS3Limits, fetchS3quotas } from "../../../AppActions";
 import External from "../../../images/external.svg";
-import CopyButton from "../../GeneralComponents/copyButton";
+import { filterFreeDiskTypes } from "../../../utils/filterFreeQuotas";
+import {
+	mapPoolToDiskTypeOptions,
+	mapQuotasToDiskType,
+} from "../../../utils/mappers";
 import QuotasModal from "./quotasModal";
 
 const getPropByString = (obj, path) => {
-  if (!obj || !path) return null;
-  return path.split(".").reduce((acc, key) => acc?.[key], obj)
-}
-
-const Quotas = ({ t }) => {
-    const dispatch = useDispatch();
-
-    const user = useSelector((state) => state.host.user);
-    const lang = useSelector((state) => state.host.lang);
-    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
-    const s3quotasFetchStatus = useSelector((state) => state.AmazonStore.s3quotasFetchStatus);
-
-    useEffect(() => {
-        dispatch(fetchS3quotas());
-        dispatch(fetchPools({ type: "s3" }));
-        dispatch(fetchS3Limits(user.account));
-    }, [dispatch, user]);
-
-    const headers = [
-        { title: "storageType", data: "pool.name", width: 2 },
-        user.role === OPERATOR && { title: "account", data: "account.name", width: 1 },
-        { title: "objects", data: "objects", width: 2 },
-        { title: "space", data: "data_size_mb", width: 2 },
-        { title: "s3swiftUsers", data: "users", width: 2 },
-        { title: "buckets", data: "buckets", width: 2 },
-        { title: "publicEndpoints", data: "public", width: 3 },
-        { title: "privateEndpoints", data: "private", width: 3 },
-        { title: "", data: "edit", width: 1 },
-    ].filter(Boolean);
-
-    const showEndpoints = (endpoints) => {
-        const endpointsArray = endpoints.split(",");
-        return (
-            <div className="endpoint">
-                {endpointsArray.map((el, index) => (
-                    <div key={index}>
-                        <a href={el} target="blank">
-                            {el}
-                        </a>
-                        <CopyButton content={el} />
-                    </div>
-                ))}
-            </div>
-        );
-    };
-
-    const vendorDomain = window.location.origin.split(".").slice(-2).join(".");
-
-    const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3/overview/`;
-
-    const getContent = () => {
-      if (s3quotasFetchStatus === "pending") return (
-          <Table.Row>
-              <Table.Cell className="s3quotas-empty-cell" colSpan="8">
-                  <div className="s3quotas-empty">
-                      <Loader active inline="centered" />
-                  </div>
-              </Table.Cell>
-          </Table.Row>
-      )
-
-      if (s3quotasFetchStatus === "rejected") return (
-        <Table.Row>
-            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
-                <div className="s3quotas-empty">
-                  <p>{t("wrong")}</p>
-                </div>
-            </Table.Cell>
-        </Table.Row>
-      )
-
-      if (quotas.length === 0) return (
-        <Table.Row>
-            <Table.Cell className="s3quotas-empty-cell" colSpan="8">
-                <div className="s3quotas-empty">
-                    <p>{t("quotasEmpty")}</p>
-                    {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
-                </div>
-            </Table.Cell>
-        </Table.Row>
-      )
-
-      return quotas.map((quota, i) => (
-        <Table.Row key={i}>
-            {headers.map((headerItem, i) =>
-                headerItem.data === "edit" ? (
-                    <Table.Cell key={i} textAlign="right">
-                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} key={i} edit quota={quota} />}
-                    </Table.Cell>
-                ) : (
-                    <Table.Cell key={i}>
-                        {headerItem.data === "data_size_mb" ||
-                              headerItem.data === "objects" ||
-                              headerItem.data === "users" ||
-                              headerItem.data === "buckets"
-                            ? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
-                            : headerItem.data === "public" || headerItem.data === "private"
-                            ? showEndpoints(quota.endpoints[headerItem.data])
-                            : getPropByString(quota, headerItem.data)}
-                    </Table.Cell>
-                )
-            )}
-        </Table.Row>
-      ))
-    };
-
-    return (
-        <section className="s3quotas-list">
-            <Grid>
-                <Grid.Row>
-                    <Grid.Column verticalAlign="middle" width={4}>
-                        <Header as="h2">{t("quotas")}</Header>
-                    </Grid.Column>
-                    <Grid.Column textAlign="right" width={12}>
-                        {rolesWithAdminRights.includes(user.role) && <QuotasModal t={t} />}
-                    </Grid.Column>
-                </Grid.Row>
-                <Grid.Row className="quotas-description">
-                    <Grid.Column verticalAlign="middle" width={16}>
-                        <p>
-                            {t("quotasDescription")}{" "}
-                            <a href={HELP_LINK} target="_blank" rel="noreferrer">
-                                {t("howToConnect")} <img src={External} alt="External link" />
-                            </a>
-                        </p>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
-
-            <Table className="quotas-list">
-                <Table.Header>
-                    <Table.Row>
-                        {headers.map((item, i) => (
-                            <Table.HeaderCell key={i} width={item.width}>
-                                {t(item.title)}
-                            </Table.HeaderCell>
-                        ))}
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {getContent()}
-                </Table.Body>
-            </Table>
-        </section>
-    );
+	if (!obj || !path) return null;
+	return path.split(".").reduce((acc, key) => acc?.[key], obj);
 };
 
-Quotas.propTypes = {
-    t: PropTypes.func,
+const Quotas = () => {
+	const { t } = useTranslation();
+	const dispatch = useDispatch();
+	const modalRef = useRef();
+
+	const user = useSelector((state) => state.host.user);
+	const lang = useSelector((state) => state.host.lang);
+	const pools = useSelector((state) => state.AmazonStore.pools);
+	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+	const s3quotasFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3quotasFetchStatus,
+	);
+
+	useEffect(() => {
+		dispatch(fetchS3quotas());
+		dispatch(fetchPools({ type: "s3" }));
+		dispatch(fetchS3Limits(user.account));
+	}, [dispatch, user]);
+
+	const onModalOpen = (instance) => () => {
+		if (modalRef.current) {
+			modalRef.current.handleClick(instance);
+		}
+	};
+
+	const headers = [
+		{ title: "storageType", data: "pool.name", width: 2 },
+		user.role === OPERATOR && {
+			title: "account",
+			data: "account.name",
+			width: 1,
+		},
+		{ title: "objects", data: "objects", width: 2 },
+		{ title: "space", data: "data_size_mb", width: 2 },
+		{ title: "s3swiftUsers", data: "users", width: 2 },
+		{ title: "buckets", data: "buckets", width: 2 },
+		{ title: "publicEndpoints", data: "public", width: 3 },
+		{ title: "privateEndpoints", data: "private", width: 3 },
+		{ title: "", data: "edit", width: 1 },
+	].filter(Boolean);
+
+	const showEndpoints = (endpoints) => {
+		const endpointsArray = endpoints.split(",");
+		return (
+			<div className="endpoint">
+				{endpointsArray.map((el) => (
+					<div key={el}>
+						<a href={el} target="blank">
+							{el}
+						</a>
+						<CopyButton content={el} />
+					</div>
+				))}
+			</div>
+		);
+	};
+
+	const vendorDomain = window.location.origin.split(".").slice(-2).join(".");
+
+	const HELP_LINK = `https://docs.${vendorDomain}/${lang}/storage/s3/overview/`;
+
+	const isFullHeight =
+		s3quotasFetchStatus !== "fulfilled" || quotas.length === 0;
+
+	const getContent = () => {
+		if (s3quotasFetchStatus === "pending")
+			return (
+				<TableRow>
+					<TableCell className="s3quotas-empty-cell" colSpan="8">
+						<div className="s3quotas-empty">
+							<Loader />
+						</div>
+					</TableCell>
+				</TableRow>
+			);
+
+		if (s3quotasFetchStatus === "rejected")
+			return (
+				<TableRow>
+					<TableCell className="s3quotas-empty-cell" colSpan="8">
+						<div className="s3quotas-empty">
+							<ErrorScreen />
+						</div>
+					</TableCell>
+				</TableRow>
+			);
+
+		if (quotas.length === 0)
+			return (
+				<TableRow>
+					<TableCell className="s3quotas-empty-cell" colSpan="8">
+						<div className="s3quotas-empty">
+							<h2>{t("quotasEmpty")}</h2>
+							{isAdminRights(user.role) && <QuotasModal />}
+						</div>
+					</TableCell>
+				</TableRow>
+			);
+
+		return quotas.map((quota, i) => (
+			<TableRow key={quota.id}>
+				{headers.map((headerItem) =>
+					headerItem.data === "edit" ? (
+						<TableCell key={headerItem.data} align="right">
+							{isAdminRights(user.role) && (
+								<Button
+									onClick={onModalOpen(quota)}
+									variant="outline"
+									color="primary"
+								>
+									{t("edit")}
+								</Button>
+							)}
+						</TableCell>
+					) : (
+						<TableCell key={quota.id}>
+							{headerItem.data === "data_size_mb" ||
+							headerItem.data === "objects" ||
+							headerItem.data === "users" ||
+							headerItem.data === "buckets"
+								? `${quota.usage[headerItem.data]} / ${quota[headerItem.data]}`
+								: headerItem.data === "public" || headerItem.data === "private"
+									? showEndpoints(quota.endpoints[headerItem.data])
+									: getPropByString(quota, headerItem.data)}
+						</TableCell>
+					),
+				)}
+			</TableRow>
+		));
+	};
+
+	const availableQuotas = pools
+		.map(mapPoolToDiskTypeOptions)
+		.map((diskOption) => ({
+			...diskOption,
+			isFree: !quotas.map(mapQuotasToDiskType).includes(diskOption.text),
+		}));
+
+	const createQuotaButton = filterFreeDiskTypes(availableQuotas).length ? (
+		<Button onClick={() => setOpen(true)}>{t("addQuota")}</Button>
+	) : (
+		<Popup content={t("noPools")}>
+			<Button className="disabled-btn ">
+				{t("addQuota")}&nbsp;&nbsp;
+				<CircleHelp size={16} />
+			</Button>
+		</Popup>
+	);
+
+	return (
+		<section className="s3quotas-list h-full">
+			<div className="flex items-center justify-between">
+				<h2>{t("quotas")}</h2>
+				{isAdminRights(user.role) &&
+					s3quotasFetchStatus === "fulfilled" &&
+					createQuotaButton}
+			</div>
+			<br />
+			<div className="flex quotas-description">
+				<p>
+					{t("quotasDescription")}{" "}
+					<a href={HELP_LINK} target="_blank" rel="noreferrer">
+						{t("howToConnect")} <img src={External} alt="External link" />
+					</a>
+				</p>
+			</div>
+			<br />
+			<Table
+				className="quotas-list h-full"
+				containerClassName={isFullHeight ? "h-full" : ""}
+			>
+				<TableHeader>
+					<TableRow>
+						{headers.map((item) => (
+							<TableHead key={item.data} width={item.width}>
+								{t(item.title)}
+							</TableHead>
+						))}
+					</TableRow>
+				</TableHeader>
+				<TableBody>{getContent()}</TableBody>
+			</Table>
+			<QuotasModal ref={modalRef} availableQuotas={availableQuotas} />
+		</section>
+	);
 };
 
 export default Quotas;

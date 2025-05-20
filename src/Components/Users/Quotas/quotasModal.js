@@ -1,173 +1,97 @@
-/* eslint-disable camelcase */
-import React, { useState, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Modal, Header, Button, Icon, Popup } from "semantic-ui-react";
-import { reset } from "redux-form";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "container/Modal";
 import PropTypes from "prop-types";
-import { actionAndFetch, createS3quotasActionAndFetch, editS3quotaAndFetch, fetchPools } from "../../../AppActions";
-import { BILLING_USER_NAME } from "../../../AppConstants";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import {
+	actionAndFetch,
+	createS3quotasActionAndFetch,
+	editS3quotaAndFetch,
+} from "../../../AppActions";
 import QuotasForm from "./quotasForm";
-import { mapPoolToDiskTypeOptions, mapQuotasToDiskType } from "../../../utils/mappers";
-import { filterFreeDiskTypes } from "../../../utils/filterFreeQuotas";
-import { rolesWithAdminRights } from "container/roles";
 
 const mapApiToProps = (item) => ({
-    storageType: item.pool.id,
-    space: item.data_size_mb,
-    buckets: item.buckets,
-    objects: item.objects,
-    users: item.users,
-    usage: item.usage
+	pool_id: item.pool.id,
+	data_size_mb: item.data_size_mb,
+	buckets: item.buckets,
+	objects: item.objects,
+	users: item.users,
+	usage: item.usage,
 });
 
-const QuotasModal = ({ quota, edit, t }) => {
-    const dispatch = useDispatch();
+const QuotasModal = ({ availableQuotas }, ref) => {
+	const { t } = useTranslation();
 
-    const userRole = useSelector((state) => state.host.user.role);
-    const userAccount = useSelector((state) => state.host.user.account);
-    const pools = useSelector((state) => state.AmazonStore.pools);
-    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
-    const accountLimits = useSelector((state) => state.AmazonStore.accountLimits);
+	const dispatch = useDispatch();
+	const userAccount = useSelector((state) => state.host.user.account);
+	const [quota, setQuota] = useState();
 
-    const [open, setOpen] = useState(false);
-    const [limits, setLimits] = useState({});
+	const [open, setOpen] = useState(false);
+	const edit = !!quota;
 
-    const mapPropsToApi = (item, edit) =>
-        edit
-            ? {
-                  objects: +item.objects,
-                  data_size_mb: +item.space,
-                  buckets: +item.buckets,
-                  users: +item.users,
-              }
-            : {
-                  objects: +item.objects,
-                  data_size_mb: +item.space,
-                  buckets: +item.buckets,
-                  users: +item.users,
-                  pool_id: +item.storageType,
-                  account_name: userAccount,
-              };
+	useImperativeHandle(ref, () => ({
+		handleClick: (quota) => {
+			setQuota(quota);
+			setOpen(true);
+		},
+	}));
 
-    useEffect(() => {
-        if (edit && open) {
-            const storageLimits = accountLimits.find((limit) => limit.pool.id === quota.pool.id);
-            setLimits({
-                objects: storageLimits?.objects,
-                data_size_mb: storageLimits?.data_size_mb,
-                users: storageLimits?.users,
-                buckets: storageLimits?.buckets,
-            });
-        }
-    }, [edit, open, quota]);
+	const mapPropsToApi = (item, edit) =>
+		edit
+			? {
+					objects: +item.objects,
+					data_size_mb: +item.data_size_mb,
+					buckets: +item.buckets,
+					users: +item.users,
+				}
+			: {
+					objects: +item.objects,
+					data_size_mb: +item.data_size_mb,
+					buckets: +item.buckets,
+					users: +item.users,
+					pool_id: +item.pool_id,
+					account_name: userAccount,
+				};
 
-    const handleChangeStorageType = (event, newValue) => {
-        const storageLimits = accountLimits.find((limit) => limit.pool.id === newValue);
-        setLimits({
-            objects: storageLimits.objects,
-            data_size_mb: storageLimits.data_size_mb,
-            users: storageLimits.users,
-            buckets: storageLimits.buckets,
-        });
-    };
+	const handleClose = () => {
+		setOpen(false);
+	};
 
-    const availableQuotas = pools.map(mapPoolToDiskTypeOptions).map((diskOption) => ({
-        ...diskOption,
-        isFree: !quotas.map(mapQuotasToDiskType).includes(diskOption.text),
-    }));
+	const onSubmit = (values) => {
+		const payload = mapPropsToApi(values, edit);
+		if (edit) {
+			dispatch(editS3quotaAndFetch(quota.id, payload)).then(handleClose);
+		} else {
+			dispatch(actionAndFetch(createS3quotasActionAndFetch, payload)).then(
+				handleClose,
+			);
+		}
+	};
 
-    const handleClose = useCallback(() => {
-        setOpen(false);
-        dispatch(reset("createS3quota"));
-        setLimits({});
-    }, [setOpen, dispatch]);
-
-    const onSubmit = useCallback(
-        (values) => {
-            handleClose();
-            let payload = mapPropsToApi(values, edit);
-            if (edit) {
-                dispatch(editS3quotaAndFetch(quota.id, payload));
-            } else {
-                dispatch(actionAndFetch(createS3quotasActionAndFetch, payload));
-            }
-            dispatch(reset("createS3quota"));
-        },
-        [handleClose, edit, quota, dispatch]
-    );
-
-    return (
-        userRole !== BILLING_USER_NAME && (
-            <React.Fragment>
-                {edit ? (
-                    <Button
-                        onClick={() => setOpen(true)}
-                        content={t("edit")}
-                        primary
-                        basic
-                    />
-                ) : filterFreeDiskTypes(availableQuotas).length ? (
-                    <Button
-                        onClick={() => setOpen(true)}
-                        content={t("addQuota")}
-                        primary
-                    />
-                ) : (
-                    <Popup
-                        on="hover"
-                        pinned
-                        trigger={
-                            <Button className="disabled-btn " primary size="medium">
-                                {t("addQuota")}
-                                <Icon name="question circle outline" size="large" className="info-icon" />
-                            </Button>
-                        }
-                        inverted
-                        position="left center"
-                    >
-                        {t("noPools")}
-                    </Popup>
-                )}
-                <Modal open={open} size="tiny" onSubmit={onSubmit} onClose={handleClose}>
-                    <Header content={edit ? t("editQuota") : t("addQuota")} />
-                    <Modal.Content>
-                        {edit ? (
-                            <QuotasForm
-                                t={t}
-                                open={open}
-                                handleClose={handleClose}
-                                onSubmit={onSubmit}
-                                initialValues={mapApiToProps(quota)}
-                                edit={edit}
-                                isAdmin={rolesWithAdminRights.includes(userRole)}
-                                availableQuotas={availableQuotas}
-                                limits={limits}
-                                handleChangeStorageType={handleChangeStorageType}
-                            />
-                        ) : (
-                            <QuotasForm
-                                t={t}
-                                open={open}
-                                handleClose={handleClose}
-                                onSubmit={onSubmit}
-                                isAdmin={rolesWithAdminRights.includes(userRole)}
-                                availableQuotas={availableQuotas}
-                                limits={limits}
-                                handleChangeStorageType={handleChangeStorageType}
-                            />
-                        )}
-                    </Modal.Content>
-                </Modal>
-            </React.Fragment>
-        )
-    );
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>{edit ? t("editQuota") : t("addQuota")}</DialogTitle>
+				</DialogHeader>
+				<QuotasForm
+					handleClose={handleClose}
+					onSubmit={onSubmit}
+					availableQuotas={availableQuotas}
+					initialValues={edit ? mapApiToProps(quota) : undefined}
+				/>
+			</DialogContent>
+		</Dialog>
+	);
 };
 
 QuotasModal.propTypes = {
-    quota: PropTypes.object,
-    edit: PropTypes.bool,
-    t: PropTypes.func,
-    availableQuotas: PropTypes.array,
+	availableQuotas: PropTypes.array,
 };
 
-export default QuotasModal;
+export default forwardRef(QuotasModal);

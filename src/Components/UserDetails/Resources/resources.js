@@ -1,52 +1,51 @@
-import React from "react";
+import { Button } from "container/Button";
 import PropTypes from "prop-types";
-import { Header, Grid } from "semantic-ui-react";
+import React, { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import EditResModal from "./editResModal";
-import { useEffect } from "react";
 
-const Resources = ({ t, s3user, setActiveItem }) => {
-    useEffect(() => {
-        return () => setActiveItem(1);
-    }, []);
+const Resources = ({ s3user }) => {
+	const { t } = useTranslation();
+	const modalRef = useRef();
 
-    return (
-        <React.Fragment>
-            <Header as="h4">{t("storageType")}</Header>
-            <Grid>
-                <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.pool?.klass}
-                </Grid.Column>
-            </Grid>
-            <Header as="h4">{t("space")}</Header>
-            <Grid>
-                <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.usage?.data_size_mb + " / " + s3user.user_quota?.data_size_mb}
-                </Grid.Column>
-            </Grid>
-            <Header as="h4">{t("objectsLimit")}</Header>
-            <Grid>
-                <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.usage?.objects + " / " + s3user.user_quota?.objects}
-                </Grid.Column>
-            </Grid>
-            <Header as="h4">{t("numberBucketsLimit")}</Header>
-            <Grid>
-                <Grid.Column verticalAlign="middle" width={2}>
-                    {s3user.usage?.buckets + " / " + s3user.user_quota?.buckets}
-                </Grid.Column>
-            </Grid>
-            <Grid className="resources-bottom-panel">
-                <Grid.Row verticalAlign="middle" width={2} className="resource-action">
-                    <EditResModal t={t} s3user={s3user} />
-                </Grid.Row>
-            </Grid>
-        </React.Fragment>
-    );
+	const onModalOpen = (instance) => () => {
+		if (modalRef.current) {
+			modalRef.current.handleClick(instance);
+		}
+	};
+
+	return (
+		<div className="flex flex-col gap-4 h-full">
+			<h4>{t("storageType")}</h4>
+			<p>{s3user.pool?.klass}</p>
+
+			<h4>{t("space")}</h4>
+			<p>
+				{`${s3user.usage?.data_size_mb} / ${s3user.user_quota?.data_size_mb}`}
+			</p>
+
+			<h4>{t("objectsLimit")}</h4>
+			<p>{`${s3user.usage?.objects} / ${s3user.user_quota?.objects}`}</p>
+
+			<h4>{t("numberBucketsLimit")}</h4>
+			<p>{`${s3user.usage?.buckets} / ${s3user.user_quota?.buckets}`}</p>
+
+			<div className="resources-bottom-panel mt-auto">
+				<Button
+					onClick={onModalOpen(s3user)}
+					disabled={s3user.status === "locked"}
+					variant="secondary"
+				>
+					{t("edit")}
+				</Button>
+			</div>
+			<EditResModal ref={modalRef} s3user={s3user} />
+		</div>
+	);
 };
 
 Resources.propTypes = {
-    t: PropTypes.func,
-    s3user: PropTypes.object,
+	s3user: PropTypes.object,
 };
 
 export default Resources;

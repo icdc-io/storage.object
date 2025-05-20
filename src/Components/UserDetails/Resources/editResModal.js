@@ -1,92 +1,107 @@
-/* eslint-disable camelcase */
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "container/Modal";
+import PropTypes from "prop-types";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { actionAndFetch, editS3user } from "../../../AppActions";
+import EditResForm from "./editResForm";
 
-import PropTypes from 'prop-types';
-import React, { useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { reset } from 'redux-form';
-import { Button, Header, Icon, Modal } from 'semantic-ui-react';
-import { actionAndFetch, editS3user } from '../../../AppActions';
-import { BILLING_USER_NAME } from '../../../AppConstants';
-import EditResForm from './editResForm';
+const EditResModal = ({ label }, ref) => {
+	const dispatch = useDispatch();
+	const [open, setOpen] = useState(false);
+	const [s3user, setS3user] = useState();
 
-const EditResModal = ({ t, s3user, name, label }) => {
-    const dispatch = useDispatch();
-    const [open, setOpen] = useState(false);
+	useImperativeHandle(ref, () => ({
+		handleClick: (instance) => {
+			setS3user(instance);
+			setOpen(true);
+		},
+	}));
 
-    const userRole = useSelector((state) => state.host.user.role);
-    const userAccount = useSelector((state) => state.host.user.account);
-    const currentOwner = useSelector((state) => state.host.user.email);
-    const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+	const userRole = useSelector((state) => state.host.user.role);
+	const userAccount = useSelector((state) => state.host.user.account);
+	const currentOwner = useSelector((state) => state.host.user.email);
+	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 
-    const userPool = quotas.filter(quota => quota.account.name === userAccount).find((quota) => quota.pool.id === s3user.pool.id);
+	if (!s3user) return null;
 
-    const limits = userPool ? {
-        storageSizeLimit: userPool.data_size_mb - userPool.usage.data_size_mb + s3user.user_quota.data_size_mb,
-        objectsLimit: userPool.objects - userPool.usage.objects + s3user.user_quota.objects,
-        bucketsLimit: userPool.buckets - userPool.usage.buckets + s3user.user_quota.buckets,
-    } : {
-      storageSizeLimit: 0,
-      objectsLimit: 0,
-      bucketsLimit: 0,
-    };
+	const userPool = quotas
+		.filter((quota) => quota.account.name === userAccount)
+		.find((quota) => quota.pool.id === s3user.pool.id);
 
-    const mapPropsToApi = (item) => ({
-        description: item.description,
-        owner: item.owner || currentOwner,
-        quota: {
-            data_size_mb: +item.storageSizeLimit,
-            objects: +item.objectsLimit,
-            buckets: +item.bucketsLimit,
-        },
-    });
-    
-    const mapApiToProps = (item) => ({
-        name: item.name,
-        description: item.description,
-        default_placement: item.pool.id,
-        storageSizeLimit: item.user_quota.data_size_mb || 0,
-        objectsLimit: item.user_quota.objects || 0,
-        bucketsLimit: +item.user_quota.buckets || 0,
-        owner: item.owner,
-    });
+	const limits = userPool
+		? {
+				data_size_mb:
+					userPool.data_size_mb -
+					userPool.usage.data_size_mb +
+					s3user.user_quota.data_size_mb,
+				objects:
+					userPool.objects - userPool.usage.objects + s3user.user_quota.objects,
+				buckets:
+					userPool.buckets - userPool.usage.buckets + s3user.user_quota.buckets,
+			}
+		: {
+				data_size_mb: 0,
+				objects: 0,
+				buckets: 0,
+			};
 
-    const handleClose = useCallback(() => {
-        setOpen(false);
-        dispatch(reset('editResForm'));
-    }, [setOpen, dispatch]);
+	const mapPropsToApi = (item) => ({
+		description: item.description,
+		owner: item.owner || currentOwner,
+		quota: {
+			data_size_mb: +item.data_size_mb,
+			objects: +item.objects,
+			buckets: +item.buckets,
+		},
+	});
 
-    const onSubmit = useCallback(
-        (values) => {
-            handleClose();
+	const mapApiToProps = (item) => ({
+		name: item.name,
+		description: item.description,
+		default_placement: item.pool.id,
+		data_size_mb: item.user_quota.data_size_mb || 0,
+		objects: item.user_quota.objects || 0,
+		buckets: +item.user_quota.buckets || 0,
+		owner: item.owner,
+	});
 
-            const payload = mapPropsToApi(values);
+	const handleClose = () => setOpen(false);
 
-            dispatch(actionAndFetch(editS3user, {user_id: s3user.id, payload}));
-            dispatch(reset('editResForm'));
-        },
-        [handleClose, dispatch, s3user]
-    );
+	const onSubmit = (values) => {
+		const payload = mapPropsToApi(values);
 
-    return (
-        userRole !== BILLING_USER_NAME && (
-            <React.Fragment>
-                <Button onClick={() => setOpen(true)} disabled={s3user.is_locked}>{t('edit')}</Button>
-                <Modal open={open} size="tiny" onSubmit={onSubmit}>
-                    <Header content={label} />
-                    <Modal.Content>
-                        <EditResForm t={t} open={open} handleClose={handleClose} onSubmit={onSubmit} name={name} initialValues={mapApiToProps(s3user)} limits={limits} />
-                    </Modal.Content>
-                </Modal>
-            </React.Fragment>
-        )
-    );
+		dispatch(actionAndFetch(editS3user, { user_id: s3user.id, payload })).then(
+			handleClose,
+		);
+	};
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>{label}</DialogTitle>
+				</DialogHeader>
+
+				<EditResForm
+					handleClose={handleClose}
+					onSubmit={onSubmit}
+					initialValues={mapApiToProps(s3user)}
+					limits={limits}
+				/>
+			</DialogContent>
+		</Dialog>
+	);
 };
 
 EditResModal.propTypes = {
-    s3user: PropTypes.object,
-    name: PropTypes.string,
-    label: PropTypes.string,
-    t: PropTypes.func,
+	s3user: PropTypes.object,
+	name: PropTypes.string,
+	label: PropTypes.string,
 };
 
-export default EditResModal;
+export default forwardRef(EditResModal);

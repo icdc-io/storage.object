@@ -1,198 +1,271 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-import { Header, Table, Progress, Dropdown, Grid, Segment, Icon, Loader, Confirm } from 'semantic-ui-react';
-import { deleteBucketAndFetch, fetchBuckets } from '../../../AppActions';
-import _ from 'lodash';
-import DangerousHTML from 'react-dangerous-html';
-import BucketModal from './bucketModal';
-import { useParams } from 'react-router-dom';
+import { Button } from "container/Button";
+import ErrorScreen from "container/ErrorScreen";
+import Loader from "container/Loader";
+import OptionsMenu from "container/OptionsMenu";
+import { Progress } from "container/Progress";
+import Segment from "container/Segment";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "container/Table";
+import _ from "lodash";
+import { Lock, Meh } from "lucide-react";
+import PropTypes from "prop-types";
+import React, { useState, useEffect, useRef } from "react";
+import DangerousHTML from "react-dangerous-html";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { deleteBucketAndFetch, fetchBuckets } from "../../../AppActions";
+import DeleteModal from "../../GeneralComponents/DeleteModal";
+import BucketModal from "./bucketModal";
 
-const Bar = ({ value, total }) => (
-    <Progress
-        success={value / total < 0.7 ? true : false}
-        error={value / total > 0.9 ? true : false}
-        warning={value / total > 0.7 && value < 0.9 ? true : false}
-        size="small"
-        value={value}
-        total={total}
-    />
-);
+const Bar = ({ value, total }) => <Progress value={value} total={total} />;
 
-const BucketsList = ({ t, setActiveItem, s3user }) => {
-    const { userId } = useParams();
+const BucketsList = ({ s3user }) => {
+	const { t } = useTranslation();
+	const bucketModalRef = useRef();
+	const deleteModalRef = useRef();
 
-    const dispatch = useDispatch();
+	const { userId } = useParams();
 
-    const buckets = useSelector((state) => state.AmazonStore.buckets);
-    const bucketsFetchStatus = useSelector((state) => state.AmazonStore.bucketsFetchStatus);
-    const user = useSelector((state) => state.host.user);
+	const dispatch = useDispatch();
 
-    const [deleteConfirm, setDeleteConfirm] = useState(false);
+	const buckets = useSelector((state) => state.AmazonStore.buckets);
+	const bucketsFetchStatus = useSelector(
+		(state) => state.AmazonStore.bucketsFetchStatus,
+	);
+	const user = useSelector((state) => state.host.user);
 
-    const [currentItem, setCurrentItem] = useState(null);
+	const [column, setColumn] = useState("name");
+	const [direction, setDirection] = useState("ascending");
+	const [data, setData] = useState([]);
 
-    const [column, setColumn] = useState('name');
-    const [direction, setDirection] = useState('ascending');
-    const [data, setData] = useState([]);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		s3user && dispatch(fetchBuckets(s3user.name));
+	}, [s3user]);
 
-    useEffect(() => {
-        s3user && dispatch(fetchBuckets(s3user.name))
-    }, [s3user]);
-    
-    useEffect(() => {
-        setData(Object.values(buckets));
-    }, [buckets]);
+	useEffect(() => {
+		setData(Object.values(buckets));
+	}, [buckets]);
 
-    useEffect(() => {
-        return () => setActiveItem(2)
-    }, []);
+	const onBucketModalOpen = (instance) => () => {
+		if (bucketModalRef.current) {
+			bucketModalRef.current.handleClick(instance);
+		}
+	};
 
-    const handleSort = (clickedColumn) => () => {
-        if (column !== clickedColumn) {
-            setColumn(clickedColumn);
-            setData(_.sortBy(data, [clickedColumn]));
-            setDirection('ascending');
-            return;
-        }
+	const onDeleteBucketModalOpen = (instance) => () => {
+		if (deleteModalRef.current) {
+			deleteModalRef.current.handleClick(instance);
+		}
+	};
 
-        direction === 'ascending' ? setDirection('descending') : setDirection('ascending');
-        setData(data.reverse());
-    };
+	const options = [
+		{
+			text: "edit",
+			action: onBucketModalOpen,
+		},
+		{
+			text: "remove",
+			action: onDeleteBucketModalOpen,
+			color: "red",
+		},
+	];
 
-    const onConfirm = (bucket) =>  dispatch(deleteBucketAndFetch(userId, `${user.account}/${bucket.name}`));
+	const handleSort = (clickedColumn) => () => {
+		if (column !== clickedColumn) {
+			setColumn(clickedColumn);
+			setData(_.sortBy(data, [clickedColumn]));
+			setDirection("ascending");
+			return;
+		}
 
-    return (
-        <React.Fragment>
-            {bucketsFetchStatus === 'pending' && Object.keys(buckets).length === 0 && <Loader active inline="centered" />}
+		direction === "ascending"
+			? setDirection("descending")
+			: setDirection("ascending");
+		setData(data.reverse());
+	};
 
-            {Object.keys(buckets).length === 0 && bucketsFetchStatus === 'fulfilled' && (
-                <Segment placeholder>
-                    <Header icon>
-                        <Icon name="meh outline" />
-                        {t('noBuckets')}
-                    </Header>
-                    <BucketModal t={t} s3user={s3user}/>
-                </Segment>
-            )}
+	const onConfirm = (bucket) =>
+		dispatch(deleteBucketAndFetch(userId, `${user.account}/${bucket.name}`));
 
-            {bucketsFetchStatus === 'rejected' && (
-                <Segment placeholder>
-                    <Header icon>
-                        <Icon name="frown outline" />
-                        {t('wrong')}
-                    </Header>
-                </Segment>
-            )}
+	return (
+		<React.Fragment>
+			{bucketsFetchStatus === "pending" && <Loader />}
 
-            {Object.keys(buckets).length > 0 && bucketsFetchStatus !== 'rejected' && (
-                <React.Fragment>
-                    <Grid className="buckets-grid">
-                        <Grid.Row>
-                            <Grid.Column verticalAlign="middle" width={4}>
-                                <Header as="h4">
-                                    {t('bucketsTab')}
-                                    {s3user.is_locked && (
-                                        <Icon
-                                            style={{ fontSize: '15px', position: 'relative', top: '-5px', marginLeft: '4px' }}
-                                            name="lock"
-                                            title={t('lockedS3user')}
-                                        />
-                                    )}
-                                </Header>
-                            </Grid.Column>
-                            <Grid.Column textAlign="right" width={12}>
-                                <BucketModal t={t} s3user={s3user}/>
-                            </Grid.Column>
-                            <Grid.Row className="buckets-description">
-                                <Grid.Column verticalAlign="middle" width={16}>
-                                    <p>{t('bucketsDescription')}</p>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid.Row>
-                    </Grid>
-                    <Table sortable className="users-list">
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell sorted={column === 'name' ? direction : null} onClick={handleSort('name')}>
-                                    {t('name')}
-                                </Table.HeaderCell>
+			{Object.keys(buckets).length === 0 &&
+				bucketsFetchStatus === "fulfilled" && (
+					<div className="h-full m-auto flex flex-col justify-center">
+						<div className="">
+							<Meh size={64} className="mx-auto" />
+							<h2>{t("noBuckets")}</h2>
+						</div>
+						<br />
+						<div className="flex">
+							<Button onClick={onBucketModalOpen()} className="mx-auto">
+								{t("create")}
+							</Button>
+						</div>
+					</div>
+				)}
 
-                                <Table.HeaderCell textAlign="center" sorted={column === 'space' ? direction : null} onClick={handleSort('space')}>
-                                    {t('space')}
-                                </Table.HeaderCell>
+			{bucketsFetchStatus === "rejected" && <ErrorScreen />}
 
-                                <Table.HeaderCell textAlign="center" sorted={column === 'objects' ? direction : null} onClick={handleSort('objects')}>
-                                    {t('objects')}
-                                </Table.HeaderCell>
-                                <Table.HeaderCell />
-                            </Table.Row>
-                        </Table.Header>
+			{Object.keys(buckets).length > 0 &&
+				bucketsFetchStatus === "fulfilled" && (
+					<React.Fragment>
+						<div className="buckets-grid">
+							<div className="flex flex-wrap items-center justify-between gap-4">
+								<h4>
+									{t("bucketsTab")}
+									{s3user.status === "locked" && (
+										<Lock size={16} />
+										// <Icon
+										// 	style={{
+										// 		fontSize: "15px",
+										// 		position: "relative",
+										// 		top: "-5px",
+										// 		marginLeft: "4px",
+										// 	}}
+										// 	name="lock"
+										// 	title={t("lockedS3user")}
+										// />
+									)}
+								</h4>
+								<Button
+									onClick={onBucketModalOpen()}
+									// content={t("addBucket")}
+									// icon="plus"
+									// labelPosition="left"
+									// primary
+									disabled={s3user.status === "locked"}
+								>
+									{t("addBucket")}
+								</Button>
+							</div>
+							<br />
+							{/* <div> */}
 
-                        <Table.Body>
-                            {data &&
-                                data.map((item, i) => (
-                                    <Table.Row key={i}>
-                                        <Table.Cell width={5}>{item.name}</Table.Cell>
-                                        <Table.Cell width={5}textAlign="center">
-                                            {item.usage.data_size_mb} / {item.quota.data_size_mb >= 0 ? item.quota.data_size_mb : "∞"}
-                                            {item.quota.data_size_mb >= 0 && <Bar value={item.usage.data_size_mb} total={item.quota.data_size_mb} />}
-                                        </Table.Cell>
-                                        <Table.Cell width={5} textAlign="center">
-                                            {item.usage.objects} / {item.quota.objects >= 0 ? item.quota.objects : "∞"}
-                                            {item.quota.objects >= 0 && <Bar value={item.usage.objects} total={item.quota.objects} />}
-                                        </Table.Cell>
-                                        <Table.Cell width={1} collapsing textAlign="right">
-                                            <Dropdown direction="left" icon="ellipsis vertical" className="users-list__actions_dot">
-                                                <Dropdown.Menu>
-                                                    <BucketModal t={t} edit bucket={item} s3user={s3user}/>
-                                                    <Dropdown.Item
-                                                        className="item-red"
-                                                        icon="trash"
-                                                        text={t('remove')}
-                                                        onClick={() => {
-                                                            setDeleteConfirm(true);
-                                                            setCurrentItem(item);
-                                                        }}
-                                                    />
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ))}
-                        </Table.Body>
-                    </Table>
-                </React.Fragment>
-            )}
-            {deleteConfirm && (
-                <Confirm
-                    open={deleteConfirm}
-                    header={t('deleteBucketConfirmName')}
-                    content={
-                        <div className="content">
-                            <DangerousHTML
-                                html={t('deleteBucketConfirmMessage', {
-                                    name: `<b>${currentItem.name}</b>`,
-                                })}
-                            />
-                        </div>
-                    }
-                    onCancel={() => setDeleteConfirm(false)}
-                    onConfirm={() => onConfirm(currentItem)}
-                />
-            )}
-        </React.Fragment>
-    );
-};
+							{/* <BucketModal s3user={s3user} /> */}
+							{/* </div> */}
+							{/* <Grid.Row className="buckets-description">
+								<Grid.Column verticalAlign="middle" width={16}> */}
+							<p className="quotas-description">{t("bucketsDescription")}</p>
+							{/* </Grid.Column>
+							</Grid.Row> */}
+						</div>
+						<br />
+						<Table className="users-list">
+							<TableHeader>
+								<TableRow>
+									<TableHead
+										sorted={column === "name" ? direction : null}
+										onSort={handleSort("name")}
+									>
+										{t("name")}
+									</TableHead>
 
-BucketsList.propTypes = {
-    t: PropTypes.func,
-    s3user: PropTypes.any,
+									<TableHead
+										align="center"
+										sorted={column === "space" ? direction : null}
+										onSort={handleSort("space")}
+									>
+										{t("space")}
+									</TableHead>
+
+									<TableHead
+										align="center"
+										sorted={column === "objects" ? direction : null}
+										onSort={handleSort("objects")}
+									>
+										{t("objects")}
+									</TableHead>
+									<TableHead />
+								</TableRow>
+							</TableHeader>
+
+							<TableBody>
+								{data?.map((item, i) => (
+									<TableRow key={item.name}>
+										<TableCell width={5}>{item.name}</TableCell>
+										<TableCell width={5} align="center">
+											{item.usage.data_size_mb} /{" "}
+											{item.quota.data_size_mb >= 0
+												? item.quota.data_size_mb
+												: "∞"}
+											{item.quota.data_size_mb >= 0 && (
+												<Bar
+													value={item.usage.data_size_mb}
+													total={item.quota.data_size_mb}
+												/>
+											)}
+										</TableCell>
+										<TableCell width={5} align="center">
+											{item.usage.objects} /{" "}
+											{item.quota.objects >= 0 ? item.quota.objects : "∞"}
+											{item.quota.objects >= 0 && (
+												<Bar
+													value={item.usage.objects}
+													total={item.quota.objects}
+												/>
+											)}
+										</TableCell>
+										<TableCell width={1} align="right">
+											<OptionsMenu instance={item} options={options} />
+											{/* <Dropdown
+												direction="left"
+												icon="ellipsis vertical"
+												className="users-list__actions_dot"
+											>
+												<Dropdown.Menu>
+													<BucketModal edit bucket={item} s3user={s3user} />
+													<Dropdown.Item
+														className="item-red"
+														icon="trash"
+														text={t("remove")}
+														onClick={() => {
+															setDeleteConfirm(true);
+															setCurrentItem(item);
+														}}
+													/>
+												</Dropdown.Menu>
+											</Dropdown> */}
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</React.Fragment>
+				)}
+			<DeleteModal
+				ref={deleteModalRef}
+				title={"deleteBucketConfirmName"}
+				onConfirm={onConfirm}
+			>
+				{(currentItem) => (
+					<div className="content">
+						<DangerousHTML
+							html={t("deleteBucketConfirmMessage", {
+								name: `<b>${currentItem.name}</b>`,
+							})}
+						/>
+					</div>
+				)}
+			</DeleteModal>
+			<BucketModal ref={bucketModalRef} />
+		</React.Fragment>
+	);
 };
 
 Bar.propTypes = {
-    value: PropTypes.number,
-    total: PropTypes.number,
+	value: PropTypes.number,
+	total: PropTypes.number,
 };
 
 export default BucketsList;

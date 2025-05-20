@@ -2,13 +2,15 @@
 
 npm i --legacy-peer-deps - to avoid errors with old dependencies in libraries
 
-_________________________
+---
 
 env='DEVELOPMENT":
 
 npm run start
 
-_________________________
+open localhost:8001
+
+---
 
 env='PRODUCTION'
 

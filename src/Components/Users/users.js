@@ -1,75 +1,78 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Grid, Loader, Header, Segment, Icon } from "semantic-ui-react";
-import UsersList from "./usersList";
-import PropTypes from "prop-types";
-import UserModal from "./userModal";
+import { Button } from "container/Button";
+import ErrorScreen from "container/ErrorScreen";
+import Loader from "container/Loader";
+import { Segment } from "container/Segment";
+import { Meh } from "lucide-react";
+import React, { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchS3Users } from "../../AppActions";
-import { useHistory } from "react-router-dom";
+import UserModal from "./userModal";
+import UsersList from "./usersList";
 
-const Users = ({ t }) => {
-    const s3users = useSelector((state) => state.AmazonStore.s3users);
-    const s3usersFetchStatus = useSelector((state) => state.AmazonStore.s3usersFetchStatus);
-    const user = useSelector((state) => state.host.user);
-    const s3quotasFetchStatus = useSelector((state) => state.AmazonStore.s3quotasFetchStatus);
-    const poolsFetchStatus = useSelector((state) => state.AmazonStore.poolsFetchStatus);
-    const dispatch = useDispatch();
-    const history = useHistory();
+const Users = () => {
+	const { t } = useTranslation();
+	const s3users = useSelector((state) => state.AmazonStore.s3users);
+	const s3usersFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3usersFetchStatus,
+	);
+	const user = useSelector((state) => state.host.user);
+	const s3quotasFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3quotasFetchStatus,
+	);
+	const poolsFetchStatus = useSelector(
+		(state) => state.AmazonStore.poolsFetchStatus,
+	);
+	const dispatch = useDispatch();
+	const editModalRef = useRef();
 
-    window.goToRootRoute = () => history.push("/amazon");
+	const onEditBucketModalOpen = (instance) => () => {
+		if (editModalRef.current) {
+			editModalRef.current.handleClick(instance);
+		}
+	};
 
-    useEffect(() => {
-        dispatch(fetchS3Users());
-    }, [dispatch, user]);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		dispatch(fetchS3Users());
+	}, [dispatch, user]);
 
-    const statuses = [s3usersFetchStatus, s3quotasFetchStatus, poolsFetchStatus];
+	const statuses = [s3usersFetchStatus, s3quotasFetchStatus, poolsFetchStatus];
 
-    if (statuses.includes("pending")) return <Loader active inline="centered" />;
+	return (
+		<Segment className="h-full flex flex-col">
+			{statuses.includes("pending") && <Loader active inline="centered" />}
+			{s3users.length === 0 && s3usersFetchStatus === "fulfilled" && (
+				<div className="h-full m-auto flex flex-col justify-center">
+					<div className="">
+						<Meh size={64} className="mx-auto" />
+						<h2>{t("noS3users")}</h2>
+					</div>
+					<br />
+					<div className="flex">
+						<Button onClick={onEditBucketModalOpen()} className="mx-auto">
+							{t("create")}
+						</Button>
+					</div>
+				</div>
+			)}
 
-    return (
-        <div>
-            {s3users.length === 0 && s3usersFetchStatus === "fulfilled" && (
-                <Segment placeholder>
-                    <Header icon>
-                        <Icon name="meh outline" />
-                        {t("noS3users")}
-                    </Header>
-                    <UserModal t={t} />
-                </Segment>
-            )}
+			{s3usersFetchStatus === "rejected" && <ErrorScreen />}
 
-            {s3usersFetchStatus === "rejected" && (
-                <Segment placeholder>
-                    <Header icon>
-                        <Icon name="frown outline" />
-                        {t("wrong")}
-                    </Header>
-                </Segment>
-            )}
-
-            {s3users.length > 0 && s3usersFetchStatus !== "rejected" && (
-                <React.Fragment>
-                    <section className="items-list">
-                        <Grid>
-                            <Grid.Row>
-                                <Grid.Column verticalAlign="middle" width={4}>
-                                    <Header as="h2">{t("s3users")}</Header>
-                                </Grid.Column>
-                                <Grid.Column textAlign="right" width={12}>
-                                    <UserModal t={t} />
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                        <UsersList t={t} items={s3users}></UsersList>
-                    </section>
-                </React.Fragment>
-            )}
-        </div>
-    );
-};
-
-Users.propTypes = {
-    t: PropTypes.func,
+			{s3users.length > 0 && s3usersFetchStatus === "fulfilled" && (
+				<section className="h-full">
+					<div>
+						<div className="flex items-center justify-between">
+							<h2>{t("s3users")}</h2>
+							<Button onClick={onEditBucketModalOpen()}>{t("create")}</Button>
+						</div>
+					</div>
+					<UsersList items={s3users} />
+				</section>
+			)}
+			<UserModal ref={editModalRef} />
+		</Segment>
+	);
 };
 
 export default Users;
