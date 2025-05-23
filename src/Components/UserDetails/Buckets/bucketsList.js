@@ -92,8 +92,16 @@ const BucketsList = ({ s3user }) => {
 		setData(data.reverse());
 	};
 
-	const onConfirm = (bucket) =>
-		dispatch(deleteBucketAndFetch(userId, `${user.account}/${bucket.name}`));
+	const onConfirm = (bucket) => {
+		const isV2Bucket = bucket.path?.startsWith(user.account);
+
+		return dispatch(
+			deleteBucketAndFetch(
+				userId,
+				isV2Bucket ? `${user.account}/${bucket.name}` : bucket.path,
+			),
+		);
+	};
 
 	return (
 		<React.Fragment>
@@ -122,7 +130,7 @@ const BucketsList = ({ s3user }) => {
 					<React.Fragment>
 						<div className="buckets-grid">
 							<div className="flex flex-wrap items-center justify-between gap-4">
-								<h4>
+								<h4 className="flex gap-2">
 									{t("bucketsTab")}
 									{s3user.status === "locked" && (
 										<Lock size={16} />
