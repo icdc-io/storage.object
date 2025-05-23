@@ -78,14 +78,9 @@ const BucketModal = (_props, ref) => {
 	const onSubmit = (values) => {
 		const payload = mapPropsToApi(values);
 		if (edit) {
-			const isV2Bucket = bucket.path?.startsWith(userAccount);
-			dispatch(
-				editBucketAndFetch(
-					s3user.id,
-					isV2Bucket ? `${userAccount}/${bucket.name}` : bucket.path,
-					payload,
-				),
-			).then(handleClose);
+			dispatch(editBucketAndFetch(s3user.id, bucket.path, payload)).then(
+				handleClose,
+			);
 		} else {
 			dispatch(
 				createBucketAndFetch(s3user.id, { ...payload, name: values.name }),

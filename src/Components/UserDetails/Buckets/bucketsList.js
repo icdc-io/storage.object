@@ -93,14 +93,7 @@ const BucketsList = ({ s3user }) => {
 	};
 
 	const onConfirm = (bucket) => {
-		const isV2Bucket = bucket.path?.startsWith(user.account);
-
-		return dispatch(
-			deleteBucketAndFetch(
-				userId,
-				isV2Bucket ? `${user.account}/${bucket.name}` : bucket.path,
-			),
-		);
+		return dispatch(deleteBucketAndFetch(userId, bucket.path));
 	};
 
 	return (
