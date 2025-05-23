@@ -44,7 +44,7 @@ const UserOverview = ({ s3user }) => {
 			<div className="flex flex-col gap-4">
 				<div className="flex">
 					<div width={4}>
-						<h4 className="flex gap-2">
+						<h4 className="flex gap-2 items-center">
 							{s3user.name}
 							{s3user.status === "locked" && (
 								// <Icon

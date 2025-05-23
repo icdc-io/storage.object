@@ -130,7 +130,7 @@ const BucketsList = ({ s3user }) => {
 					<React.Fragment>
 						<div className="buckets-grid">
 							<div className="flex flex-wrap items-center justify-between gap-4">
-								<h4 className="flex gap-2">
+								<h4 className="flex gap-2 items-center">
 									{t("bucketsTab")}
 									{s3user.status === "locked" && (
 										<Lock size={16} />
