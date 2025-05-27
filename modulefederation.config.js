@@ -1,10 +1,10 @@
 const { dependencies } = require("./package.json");
 
 module.exports = {
-	name: "storage_amazon",
+	name: "storage_objects",
 	filename: "remoteEntry.js",
 	exposes: {
-		"./amazon": "./src/amazon.jsx",
+		"./objects": "./src/amazon.jsx",
 	},
 	remotes: {
 		container: "host@/general.js",
