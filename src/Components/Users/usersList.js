@@ -25,6 +25,18 @@ import UserModal from "./userModal";
 
 const Bar = ({ value, total }) => <Progress value={value} total={total} />;
 
+const sortChartData = (data, field) =>
+	data.sort((a, b) => {
+		if (!a.usage[field]) {
+			if (!b.usage[field]) {
+				return a.user_quota[field] - b.user_quota[field];
+			}
+			return -1;
+		}
+
+		return a.usage[field] - b.usage[field];
+	});
+
 const UsersList = ({ items }) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
@@ -32,14 +44,17 @@ const UsersList = ({ items }) => {
 
 	const [column, setColumn] = useState("name");
 	const [direction, setDirection] = useState("ascending");
-	const [data, setData] = useState(items);
+	const [data, setData] = useState([...items]);
 	const deleteModalRef = useRef();
 	const editModalRef = useRef();
 
 	const handleSort = (clickedColumn) => () => {
 		if (column !== clickedColumn) {
+			const sortedData = clickedColumn?.includes("usage.")
+				? sortChartData(data, clickedColumn.split("usage.")[1])
+				: _.sortBy(data, [clickedColumn]);
 			setColumn(clickedColumn);
-			setData(_.sortBy(data, [clickedColumn]));
+			setData(sortedData);
 			setDirection("ascending");
 			return;
 		}
@@ -49,8 +64,6 @@ const UsersList = ({ items }) => {
 			: setDirection("ascending");
 		setData(data.reverse());
 	};
-
-	useEffect(() => setData(_.sortBy(items, [column])), [items, column]);
 
 	const onConfirm = (item) => {
 		dispatch(actionAndFetch(deleteS3user, item.id));
@@ -74,9 +87,11 @@ const UsersList = ({ items }) => {
 	const unlockS3User = (item) => () =>
 		dispatch(lockS3user(item.id, { is_locked: "unlock" }));
 
+	const withContent = data.length > 0;
+
 	return (
 		<React.Fragment>
-			<Table className="users-list">
+			<Table className={`${withContent ? "loaded" : ""} users-list`}>
 				<TableHeader>
 					<TableRow>
 						<TableHead
@@ -101,32 +116,32 @@ const UsersList = ({ items }) => {
 						</TableHead>
 
 						<TableHead
-							sorted={column === "storageType" ? direction : null}
-							onSort={handleSort("storageType")}
+							sorted={column === "pool.name" ? direction : null}
+							onSort={handleSort("pool.name")}
 						>
 							{t("storageType")}
 						</TableHead>
 
 						<TableHead
 							align="center"
-							sorted={column === "space" ? direction : null}
-							onSort={handleSort("space")}
+							sorted={column === "usage.data_size_mb" ? direction : null}
+							onSort={handleSort("usage.data_size_mb")}
 						>
 							{t("space")}
 						</TableHead>
 
 						<TableHead
 							align="center"
-							sorted={column === "buckets" ? direction : null}
-							onSort={handleSort("buckets")}
+							sorted={column === "usage.buckets" ? direction : null}
+							onSort={handleSort("usage.buckets")}
 						>
 							{t("buckets")}
 						</TableHead>
 
 						<TableHead
 							align="center"
-							sorted={column === "objects" ? direction : null}
-							onSort={handleSort("objects")}
+							sorted={column === "usage.objects" ? direction : null}
+							onSort={handleSort("usage.objects")}
 						>
 							{t("objects")}
 						</TableHead>
@@ -141,7 +156,7 @@ const UsersList = ({ items }) => {
 							Object.keys(item.usage).length > 0;
 						return (
 							<TableRow key={item.name}>
-								<TableCell width={3}>
+								<TableCell>
 									<div className="flex-inline">
 										<div className="name-cell">
 											{item.name.length > 20 ? (
@@ -160,14 +175,7 @@ const UsersList = ({ items }) => {
 												</Link>
 											)}
 										</div>
-										{item.status === "locked" && (
-											// <Icon
-											// 	name="lock"
-											// 	title={t("lockedS3user")}
-											// 	style={{ marginLeft: "4px" }}
-											// />
-											<Lock size={16} />
-										)}
+										{item.status === "locked" && <Lock size={16} />}
 									</div>
 								</TableCell>
 								<TableCell>
@@ -176,7 +184,7 @@ const UsersList = ({ items }) => {
 										{item.owner && <CopyButton content={item.owner} />}
 									</div>
 								</TableCell>
-								<TableCell width={3}>
+								<TableCell>
 									<div>
 										{item.description.length > 18 ? (
 											<Popup content={item.description}>

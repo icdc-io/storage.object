@@ -43,12 +43,11 @@ const Users = () => {
 		<Segment className="h-full flex flex-col">
 			{statuses.includes("pending") && <Loader active inline="centered" />}
 			{s3users.length === 0 && s3usersFetchStatus === "fulfilled" && (
-				<div className="h-full m-auto flex flex-col justify-center">
+				<div className="h-full m-auto flex flex-col justify-center gap-4">
 					<div className="">
 						<Meh size={64} className="mx-auto" />
 						<h2>{t("noS3users")}</h2>
 					</div>
-					<br />
 					<div className="flex">
 						<Button onClick={onEditBucketModalOpen()} className="mx-auto">
 							{t("create")}
@@ -60,7 +59,7 @@ const Users = () => {
 			{s3usersFetchStatus === "rejected" && <ErrorScreen />}
 
 			{s3users.length > 0 && s3usersFetchStatus === "fulfilled" && (
-				<section className="h-full">
+				<section className="h-full flex flex-col gap-4">
 					<div>
 						<div className="flex items-center justify-between">
 							<h2>{t("s3users")}</h2>

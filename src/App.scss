@@ -5,6 +5,7 @@
   height: 100%;
 
   .quotas-description {
+    margin-top: 1rem;
     color: #767676;
       img {
       display: inline;
@@ -24,45 +25,83 @@
     margin-bottom: 2rem;
   }
 
-  .users-list__actions_dot {
-    padding: 0.79em;
-    line-height: 1em;
-    min-height: 1em;
-    border-radius: 0.29rem;
+  table.users-list.loaded {
+    th:nth-child(1) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(2) {
+      min-width: 10rem;
+      width: 12%;
+    }
+    th:nth-child(3) {
+      min-width: 10rem;
+      width: 20%;
+    }
+    th:nth-child(4) {
+      min-width: 6rem;
+      width: 10%;
+    }
+    th:nth-child(5) {
+      min-width: 10rem;
+      width: 15%;
+    }
+    th:nth-child(6) {
+      min-width: 10rem;
+      width: 15%;
+    }
+    th:nth-child(7) {
+      min-width: 10rem;
+      width: 15%;
+    }
   }
-
-  .users-list__actions_dot:hover {
-      background: #e0e1e2 none;
+  table.quotas-list.loaded {
+    th:nth-child(1) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(2) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(3) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(4) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(5) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(6) {
+      min-width: 8rem;
+      width: 10%;
+    }
+    th:nth-child(7) {
+      min-width: 16rem;
+      width: 18%;
+    }
+    th:nth-child(8) {
+      min-width: 16rem;
+      width: 18%;
+    }
   }
-
-  .table.users-list,
-  .table.quotas-list {
-      padding: 0;
-
-      thead th {
-          border-left: none !important;
-          background-color: white;
-          padding: 8px 11px;
-          color: #676767 !important;
-
-          &.sorted {
-              border-left: none;
-              background: white;
-          }
-
-          &:not(:first-child) {
-              cursor: default;
-
-              &:hover {
-                  background-color: white;
-              }
-          }
-      }
-
-      thead th:first-child,
-      tbody td:first-child {
-          padding-left: 20px;
-      }
+  table.buckets-list {
+    th:nth-child(1) {
+      min-width: 8rem;
+      width: 30%;
+    }
+    th:nth-child(2) {
+      min-width: 12rem;
+      width: 34%;
+    }
+    th:nth-child(3) {
+      min-width: 12rem;
+      width: 34%;
+    }
   }
 
   .s3quotas-list {
@@ -71,7 +110,6 @@
       background-color: white;
       border-radius: 3px;
       margin-top: 20px;
-      min-width: 600px;
       padding: 20px;
 
       td {
@@ -82,7 +120,6 @@
       background-color: white;
       border-radius: 3px;
       margin-top: 20px;
-      min-width: 600px;
       padding: 20px;
   }
   .ui.basic.label {
@@ -121,11 +158,6 @@
 
   .text_right {
       float: right;
-  }
-
-  .users-list tr:hover {
-      background: #f8f8f8;
-      cursor: pointer;
   }
 
   .row.buckets-description {
@@ -283,11 +315,6 @@
   .column-wrapper {
       display: flex;
       width: 100%;
-  }
-
-  .users-list .name-cell {
-      font-weight: bold;
-      color: #4183c4;
   }
 }
 

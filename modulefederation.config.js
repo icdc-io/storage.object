@@ -1,13 +1,16 @@
-const { dependencies } = require("./package.json");
+import { dependencies } from "./package.json";
 
-module.exports = {
+export const mfConfig = (envMode) => ({
 	name: "storage_objects",
 	filename: "remoteEntry.js",
 	exposes: {
 		"./objects": "./src/amazon.jsx",
 	},
 	remotes: {
-		container: "host@/general.js",
+		container:
+			envMode === "development"
+				? "host@http://localhost:8000/general.js"
+				: "host@/general.js",
 	},
 	shared: {
 		react: {
@@ -25,5 +28,11 @@ module.exports = {
 			strictVersion: true,
 			requiredVersion: dependencies["react-i18next"],
 		},
+		"@tanstack/react-query": {
+			singleton: true,
+			strictVersion: true,
+			requiredVersion: dependencies["@tanstack/react-query"],
+		},
 	},
-};
+	types: false,
+});

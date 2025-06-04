@@ -94,11 +94,13 @@ const Quotas = () => {
 	const isFullHeight =
 		s3quotasFetchStatus !== "fulfilled" || quotas.length === 0;
 
+	const withContent = s3quotasFetchStatus === "fulfilled" && quotas.length > 0;
+
 	const getContent = () => {
 		if (s3quotasFetchStatus === "pending")
 			return (
 				<TableRow>
-					<TableCell className="s3quotas-empty-cell" colSpan="8">
+					<TableCell className="s3quotas-empty-cell" colSpan="100">
 						<div className="s3quotas-empty">
 							<Loader />
 						</div>
@@ -109,7 +111,7 @@ const Quotas = () => {
 		if (s3quotasFetchStatus === "rejected")
 			return (
 				<TableRow>
-					<TableCell className="s3quotas-empty-cell" colSpan="8">
+					<TableCell className="s3quotas-empty-cell" colSpan="100">
 						<div className="s3quotas-empty">
 							<ErrorScreen />
 						</div>
@@ -120,7 +122,7 @@ const Quotas = () => {
 		if (quotas.length === 0)
 			return (
 				<TableRow>
-					<TableCell className="s3quotas-empty-cell" colSpan="8">
+					<TableCell className="s3quotas-empty-cell" colSpan="100">
 						<div className="s3quotas-empty">
 							<h2>{t("quotasEmpty")}</h2>
 							{isAdminRights(user.role) && <QuotasModal />}
@@ -180,14 +182,13 @@ const Quotas = () => {
 	);
 
 	return (
-		<section className="s3quotas-list h-full">
+		<section className="s3quotas-list flex flex-col gap-4">
 			<div className="flex items-center justify-between">
 				<h2>{t("quotas")}</h2>
 				{isAdminRights(user.role) &&
 					s3quotasFetchStatus === "fulfilled" &&
 					createQuotaButton}
 			</div>
-			<br />
 			<div className="flex quotas-description">
 				<p>
 					{t("quotasDescription")}{" "}
@@ -196,17 +197,14 @@ const Quotas = () => {
 					</a>
 				</p>
 			</div>
-			<br />
 			<Table
-				className="quotas-list h-full"
+				className={`${withContent ? "loaded" : ""} quotas-list h-full`}
 				containerClassName={isFullHeight ? "h-full" : ""}
 			>
 				<TableHeader>
 					<TableRow>
 						{headers.map((item) => (
-							<TableHead key={item.data} width={item.width}>
-								{t(item.title)}
-							</TableHead>
+							<TableHead key={item.data}>{t(item.title)}</TableHead>
 						))}
 					</TableRow>
 				</TableHeader>

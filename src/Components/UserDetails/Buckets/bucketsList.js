@@ -44,6 +44,7 @@ const BucketsList = ({ s3user }) => {
 	const [column, setColumn] = useState("name");
 	const [direction, setDirection] = useState("ascending");
 	const [data, setData] = useState([]);
+	const isUserLocked = s3user.status === "locked";
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -70,6 +71,7 @@ const BucketsList = ({ s3user }) => {
 		{
 			text: "edit",
 			action: onBucketModalOpen,
+			disabled: isUserLocked,
 		},
 		{
 			text: "remove",
@@ -102,14 +104,17 @@ const BucketsList = ({ s3user }) => {
 
 			{Object.keys(buckets).length === 0 &&
 				bucketsFetchStatus === "fulfilled" && (
-					<div className="h-full m-auto flex flex-col justify-center">
+					<div className="h-full m-auto flex flex-col justify-center gap-4">
 						<div className="">
 							<Meh size={64} className="mx-auto" />
 							<h2>{t("noBuckets")}</h2>
 						</div>
-						<br />
 						<div className="flex">
-							<Button onClick={onBucketModalOpen()} className="mx-auto">
+							<Button
+								onClick={onBucketModalOpen()}
+								disabled={isUserLocked}
+								className="mx-auto"
+							>
 								{t("create")}
 							</Button>
 						</div>
@@ -120,12 +125,12 @@ const BucketsList = ({ s3user }) => {
 
 			{Object.keys(buckets).length > 0 &&
 				bucketsFetchStatus === "fulfilled" && (
-					<React.Fragment>
+					<div className="flex flex-col gap-4">
 						<div className="buckets-grid">
 							<div className="flex flex-wrap items-center justify-between gap-4">
 								<h4 className="flex gap-2 items-center">
 									{t("bucketsTab")}
-									{s3user.status === "locked" && (
+									{isUserLocked && (
 										<Lock size={16} />
 										// <Icon
 										// 	style={{
@@ -145,24 +150,14 @@ const BucketsList = ({ s3user }) => {
 									// icon="plus"
 									// labelPosition="left"
 									// primary
-									disabled={s3user.status === "locked"}
+									disabled={isUserLocked}
 								>
 									{t("addBucket")}
 								</Button>
 							</div>
-							<br />
-							{/* <div> */}
-
-							{/* <BucketModal s3user={s3user} /> */}
-							{/* </div> */}
-							{/* <Grid.Row className="buckets-description">
-								<Grid.Column verticalAlign="middle" width={16}> */}
 							<p className="quotas-description">{t("bucketsDescription")}</p>
-							{/* </Grid.Column>
-							</Grid.Row> */}
 						</div>
-						<br />
-						<Table className="users-list">
+						<Table className="buckets-list">
 							<TableHeader>
 								<TableRow>
 									<TableHead
@@ -194,8 +189,8 @@ const BucketsList = ({ s3user }) => {
 							<TableBody>
 								{data?.map((item, i) => (
 									<TableRow key={item.name}>
-										<TableCell width={5}>{item.name}</TableCell>
-										<TableCell width={5} align="center">
+										<TableCell>{item.name}</TableCell>
+										<TableCell align="center">
 											{item.usage.data_size_mb} /{" "}
 											{item.quota.data_size_mb >= 0
 												? item.quota.data_size_mb
@@ -207,7 +202,7 @@ const BucketsList = ({ s3user }) => {
 												/>
 											)}
 										</TableCell>
-										<TableCell width={5} align="center">
+										<TableCell align="center">
 											{item.usage.objects} /{" "}
 											{item.quota.objects >= 0 ? item.quota.objects : "∞"}
 											{item.quota.objects >= 0 && (
@@ -217,32 +212,14 @@ const BucketsList = ({ s3user }) => {
 												/>
 											)}
 										</TableCell>
-										<TableCell width={1} align="right">
+										<TableCell align="right">
 											<OptionsMenu instance={item} options={options} />
-											{/* <Dropdown
-												direction="left"
-												icon="ellipsis vertical"
-												className="users-list__actions_dot"
-											>
-												<Dropdown.Menu>
-													<BucketModal edit bucket={item} s3user={s3user} />
-													<Dropdown.Item
-														className="item-red"
-														icon="trash"
-														text={t("remove")}
-														onClick={() => {
-															setDeleteConfirm(true);
-															setCurrentItem(item);
-														}}
-													/>
-												</Dropdown.Menu>
-											</Dropdown> */}
 										</TableCell>
 									</TableRow>
 								))}
 							</TableBody>
 						</Table>
-					</React.Fragment>
+					</div>
 				)}
 			<DeleteModal
 				ref={deleteModalRef}
