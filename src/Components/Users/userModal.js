@@ -18,7 +18,7 @@ import UserForm from "./userForm";
 const UserModal = (_props, ref) => {
 	const { t } = useTranslation();
 	const accountName = useSelector((state) => state.host.user.account);
-	const currentOwner = useSelector((state) => state.host.user.email);
+	const currentOwner = useSelector((state) => state.host.email);
 
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);

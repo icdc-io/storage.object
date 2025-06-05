@@ -24,7 +24,7 @@ const EditResModal = ({ label }, ref) => {
 
 	const userRole = useSelector((state) => state.host.user.role);
 	const userAccount = useSelector((state) => state.host.user.account);
-	const currentOwner = useSelector((state) => state.host.user.email);
+	const currentOwner = useSelector((state) => state.host.email);
 	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 
 	if (!s3user) return null;
