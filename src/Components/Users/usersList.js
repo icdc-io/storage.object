@@ -42,7 +42,7 @@ const UsersList = ({ items }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const [column, setColumn] = useState("name");
+	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
 	const [data, setData] = useState([...items]);
 	const deleteModalRef = useRef();

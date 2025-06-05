@@ -41,7 +41,7 @@ const BucketsList = ({ s3user }) => {
 	);
 	const user = useSelector((state) => state.host.user);
 
-	const [column, setColumn] = useState("name");
+	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
 	const [data, setData] = useState([]);
 	const isUserLocked = s3user.status === "locked";
