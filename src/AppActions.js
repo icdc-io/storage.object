@@ -140,8 +140,9 @@ export const lockS3user = (user_id, payload) => {
 	return (dispatch) => {
 		const response = dispatch(lockS3userAC(user_id, payload));
 
-		return response.then(() => {
+		return response.then((data) => {
 			showSuccessNotification("");
+			return data;
 		}, handleError);
 	};
 };

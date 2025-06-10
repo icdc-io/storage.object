@@ -132,7 +132,7 @@ const Quotas = () => {
 			);
 
 		return quotas.map((quota, i) => (
-			<TableRow key={quota.id}>
+			<TableRow key={quota.id + quota.account.name}>
 				{headers.map((headerItem) =>
 					headerItem.data === "edit" ? (
 						<TableCell key={headerItem.data} align="right">
@@ -147,7 +147,7 @@ const Quotas = () => {
 							)}
 						</TableCell>
 					) : (
-						<TableCell key={quota.id}>
+						<TableCell key={headerItem.data}>
 							{headerItem.data === "data_size_mb" ||
 							headerItem.data === "objects" ||
 							headerItem.data === "users" ||

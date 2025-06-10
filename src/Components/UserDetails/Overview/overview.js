@@ -33,7 +33,7 @@ const UserOverview = ({ s3user }) => {
 	}, [dispatch, s3user]);
 
 	const deleteS3user = () => {
-		dispatch(deleteS3userAndFetch(s3user.id)).then(() => navigate(-1));
+		dispatch(deleteS3userAndFetch(s3user.id)).then(() => navigate(".."));
 		// setDeleteConfirm(false);
 		// history.push("/amazon");
 		// navigate(-1);

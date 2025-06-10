@@ -37,6 +37,14 @@ const sortChartData = (data, field) =>
 		return a.usage[field] - b.usage[field];
 	});
 
+const updateAfterLocking = (setData) => (data) => {
+	setData((prevState) =>
+		prevState.map((s3User) =>
+			s3User.id === data.value.id ? data.value : s3User,
+		),
+	);
+};
+
 const UsersList = ({ items }) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
@@ -82,10 +90,14 @@ const UsersList = ({ items }) => {
 	};
 
 	const lockS3User = (item) => () =>
-		dispatch(lockS3user(item.id, { is_locked: "lock" }));
+		dispatch(lockS3user(item.id, { is_locked: "lock" })).then(
+			updateAfterLocking(setData),
+		);
 
 	const unlockS3User = (item) => () =>
-		dispatch(lockS3user(item.id, { is_locked: "unlock" }));
+		dispatch(lockS3user(item.id, { is_locked: "unlock" })).then(
+			updateAfterLocking(setData),
+		);
 
 	const withContent = data.length > 0;
 

@@ -104,7 +104,7 @@ const BucketsList = ({ s3user }) => {
 
 			{Object.keys(buckets).length === 0 &&
 				bucketsFetchStatus === "fulfilled" && (
-					<div className="h-full m-auto flex flex-col justify-center gap-4">
+					<div className="no_buckets h-full m-auto flex flex-col justify-center gap-4">
 						<div className="">
 							<Meh size={64} className="mx-auto" />
 							<h2>{t("noBuckets")}</h2>
