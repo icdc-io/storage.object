@@ -15,7 +15,7 @@ const fieldsInfo = [
 		placeholder: "namePlaceholder",
 		rules: {
 			required: "required",
-			maxLength: 64,
+			maxLength: 63,
 			pattern: {
 				value: bucketPattern,
 				message: "bucketName",

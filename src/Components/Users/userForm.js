@@ -32,10 +32,12 @@ const generalFieldsInfo = (isEdit) => [
 		rules: {
 			required: "required",
 			maxLength: 64,
-			pattern: {
-				value: s3userPattern,
-				message: "s3userName",
-			},
+			pattern: isEdit
+				? undefined
+				: {
+						value: s3userPattern,
+						message: "s3userName",
+					},
 		},
 	},
 	{
