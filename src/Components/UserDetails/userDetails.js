@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
 	clearS3UserFetchStatus,
@@ -59,6 +59,8 @@ const UserDetails = () => {
 			// history.push("/storage");
 		}
 	}, [dispatch, s3userFetchStatus]);
+
+	if (s3user.status === "deleted") return <Navigate to={".."} />;
 
 	const statuses = [s3userFetchStatus, s3quotasFetchStatus];
 

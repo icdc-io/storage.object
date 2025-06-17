@@ -1,3 +1,4 @@
+import { Button } from "container/Button";
 import CopyButton from "container/CopyButton";
 import OptionsMenu from "container/OptionsMenu";
 import Popup from "container/Popup";
@@ -11,7 +12,7 @@ import {
 	TableRow,
 } from "container/Table";
 import _ from "lodash";
-import { Lock } from "lucide-react";
+import { CircleX, Lock } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
@@ -163,31 +164,41 @@ const UsersList = ({ items }) => {
 
 				<TableBody>
 					{data?.map((item) => {
+						const TagName = item.status === "deleted" ? Button : Link;
 						const isData =
 							Object.keys(item.user_quota).length > 0 &&
 							Object.keys(item.usage).length > 0;
+						const nameCellContent = (
+							<TagName to={`${item.id}`} className="text-overflow">
+								{item.name}
+							</TagName>
+						);
 						return (
 							<TableRow key={item.name}>
 								<TableCell>
 									<div className="flex-inline">
 										<div className="name-cell">
 											{item.name.length > 20 ? (
-												<Popup content={item.name}>
-													<button
-														type="button"
-														onClick={() => navigate(`${item.id}`)}
-														className="text-overflow"
-													>
-														{item.name}
-													</button>
-												</Popup>
+												<Popup content={item.name}>{nameCellContent}</Popup>
 											) : (
-												<Link to={`${item.id}`} className="text-overflow">
-													{item.name}
-												</Link>
+												nameCellContent
 											)}
 										</div>
-										{item.status === "locked" && <Lock size={16} />}
+
+										{item.status === "locked" && (
+											<Popup content={t("lockedUserPopup")}>
+												<button type="button">
+													<Lock size={16} />
+												</button>
+											</Popup>
+										)}
+										{item.status === "deleted" && (
+											<Popup content={t("deletedUserPopup")}>
+												<button type="button">
+													<CircleX size={16} />
+												</button>
+											</Popup>
+										)}
 									</div>
 								</TableCell>
 								<TableCell>
@@ -245,30 +256,32 @@ const UsersList = ({ items }) => {
 								)}
 
 								<TableCell align="right">
-									<OptionsMenu
-										instance={item}
-										options={[
-											{
-												text: "edit",
-												action: onEditBucketModalOpen,
-												disabled: item.status === "locked",
-											},
-											item.status === "locked"
-												? {
-														text: "unlockS3user",
-														action: unlockS3User,
-													}
-												: {
-														text: "lockS3user",
-														action: lockS3User,
-													},
-											{
-												text: "remove",
-												action: onDeleteBucketModalOpen,
-												color: "red",
-											},
-										]}
-									/>
+									{item.status !== "deleted" && (
+										<OptionsMenu
+											instance={item}
+											options={[
+												{
+													text: "edit",
+													action: onEditBucketModalOpen,
+													disabled: item.status === "locked",
+												},
+												item.status === "locked"
+													? {
+															text: "unlockS3user",
+															action: unlockS3User,
+														}
+													: {
+															text: "lockS3user",
+															action: lockS3User,
+														},
+												{
+													text: "remove",
+													action: onDeleteBucketModalOpen,
+													color: "red",
+												},
+											]}
+										/>
+									)}
 								</TableCell>
 							</TableRow>
 						);

@@ -30,6 +30,17 @@
   }
 
   table.users-list.loaded {
+    .name-cell button {
+      background-color: transparent;
+      color: var(--black);
+      font-size: 14px;
+      height: auto;
+      padding: 0;
+      margin: 0;
+      box-shadow: none;
+      font-weight: 400;
+      cursor: default;
+    }
     th:nth-child(1) {
       min-width: 8rem;
       width: 10%;
