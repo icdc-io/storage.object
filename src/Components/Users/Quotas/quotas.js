@@ -184,7 +184,7 @@ const Quotas = () => {
 	return (
 		<section className="s3quotas-list flex flex-col gap-4">
 			<div className="flex items-center justify-between">
-				<h2>{t("quotas")}</h2>
+				<h2 className="page-title">{t("quotas")}</h2>
 				{isAdminRights(user.role) &&
 					s3quotasFetchStatus === "fulfilled" &&
 					createQuotaButton}
