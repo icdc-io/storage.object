@@ -65,11 +65,8 @@ const UserOverview = ({ s3user }) => {
 					<div>{s3user.description}</div>
 				</div>
 			</div>
-			<br />
-			<hr />
-			<br />
-			<h4>{t("s3")}</h4>
-			<br />
+			<hr className="mx-4" />
+			<h4 className="mb-4">{t("s3")}</h4>
 			<div className="flex flex-col gap-4">
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("id")}</div>
@@ -93,11 +90,8 @@ const UserOverview = ({ s3user }) => {
 					</div>
 				</div>
 			</div>
-			<br />
-			<hr />
-			<br />
-			<h4>{t("swift")}</h4>
-			<br />
+			<hr className="mx-4" />
+			<h4 className="mb-4">{t("swift")}</h4>
 			<div className="flex flex-col gap-4 mb-8">
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("id")}</div>

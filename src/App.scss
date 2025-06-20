@@ -4,6 +4,15 @@
 	gap: 1rem;
 	height: 100%;
 
+	.mx-4 {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.mb-4 {
+		margin-bottom: 1rem;
+	}
+
 	.no_buckets {
 		padding: 4rem 0;
 	}
@@ -67,7 +76,7 @@
 			width: 15%;
 		}
 	}
-	table.quotas-list.loaded {
+	/* table.quotas-list.loaded {
 		th:nth-child(1) {
 			min-width: 8rem;
 			width: 10%;
@@ -100,7 +109,7 @@
 			min-width: 16rem;
 			width: 18%;
 		}
-	}
+	} */
 	table.buckets-list {
 		th:nth-child(1) {
 			min-width: 8rem;

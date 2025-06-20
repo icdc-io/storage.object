@@ -65,10 +65,14 @@ const Quotas = () => {
 		{ title: "objects", data: "objects", width: 2 },
 		{ title: "space", data: "data_size_mb", width: 2 },
 		{ title: "s3swiftUsers", data: "users", width: 2 },
-		{ title: "buckets", data: "buckets", width: 2 },
+		{
+			title: "buckets",
+			data: "buckets",
+			width: user.role === OPERATOR ? 1 : 2,
+		},
 		{ title: "publicEndpoints", data: "public", width: 3 },
 		{ title: "privateEndpoints", data: "private", width: 3 },
-		{ title: "", data: "edit", width: 1 },
+		isAdminRights(user.role) && { title: "", data: "edit", width: 1 },
 	].filter(Boolean);
 
 	const showEndpoints = (endpoints) => {
@@ -135,8 +139,8 @@ const Quotas = () => {
 			<TableRow key={quota.id + quota.account.name}>
 				{headers.map((headerItem) =>
 					headerItem.data === "edit" ? (
-						<TableCell key={headerItem.data} align="right">
-							{isAdminRights(user.role) && (
+						isAdminRights(user.role) ? (
+							<TableCell key={headerItem.data} align="right">
 								<Button
 									onClick={onModalOpen(quota)}
 									variant="outline"
@@ -144,8 +148,8 @@ const Quotas = () => {
 								>
 									{t("edit")}
 								</Button>
-							)}
-						</TableCell>
+							</TableCell>
+						) : null
 					) : (
 						<TableCell key={headerItem.data}>
 							{headerItem.data === "data_size_mb" ||
@@ -204,7 +208,9 @@ const Quotas = () => {
 				<TableHeader>
 					<TableRow>
 						{headers.map((item) => (
-							<TableHead key={item.data}>{t(item.title)}</TableHead>
+							<TableHead key={item.data} width={item.width}>
+								{t(item.title)}
+							</TableHead>
 						))}
 					</TableRow>
 				</TableHeader>
