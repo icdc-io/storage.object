@@ -2,6 +2,7 @@ import { Button } from "container/Button";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { isStatusLocked } from "../../../utils/isStatusLocked";
 import EditResModal from "./editResModal";
 
 const Resources = ({ s3user }) => {
@@ -33,7 +34,7 @@ const Resources = ({ s3user }) => {
 			<div className="resources-bottom-panel mt-auto">
 				<Button
 					onClick={onModalOpen(s3user)}
-					disabled={s3user.status === "locked"}
+					disabled={isStatusLocked(s3user)}
 					variant="secondary"
 				>
 					{t("edit")}
