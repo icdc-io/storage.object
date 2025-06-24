@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { deleteBucketAndFetch, fetchBuckets } from "../../../AppActions";
+import { isStatusLocked } from "../../../utils/isStatusLocked";
 import DeleteModal from "../../GeneralComponents/DeleteModal";
 import BucketModal from "./bucketModal";
 
@@ -44,7 +45,7 @@ const BucketsList = ({ s3user }) => {
 	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
 	const [data, setData] = useState([]);
-	const isUserLocked = s3user.status === "locked";
+	const isUserLocked = isStatusLocked(s3user);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {

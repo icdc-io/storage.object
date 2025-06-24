@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { actionAndFetch, deleteS3user, lockS3user } from "../../AppActions";
 import { EMPTY_VALUE } from "../../AppConstants";
+import { isStatusLocked } from "../../utils/isStatusLocked";
 import DeleteModal from "../GeneralComponents/DeleteModal";
 import UserModal from "./userModal";
 
@@ -100,7 +101,7 @@ const UsersList = () => {
 	};
 
 	const onConfirm = (item) => {
-		dispatch(actionAndFetch(deleteS3user, item.id));
+		return dispatch(actionAndFetch(deleteS3user, item.id));
 	};
 
 	const onDeleteBucketModalOpen = (instance) => () => {
@@ -133,6 +134,7 @@ const UsersList = () => {
 		const isData =
 			Object.keys(item.user_quota).length > 0 &&
 			Object.keys(item.usage).length > 0;
+		const isLocked = isStatusLocked(item);
 		return (
 			<TableRow key={item.name}>
 				<TableCell>
@@ -154,7 +156,7 @@ const UsersList = () => {
 								</Link>
 							)}
 						</div>
-						{item.status === "locked" && <Lock size={16} />}
+						{isLocked && <Lock size={16} />}
 					</div>
 				</TableCell>
 				<TableCell>
@@ -212,9 +214,9 @@ const UsersList = () => {
 							{
 								text: "edit",
 								action: onEditBucketModalOpen,
-								disabled: item.status === "locked",
+								disabled: isLocked,
 							},
-							item.status === "locked"
+							isLocked
 								? {
 										text: "unlockS3user",
 										action: unlockS3User,
