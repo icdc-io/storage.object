@@ -7,7 +7,8 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 // import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAccountUsers } from "../../AppActions";
 import { emailPattern, number, s3userPattern } from "../../Validaions";
 import { formatI18nMessageToString } from "../../utils/formatErrorMessages";
 import { ComboboxFormField } from "../GeneralComponents/ComboboxFormField";
@@ -47,21 +48,6 @@ const generalFieldsInfo = (isEdit) => [
 		rules: {
 			required: "required",
 			maxLength: 64,
-		},
-	},
-	{
-		name: "owner",
-		label: "owner",
-		placeholder: "emailPlaceholder",
-		adminOnly: true,
-		rules: {
-			required: "required",
-			pattern: isEdit
-				? {
-						value: emailPattern,
-						message: "noValidEmail",
-					}
-				: undefined,
 		},
 	},
 ];
@@ -113,11 +99,15 @@ const quotasFieldsInfo = [
 
 const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 	const { t } = useTranslation();
+	const dispatch = useDispatch();
 
 	const userRole = useSelector((state) => state.host.user.role);
 	const currentAccount = useSelector((state) => state.host.user.account);
+	const currentUserEmail = useSelector((state) => state.host.email);
 	const pools = useSelector((state) => state.AmazonStore.s3quotas);
+	const acountUsers = useSelector((state) => state.AmazonStore.accountUsers);
 	const isAdmin = isAdminRights(userRole);
+	const isMember = userRole === "member";
 
 	const currentPool = pools.filter(
 		(item) => item.account.name === currentAccount,
@@ -134,6 +124,14 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 		text: item.pool.name,
 		value: item.pool.id,
 	}));
+
+	const usersOptions = isMember
+		? [{ key: 0, text: currentUserEmail, value: currentUserEmail }]
+		: acountUsers.map((item, index) => ({
+				key: index,
+				text: item.email,
+				value: item.email,
+			}));
 
 	const handleStorageTypeChange = (newValue) => {
 		const checkedPool = currentPool.find((quota) => quota.pool.id === newValue);
@@ -176,6 +174,14 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 			});
 		}
 	}, [initialValues]);
+
+	useEffect(() => {
+		if (!isMember) {
+			dispatch(fetchAccountUsers());
+		} else if (!edit) {
+			form.setValue("owner", currentUserEmail);
+		}
+	}, [isMember, edit, currentUserEmail, form, dispatch]);
 
 	const onClose = () => {
 		setLimits({});
@@ -233,6 +239,28 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 						validate={edit ? [required, email] : [email]}
 					/>
 				)} */}
+				{
+					<ComboboxFormField
+						fieldInfo={{
+							name: "owner",
+							label: "owner",
+							placeholder: "emailPlaceholder",
+							rules: {
+								required: "required",
+								pattern: edit
+									? {
+											value: emailPattern,
+											message: "noValidEmail",
+										}
+									: undefined,
+							},
+							disabled: isMember,
+							options: usersOptions,
+						}}
+						form={form}
+					/>
+				}
+
 				{edit ? (
 					<div className="uneditable_field">
 						<Label>
@@ -258,16 +286,6 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 							onChange: handleStorageTypeChange,
 						}}
 						form={form}
-						// placeholder={t("select")}
-						// name="pool_id"
-						// label={t("storageType")}
-						// component={CustomSelect}
-						// type="text"
-						// options={storageTypes}
-						// edit={edit}
-						// initialValues={initialValues}
-						// validate={!edit ? [required] : []}
-						// onChange={handleStorageTypeChange} // Listen for changes
 					/>
 				)}
 				<h4>{t("quotas")}</h4>

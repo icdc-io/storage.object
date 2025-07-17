@@ -213,3 +213,8 @@ export const changeLang = (lang) => ({
 	type: ActionTypes.CHANGE_LANG,
 	payload: lang,
 });
+
+export const fetchAccountUsers = () => ({
+	type: ActionTypes.ACCOUNT_USERS_FETCH,
+	payload: fetchData(ActionTypes.getAccountUsersUrl()),
+});
