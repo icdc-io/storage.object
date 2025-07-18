@@ -107,7 +107,6 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 	const pools = useSelector((state) => state.AmazonStore.s3quotas);
 	const acountUsers = useSelector((state) => state.AmazonStore.accountUsers);
 	const isAdmin = isAdminRights(userRole);
-	const isMember = userRole === "member";
 
 	const currentPool = pools.filter(
 		(item) => item.account.name === currentAccount,
@@ -125,13 +124,13 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 		value: item.pool.id,
 	}));
 
-	const usersOptions = isMember
-		? [{ key: 0, text: currentUserEmail, value: currentUserEmail }]
-		: acountUsers.map((item, index) => ({
+	const usersOptions = isAdmin
+		? acountUsers.map((item, index) => ({
 				key: index,
 				text: item.email,
 				value: item.email,
-			}));
+			}))
+		: [{ key: 0, text: currentUserEmail, value: currentUserEmail }];
 
 	const handleStorageTypeChange = (newValue) => {
 		const checkedPool = currentPool.find((quota) => quota.pool.id === newValue);
@@ -176,12 +175,12 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 	}, [initialValues]);
 
 	useEffect(() => {
-		if (!isMember) {
+		if (isAdmin) {
 			dispatch(fetchAccountUsers());
 		} else if (!edit) {
 			form.setValue("owner", currentUserEmail);
 		}
-	}, [isMember, edit, currentUserEmail, form, dispatch]);
+	}, [isAdmin, edit, currentUserEmail, form, dispatch]);
 
 	const onClose = () => {
 		setLimits({});
@@ -253,7 +252,7 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 									}
 								: undefined,
 						},
-						disabled: isMember,
+						disabled: !isAdmin,
 						options: usersOptions,
 					}}
 					form={form}
