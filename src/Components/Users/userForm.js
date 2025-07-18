@@ -239,28 +239,25 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 						validate={edit ? [required, email] : [email]}
 					/>
 				)} */}
-				{
-					<ComboboxFormField
-						fieldInfo={{
-							name: "owner",
-							label: "owner",
-							placeholder: "emailPlaceholder",
-							rules: {
-								required: "required",
-								pattern: edit
-									? {
-											value: emailPattern,
-											message: "noValidEmail",
-										}
-									: undefined,
-							},
-							disabled: isMember,
-							options: usersOptions,
-						}}
-						form={form}
-					/>
-				}
-
+				<ComboboxFormField
+					fieldInfo={{
+						name: "owner",
+						label: "owner",
+						placeholder: "emailPlaceholder",
+						rules: {
+							required: "required",
+							pattern: edit
+								? {
+										value: emailPattern,
+										message: "noValidEmail",
+									}
+								: undefined,
+						},
+						disabled: isMember,
+						options: usersOptions,
+					}}
+					form={form}
+				/>
 				{edit ? (
 					<div className="uneditable_field">
 						<Label>
