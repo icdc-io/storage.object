@@ -13,7 +13,7 @@ import {
 	TableRow,
 } from "container/Table";
 import _ from "lodash";
-import { Lock, Meh } from "lucide-react";
+import { Lock, Meh, RefreshCw } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
@@ -145,16 +145,25 @@ const BucketsList = ({ s3user }) => {
 										// />
 									)}
 								</h4>
-								<Button
-									onClick={onBucketModalOpen()}
-									// content={t("addBucket")}
-									// icon="plus"
-									// labelPosition="left"
-									// primary
-									disabled={isUserLocked}
-								>
-									{t("addBucket")}
-								</Button>
+								<div className="flex gap-2">
+									<Button
+										variant="outline"
+										className="p-2 color--primary"
+										onClick={() => dispatch(fetchBuckets(s3user.name))}
+									>
+										<RefreshCw size={20} />
+									</Button>
+									<Button
+										onClick={onBucketModalOpen()}
+										// content={t("addBucket")}
+										// icon="plus"
+										// labelPosition="left"
+										// primary
+										disabled={isUserLocked}
+									>
+										{t("addBucket")}
+									</Button>
+								</div>
 							</div>
 							<p className="quotas-description">{t("bucketsDescription")}</p>
 						</div>
