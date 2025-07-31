@@ -1,9 +1,9 @@
 import { Button } from "container/Button";
+import CopyButton from "container/CopyButton";
 import ErrorScreen from "container/ErrorScreen";
 import Loader from "container/Loader";
 import OptionsMenu from "container/OptionsMenu";
 import { Progress } from "container/Progress";
-import Segment from "container/Segment";
 import {
 	Table,
 	TableBody,
@@ -41,6 +41,10 @@ const BucketsList = ({ s3user }) => {
 		(state) => state.AmazonStore.bucketsFetchStatus,
 	);
 	const user = useSelector((state) => state.host.user);
+	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+
+	const publicEndpoint = quotas?.find((q) => q.pool.id === s3user.pool.id)
+		?.endpoints.public;
 
 	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
@@ -199,7 +203,15 @@ const BucketsList = ({ s3user }) => {
 							<TableBody>
 								{data?.map((item, i) => (
 									<TableRow key={item.name}>
-										<TableCell>{item.name}</TableCell>
+										<TableCell>
+											<div className="flex items-center gap-2">
+												{item.name}
+												<CopyButton
+													content={`${publicEndpoint}/${item.name.replace(/\//g, ":")}`}
+													buttonText={t("copyUrl")}
+												/>
+											</div>
+										</TableCell>
 										<TableCell align="center">
 											{item.usage.data_size_mb} /{" "}
 											{item.quota.data_size_mb >= 0
