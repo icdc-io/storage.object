@@ -19,6 +19,17 @@ export default ({ envMode }) => {
 		tools: {
 			rspack: (config, { appendPlugins, rspack, isProd }) => {
 				config.output.publicPath = "auto";
+
+				config.plugins = config.plugins || [];
+				config.plugins.push(
+					new rspack.DefinePlugin({
+						"process.env": JSON.stringify(process.env),
+						"process.env.NODE_ENV": JSON.stringify(
+							envMode === "development" ? "development" : "production",
+						),
+					}),
+				);
+
 				const plugins = [new ModuleFederationPlugin(mfConfig(envMode))];
 				if (envMode === "development")
 					plugins.push(
