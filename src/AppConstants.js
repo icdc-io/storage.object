@@ -27,7 +27,9 @@ export const EDIT_BUCKET = "EDIT_BUCKET";
 export const ACCOUNT_USERS_FETCH = "ACCOUNT_USERS_FETCH";
 
 export const BASE_URL = "/api/storage/v2";
-export const BASE_USERS_URL = `${process.env.REACT_APP_API_GATEWAY}/api`;
+export const BASE_USERS_URL = process.env.REACT_APP_API_GATEWAY
+	? `${process.env.REACT_APP_API_GATEWAY}/api`
+	: "https://api.deu.lab.icdc.io/api";
 
 export const poolsUrl = () => `${BASE_URL}/pools`;
 export const s3UsersUrl = () => `${BASE_URL}/s3/users`;
