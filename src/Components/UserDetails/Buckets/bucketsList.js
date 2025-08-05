@@ -207,7 +207,7 @@ const BucketsList = ({ s3user }) => {
 											<div className="flex items-center gap-2">
 												{item.name}
 												<CopyButton
-													content={`${publicEndpoint}/${item.name.replace(/\//g, ":")}`}
+													content={`${publicEndpoint}/${item.path.replace(/\//g, ":")}`}
 													buttonText={t("copyUrl")}
 												/>
 											</div>
