@@ -45,7 +45,7 @@ const Quotas = () => {
 
 	useEffect(() => {
 		dispatch(fetchS3quotas());
-		dispatch(fetchPools({ type: "s3" }));
+		dispatch(fetchPools());
 		dispatch(fetchS3Limits(user.account));
 	}, [dispatch, user]);
 
@@ -168,7 +168,6 @@ const Quotas = () => {
 	};
 
 	const availableQuotas = pools
-		.filter((pool) => pool.type === "s3")
 		.map(mapPoolToDiskTypeOptions)
 		.map((diskOption) => ({
 			...diskOption,
