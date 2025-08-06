@@ -19,9 +19,9 @@ export const fetchS3Users = (options) => ({
 	payload: fetchData(ActionTypes.s3UsersUrl(), {}, options),
 });
 
-export const fetchPools = (options) => ({
+export const fetchPools = () => ({
 	type: ActionTypes.POOLS_FETCH,
-	payload: fetchData(ActionTypes.poolsUrl(), {}, options),
+	payload: fetchData(ActionTypes.s3PoolsUrl()),
 });
 
 export const fetchS3Limits = (account) => ({

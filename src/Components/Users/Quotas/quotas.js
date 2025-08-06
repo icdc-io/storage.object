@@ -45,7 +45,7 @@ const Quotas = () => {
 
 	useEffect(() => {
 		dispatch(fetchS3quotas());
-		dispatch(fetchPools({ type: "s3" }));
+		dispatch(fetchPools());
 		dispatch(fetchS3Limits(user.account));
 	}, [dispatch, user]);
 
