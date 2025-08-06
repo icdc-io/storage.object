@@ -168,6 +168,7 @@ const Quotas = () => {
 	};
 
 	const availableQuotas = pools
+		.filter((pool) => pool.type === "s3")
 		.map(mapPoolToDiskTypeOptions)
 		.map((diskOption) => ({
 			...diskOption,
