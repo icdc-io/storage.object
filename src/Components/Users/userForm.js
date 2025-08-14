@@ -46,7 +46,6 @@ const generalFieldsInfo = (isEdit) => [
 		label: "description",
 		placeholder: "descriptPlaceholder",
 		rules: {
-			required: "required",
 			maxLength: 64,
 		},
 	},
@@ -111,7 +110,7 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 	const currentPool = pools.filter(
 		(item) => item.account.name === currentAccount,
 	);
-
+	console.log(acountUsers);
 	const form = useForm({
 		defaultValues,
 	});
