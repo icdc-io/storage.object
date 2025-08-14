@@ -46,7 +46,6 @@ const generalFieldsInfo = (isEdit) => [
 		label: "description",
 		placeholder: "descriptPlaceholder",
 		rules: {
-			required: "required",
 			maxLength: 64,
 		},
 	},
