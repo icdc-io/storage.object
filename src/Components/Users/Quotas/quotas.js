@@ -175,7 +175,7 @@ const Quotas = () => {
 		}));
 
 	const createQuotaButton = filterFreeDiskTypes(availableQuotas).length ? (
-		<Button onClick={() => setOpen(true)}>{t("addQuota")}</Button>
+		<Button onClick={onModalOpen(null)}>{t("addQuota")}</Button>
 	) : (
 		<Popup content={t("noPools")}>
 			<Button className="disabled-btn ">
