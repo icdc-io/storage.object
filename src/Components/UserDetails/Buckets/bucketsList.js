@@ -3,6 +3,7 @@ import CopyButton from "container/CopyButton";
 import ErrorScreen from "container/ErrorScreen";
 import Loader from "container/Loader";
 import OptionsMenu from "container/OptionsMenu";
+import Popup from "container/Popup";
 import { Progress } from "container/Progress";
 import {
 	Table,
@@ -13,7 +14,7 @@ import {
 	TableRow,
 } from "container/Table";
 import _ from "lodash";
-import { Lock, Meh, RefreshCw } from "lucide-react";
+import { Info, Lock, Meh, RefreshCw } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
@@ -25,7 +26,7 @@ import { isStatusLocked } from "../../../utils/isStatusLocked";
 import DeleteModal from "../../GeneralComponents/DeleteModal";
 import BucketModal from "./bucketModal";
 
-const Bar = ({ value, total }) => <Progress value={value} total={total} />;
+const Bar = (...props) => <Progress {...props} />;
 
 const BucketsList = ({ s3user }) => {
 	const { t } = useTranslation();
@@ -102,6 +103,31 @@ const BucketsList = ({ s3user }) => {
 	const onConfirm = (bucket) => {
 		return dispatch(deleteBucketAndFetch(userId, bucket.path));
 	};
+
+	const objectsQuotasHint = (
+		<div className="objects_quotas_hint">
+			<h4>{t("quotaCalculationTitle")}</h4>
+			<p>{t("quotaCalculationDesc")}</p>
+			<h4>{t("formulaTitle")}</h4>
+			<p>{t("formulaDesc")}</p>
+		</div>
+	);
+
+	const objectsQuotasBar = (quotas) => (
+		<div className="objects_quotas_hint">
+			<div>
+				<h4>
+					{t("totalObjects")}: {quotas.total_objects}
+				</h4>
+				<h4>
+					{t("storedObjects")}: {quotas.objects}
+				</h4>
+				<h4>
+					{t("multipartObjects")}: {quotas.multipart_objects}
+				</h4>
+			</div>
+		</div>
+	);
 
 	return (
 		<React.Fragment>
@@ -194,7 +220,12 @@ const BucketsList = ({ s3user }) => {
 										sorted={column === "objects" ? direction : null}
 										onSort={handleSort("objects")}
 									>
-										{t("objects")}
+										{t("objects")}&nbsp;&nbsp;
+										<Popup content={objectsQuotasHint}>
+											<span role="button" tabIndex={0}>
+												<Info size={16} />
+											</span>
+										</Popup>
 									</TableHead>
 									<TableHead />
 								</TableRow>
@@ -225,8 +256,13 @@ const BucketsList = ({ s3user }) => {
 											)}
 										</TableCell>
 										<TableCell align="center">
-											{item.usage.objects} /{" "}
-											{item.quota.objects >= 0 ? item.quota.objects : "∞"}
+											<Popup content={objectsQuotasBar(item.usage)}>
+												<button type="button">
+													{item.usage.objects} /{" "}
+													{item.quota.objects >= 0 ? item.quota.objects : "∞"}
+												</button>
+											</Popup>
+
 											{item.quota.objects >= 0 && (
 												<Bar
 													value={item.usage.objects}
