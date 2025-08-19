@@ -5,5 +5,5 @@ export const isStatusLocked = (s3UserInfo) => {
 
 export const isStatusDeleted = (s3UserInfo) => {
 	if (s3UserInfo.status) return s3UserInfo.status === "deleted";
-	return s3UserInfo.is_locked;
+	return false;
 };
