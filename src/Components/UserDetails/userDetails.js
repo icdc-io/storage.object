@@ -6,13 +6,14 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
 	clearS3UserFetchStatus,
 	fetchBuckets,
 	fetchS3User,
 } from "../../AppActions";
+import { isStatusDeleted } from "../../utils/isStatusLocked";
 import BucketsList from "./Buckets/bucketsList";
 import UserOverview from "./Overview/overview";
 import Resources from "./Resources/resources";
@@ -59,6 +60,8 @@ const UserDetails = () => {
 			// history.push("/storage");
 		}
 	}, [dispatch, s3userFetchStatus]);
+
+	if (isStatusDeleted(s3user)) return <Navigate to={".."} />;
 
 	const statuses = [s3userFetchStatus, s3quotasFetchStatus];
 

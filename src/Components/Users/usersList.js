@@ -14,7 +14,7 @@ import {
 	TableRow,
 } from "container/Table";
 import _ from "lodash";
-import { Lock, Meh } from "lucide-react";
+import { CircleX, Lock, Meh } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { actionAndFetch, deleteS3user, lockS3user } from "../../AppActions";
 import { EMPTY_VALUE } from "../../AppConstants";
-import { isStatusLocked } from "../../utils/isStatusLocked";
+import { isStatusDeleted, isStatusLocked } from "../../utils/isStatusLocked";
 import DeleteModal from "../GeneralComponents/DeleteModal";
 import UserModal from "./userModal";
 
@@ -131,32 +131,45 @@ const UsersList = () => {
 	const statuses = [s3usersFetchStatus, s3quotasFetchStatus, poolsFetchStatus];
 
 	const content = data?.map((item) => {
+		const isLocked = isStatusLocked(item);
+		const isDeleted = isStatusDeleted(item);
+		const TagName = isDeleted ? Button : Link;
 		const isData =
 			Object.keys(item.user_quota).length > 0 &&
 			Object.keys(item.usage).length > 0;
-		const isLocked = isStatusLocked(item);
+		const nameCellContent = (
+			<TagName
+				to={`${item.id}`}
+				className={`text-overflow ${isDeleted ? "deleted" : ""}`}
+			>
+				{item.name}
+			</TagName>
+		);
 		return (
 			<TableRow key={item.name}>
 				<TableCell>
 					<div className="flex-inline">
 						<div className="name-cell">
 							{item.name.length > 20 ? (
-								<Popup content={item.name}>
-									<button
-										type="button"
-										onClick={() => navigate(`${item.id}`)}
-										className="text-overflow"
-									>
-										{item.name}
-									</button>
-								</Popup>
+								<Popup content={item.name}>{nameCellContent}</Popup>
 							) : (
-								<Link to={`${item.id}`} className="text-overflow">
-									{item.name}
-								</Link>
+								nameCellContent
 							)}
 						</div>
-						{isLocked && <Lock size={16} />}
+						{isLocked && (
+							<Popup content={t("lockedUserPopup")}>
+								<button type="button">
+									<Lock size={16} />
+								</button>
+							</Popup>
+						)}
+						{isDeleted && (
+							<Popup content={t("deletedUserPopup")}>
+								<button type="button">
+									<CircleX size={16} color="#DB2828" />
+								</button>
+							</Popup>
+						)}
 					</div>
 				</TableCell>
 				<TableCell>
