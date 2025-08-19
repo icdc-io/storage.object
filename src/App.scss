@@ -83,10 +83,10 @@
 
 	table.users-list.loaded {
     .name-cell {
-      font-weight: 700;
 
       a {
         color: #2A7DBC;
+        font-weight: 700;
       }
 
       button {
@@ -98,6 +98,7 @@
         margin: 0;
         box-shadow: none;
         cursor: default;
+        font-weight: 700;
 
         &.deleted {
           opacity: 0.6;
