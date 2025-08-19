@@ -13,6 +13,7 @@ import {
 	fetchBuckets,
 	fetchS3User,
 } from "../../AppActions";
+import { isStatusDeleted } from "../../utils/isStatusLocked";
 import BucketsList from "./Buckets/bucketsList";
 import UserOverview from "./Overview/overview";
 import Resources from "./Resources/resources";
@@ -60,7 +61,7 @@ const UserDetails = () => {
 		}
 	}, [dispatch, s3userFetchStatus]);
 
-	if (s3user.status === "deleted") return <Navigate to={".."} />;
+	if (isStatusDeleted(s3user)) return <Navigate to={".."} />;
 
 	const statuses = [s3userFetchStatus, s3quotasFetchStatus];
 

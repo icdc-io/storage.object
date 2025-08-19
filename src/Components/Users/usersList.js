@@ -1,5 +1,7 @@
 import { Button } from "container/Button";
 import CopyButton from "container/CopyButton";
+import ErrorScreen from "container/ErrorScreen";
+import Loader from "container/Loader";
 import OptionsMenu from "container/OptionsMenu";
 import Popup from "container/Popup";
 import { Progress } from "container/Progress";
@@ -12,19 +14,30 @@ import {
 	TableRow,
 } from "container/Table";
 import _ from "lodash";
-import { CircleX, Lock } from "lucide-react";
+import { CircleX, Lock, Meh } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { actionAndFetch, deleteS3user, lockS3user } from "../../AppActions";
 import { EMPTY_VALUE } from "../../AppConstants";
+import { isStatusDeleted, isStatusLocked } from "../../utils/isStatusLocked";
 import DeleteModal from "../GeneralComponents/DeleteModal";
 import UserModal from "./userModal";
 
 const Bar = ({ value, total }) => <Progress value={value} total={total} />;
+
+export const fullCellWidth = (content) => {
+	return (
+		<TableRow>
+			<TableCell colSpan={100}>
+				<div className="empty-cell">{content}</div>
+			</TableCell>
+		</TableRow>
+	);
+};
 
 const sortChartData = (data, field) =>
 	data.sort((a, b) => {
@@ -46,16 +59,29 @@ const updateAfterLocking = (setData) => (data) => {
 	);
 };
 
-const UsersList = ({ items }) => {
+const UsersList = () => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
+	const items = useSelector((state) => state.AmazonStore.s3users);
+	const s3usersFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3usersFetchStatus,
+	);
+	const s3quotasFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3quotasFetchStatus,
+	);
+	const poolsFetchStatus = useSelector(
+		(state) => state.AmazonStore.poolsFetchStatus,
+	);
 	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
 	const [data, setData] = useState([...items]);
 	const deleteModalRef = useRef();
 	const editModalRef = useRef();
+
+	useEffect(() => {
+		setData([...items]);
+	}, [items]);
 
 	const handleSort = (clickedColumn) => () => {
 		if (column !== clickedColumn) {
@@ -75,7 +101,7 @@ const UsersList = ({ items }) => {
 	};
 
 	const onConfirm = (item) => {
-		dispatch(actionAndFetch(deleteS3user, item.id));
+		return dispatch(actionAndFetch(deleteS3user, item.id));
 	};
 
 	const onDeleteBucketModalOpen = (instance) => () => {
@@ -101,6 +127,125 @@ const UsersList = ({ items }) => {
 		);
 
 	const withContent = data.length > 0;
+
+	const statuses = [s3usersFetchStatus, s3quotasFetchStatus, poolsFetchStatus];
+
+	const content = data?.map((item) => {
+		const isLocked = isStatusLocked(item);
+		const isDeleted = isStatusDeleted(item);
+		const TagName = isDeleted ? Button : Link;
+		const isData =
+			Object.keys(item.user_quota).length > 0 &&
+			Object.keys(item.usage).length > 0;
+		const nameCellContent = (
+			<TagName to={`${item.id}`} className="text-overflow">
+				{item.name}
+			</TagName>
+		);
+		return (
+			<TableRow key={item.name}>
+				<TableCell>
+					<div className="flex-inline">
+						<div className="name-cell">
+							{item.name.length > 20 ? (
+								<Popup content={item.name}>{nameCellContent}</Popup>
+							) : (
+								nameCellContent
+							)}
+						</div>
+						{isLocked && (
+							<Popup content={t("lockedUserPopup")}>
+								<button type="button">
+									<Lock size={16} />
+								</button>
+							</Popup>
+						)}
+						{isDeleted && (
+							<Popup content={t("deletedUserPopup")}>
+								<button type="button">
+									<CircleX size={16} />
+								</button>
+							</Popup>
+						)}
+					</div>
+				</TableCell>
+				<TableCell>
+					<div className="flex-inline">
+						{item.owner || EMPTY_VALUE}
+						{item.owner && <CopyButton content={item.owner} />}
+					</div>
+				</TableCell>
+				<TableCell>
+					<div>
+						{item.description.length > 18 ? (
+							<Popup content={item.description}>
+								<button type="button" className="text-overflow">
+									{item.description}
+								</button>
+							</Popup>
+						) : (
+							<span className="text-overflow">{item.description}</span>
+						)}
+					</div>
+				</TableCell>
+				<TableCell>{item.pool.name || EMPTY_VALUE}</TableCell>
+				{isData ? (
+					<TableCell align="center">
+						{item.usage.data_size_mb} / {item.user_quota.data_size_mb}
+						<Bar
+							value={item.usage.data_size_mb}
+							total={item.user_quota.data_size_mb}
+						/>
+					</TableCell>
+				) : (
+					<TableCell align="center">{t("notAvailable")}</TableCell>
+				)}
+				{isData ? (
+					<TableCell align="center">
+						{item.usage.buckets} / {item.user_quota.buckets}
+						<Bar value={item.usage.buckets} total={item.user_quota.buckets} />
+					</TableCell>
+				) : (
+					<TableCell align="center">{t("notAvailable")}</TableCell>
+				)}
+				{isData ? (
+					<TableCell align="center">
+						{item.usage.objects} / {item.user_quota.objects}
+						<Bar value={item.usage.objects} total={item.user_quota.objects} />
+					</TableCell>
+				) : (
+					<TableCell align="center">{t("notAvailable")}</TableCell>
+				)}
+
+				<TableCell align="right">
+					<OptionsMenu
+						instance={item}
+						options={[
+							{
+								text: "edit",
+								action: onEditBucketModalOpen,
+								disabled: isLocked,
+							},
+							isLocked
+								? {
+										text: "unlockS3user",
+										action: unlockS3User,
+									}
+								: {
+										text: "lockS3user",
+										action: lockS3User,
+									},
+							{
+								text: "remove",
+								action: onDeleteBucketModalOpen,
+								color: "red",
+							},
+						]}
+					/>
+				</TableCell>
+			</TableRow>
+		);
+	});
 
 	return (
 		<React.Fragment>
@@ -163,129 +308,18 @@ const UsersList = ({ items }) => {
 				</TableHeader>
 
 				<TableBody>
-					{data?.map((item) => {
-						const TagName = item.status === "deleted" ? Button : Link;
-						const isData =
-							Object.keys(item.user_quota).length > 0 &&
-							Object.keys(item.usage).length > 0;
-						const nameCellContent = (
-							<TagName to={`${item.id}`} className="text-overflow">
-								{item.name}
-							</TagName>
-						);
-						return (
-							<TableRow key={item.name}>
-								<TableCell>
-									<div className="flex-inline">
-										<div className="name-cell">
-											{item.name.length > 20 ? (
-												<Popup content={item.name}>{nameCellContent}</Popup>
-											) : (
-												nameCellContent
-											)}
-										</div>
-
-										{item.status === "locked" && (
-											<Popup content={t("lockedUserPopup")}>
-												<button type="button">
-													<Lock size={16} />
-												</button>
-											</Popup>
-										)}
-										{item.status === "deleted" && (
-											<Popup content={t("deletedUserPopup")}>
-												<button type="button">
-													<CircleX size={16} />
-												</button>
-											</Popup>
-										)}
-									</div>
-								</TableCell>
-								<TableCell>
-									<div className="flex-inline">
-										{item.owner || EMPTY_VALUE}
-										{item.owner && <CopyButton content={item.owner} />}
-									</div>
-								</TableCell>
-								<TableCell>
-									<div>
-										{item.description.length > 18 ? (
-											<Popup content={item.description}>
-												<button type="button" className="text-overflow">
-													{item.description}
-												</button>
-											</Popup>
-										) : (
-											<span className="text-overflow">{item.description}</span>
-										)}
-									</div>
-								</TableCell>
-								<TableCell>{item.pool.name || EMPTY_VALUE}</TableCell>
-								{isData ? (
-									<TableCell align="center">
-										{item.usage.data_size_mb} / {item.user_quota.data_size_mb}
-										<Bar
-											value={item.usage.data_size_mb}
-											total={item.user_quota.data_size_mb}
-										/>
-									</TableCell>
-								) : (
-									<TableCell align="center">{t("notAvailable")}</TableCell>
-								)}
-								{isData ? (
-									<TableCell align="center">
-										{item.usage.buckets} / {item.user_quota.buckets}
-										<Bar
-											value={item.usage.buckets}
-											total={item.user_quota.buckets}
-										/>
-									</TableCell>
-								) : (
-									<TableCell align="center">{t("notAvailable")}</TableCell>
-								)}
-								{isData ? (
-									<TableCell align="center">
-										{item.usage.objects} / {item.user_quota.objects}
-										<Bar
-											value={item.usage.objects}
-											total={item.user_quota.objects}
-										/>
-									</TableCell>
-								) : (
-									<TableCell align="center">{t("notAvailable")}</TableCell>
-								)}
-
-								<TableCell align="right">
-									{item.status !== "deleted" && (
-										<OptionsMenu
-											instance={item}
-											options={[
-												{
-													text: "edit",
-													action: onEditBucketModalOpen,
-													disabled: item.status === "locked",
-												},
-												item.status === "locked"
-													? {
-															text: "unlockS3user",
-															action: unlockS3User,
-														}
-													: {
-															text: "lockS3user",
-															action: lockS3User,
-														},
-												{
-													text: "remove",
-													action: onDeleteBucketModalOpen,
-													color: "red",
-												},
-											]}
-										/>
+					{statuses.includes("pending")
+						? fullCellWidth(<Loader />)
+						: s3usersFetchStatus === "rejected"
+							? fullCellWidth(<ErrorScreen />)
+							: data.length
+								? content
+								: fullCellWidth(
+										<div className="flex flex-col gap-2">
+											<Meh size={64} className="mx-auto" />
+											<h2>{t("noS3users")}</h2>
+										</div>,
 									)}
-								</TableCell>
-							</TableRow>
-						);
-					})}
 				</TableBody>
 			</Table>
 			<UserModal ref={editModalRef} />

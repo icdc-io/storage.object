@@ -1,9 +1,9 @@
 import { Button } from "container/Button";
+import CopyButton from "container/CopyButton";
 import ErrorScreen from "container/ErrorScreen";
 import Loader from "container/Loader";
 import OptionsMenu from "container/OptionsMenu";
 import { Progress } from "container/Progress";
-import Segment from "container/Segment";
 import {
 	Table,
 	TableBody,
@@ -13,7 +13,7 @@ import {
 	TableRow,
 } from "container/Table";
 import _ from "lodash";
-import { Lock, Meh } from "lucide-react";
+import { Lock, Meh, RefreshCw } from "lucide-react";
 import PropTypes from "prop-types";
 import React, { useState, useEffect, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { deleteBucketAndFetch, fetchBuckets } from "../../../AppActions";
+import { isStatusLocked } from "../../../utils/isStatusLocked";
 import DeleteModal from "../../GeneralComponents/DeleteModal";
 import BucketModal from "./bucketModal";
 
@@ -40,11 +41,15 @@ const BucketsList = ({ s3user }) => {
 		(state) => state.AmazonStore.bucketsFetchStatus,
 	);
 	const user = useSelector((state) => state.host.user);
+	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
+
+	const publicEndpoint = quotas?.find((q) => q.pool.id === s3user.pool.id)
+		?.endpoints.public;
 
 	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
 	const [data, setData] = useState([]);
-	const isUserLocked = s3user.status === "locked";
+	const isUserLocked = isStatusLocked(s3user);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -144,16 +149,25 @@ const BucketsList = ({ s3user }) => {
 										// />
 									)}
 								</h4>
-								<Button
-									onClick={onBucketModalOpen()}
-									// content={t("addBucket")}
-									// icon="plus"
-									// labelPosition="left"
-									// primary
-									disabled={isUserLocked}
-								>
-									{t("addBucket")}
-								</Button>
+								<div className="flex gap-2">
+									<Button
+										variant="outline"
+										className="p-2 color--primary"
+										onClick={() => dispatch(fetchBuckets(s3user.name))}
+									>
+										<RefreshCw size={20} />
+									</Button>
+									<Button
+										onClick={onBucketModalOpen()}
+										// content={t("addBucket")}
+										// icon="plus"
+										// labelPosition="left"
+										// primary
+										disabled={isUserLocked}
+									>
+										{t("addBucket")}
+									</Button>
+								</div>
 							</div>
 							<p className="quotas-description">{t("bucketsDescription")}</p>
 						</div>
@@ -189,7 +203,15 @@ const BucketsList = ({ s3user }) => {
 							<TableBody>
 								{data?.map((item, i) => (
 									<TableRow key={item.name}>
-										<TableCell>{item.name}</TableCell>
+										<TableCell>
+											<div className="flex items-center gap-2">
+												{item.name}
+												<CopyButton
+													content={`${publicEndpoint}/${item.path.replace(/\//g, ":")}`}
+													buttonText={t("copyUrl")}
+												/>
+											</div>
+										</TableCell>
 										<TableCell align="center">
 											{item.usage.data_size_mb} /{" "}
 											{item.quota.data_size_mb >= 0

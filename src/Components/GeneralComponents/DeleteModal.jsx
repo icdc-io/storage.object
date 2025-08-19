@@ -24,7 +24,7 @@ const DeleteModal = ({ title, children, onConfirm }, ref) => {
 
 	if (!instance) return null;
 
-	const onSubmit = () => onConfirm(instance);
+	const onSubmit = () => onConfirm(instance).then(() => setOpen(false));
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>

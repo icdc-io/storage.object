@@ -11,6 +11,7 @@ import {
 	generateKeys,
 	lockS3user,
 } from "../../../AppActions";
+import { isStatusLocked } from "../../../utils/isStatusLocked";
 import DeleteModal from "../../GeneralComponents/DeleteModal";
 
 const UserOverview = ({ s3user }) => {
@@ -33,11 +34,14 @@ const UserOverview = ({ s3user }) => {
 	}, [dispatch, s3user]);
 
 	const deleteS3user = () => {
-		dispatch(deleteS3userAndFetch(s3user.id)).then(() => navigate(".."));
+		return dispatch(deleteS3userAndFetch(s3user.id)).then(() => navigate(".."));
 		// setDeleteConfirm(false);
 		// history.push("/amazon");
 		// navigate(-1);
 	};
+
+	const s3Info = s3user.keys.s3?.[0] || s3user.keys.s3 || {};
+	const swiftInfo = s3user.keys.swift?.[0] || s3user.keys.swift || {};
 
 	return (
 		<React.Fragment>
@@ -46,7 +50,7 @@ const UserOverview = ({ s3user }) => {
 					<div>
 						<h4 className="flex gap-2 items-center">
 							{s3user.name}
-							{s3user.status === "locked" && (
+							{isStatusLocked(s3user) && (
 								// <Icon
 								// 	style={{
 								// 		fontSize: "15px",
@@ -65,52 +69,46 @@ const UserOverview = ({ s3user }) => {
 					<div>{s3user.description}</div>
 				</div>
 			</div>
-			<br />
-			<hr />
-			<br />
-			<h4>{t("s3")}</h4>
-			<br />
+			<hr className="mx-4" />
+			<h4 className="mb-4">{t("s3")}</h4>
 			<div className="flex flex-col gap-4">
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("id")}</div>
 					<div className="flex align-items gap-2 column-copy">
-						{s3user.keys.s3.user}
-						<CopyButton content={s3user.keys.s3.user} />
+						{s3Info.user}
+						<CopyButton content={s3Info.user} />
 					</div>
 				</div>
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("accessKey")}</div>
 					<div className="flex align-items gap-2 column-copy">
-						{s3user.keys.s3.access_key}
-						<CopyButton content={s3user.keys.s3.access_key} />
+						{s3Info.access_key}
+						<CopyButton content={s3Info.access_key} />
 					</div>
 				</div>
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("secretKey")}</div>
 					<div className="flex align-items gap-2 column-copy">
-						<span className="secret-key">{s3user.keys.s3.secret_key}</span>
-						<CopyButton content={s3user.keys.s3.secret_key} />
+						<span className="secret-key">{s3Info.secret_key}</span>
+						<CopyButton content={s3Info.secret_key} />
 					</div>
 				</div>
 			</div>
-			<br />
-			<hr />
-			<br />
-			<h4>{t("swift")}</h4>
-			<br />
+			<hr className="mx-4" />
+			<h4 className="mb-4">{t("swift")}</h4>
 			<div className="flex flex-col gap-4 mb-8">
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("id")}</div>
 					<div className="flex align-items gap-2 column-copy">
-						{s3user.keys.swift.user}
-						<CopyButton content={s3user.keys.swift.user} />
+						{swiftInfo.user}
+						<CopyButton content={swiftInfo.user} />
 					</div>
 				</div>
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("accessKey")}</div>
 					<div className="flex align-items gap-2 column-copy">
-						<span className="secret-key">{s3user.keys.swift.secret_key}</span>
-						<CopyButton content={s3user.keys.swift.secret_key} />
+						<span className="secret-key">{swiftInfo.secret_key}</span>
+						<CopyButton content={swiftInfo.secret_key} />
 					</div>
 				</div>
 			</div>
@@ -123,7 +121,7 @@ const UserOverview = ({ s3user }) => {
 				>
 					{t("generatenewKeys")}
 				</Button>
-				{s3user.status === "locked" ? (
+				{isStatusLocked(s3user) ? (
 					<Button
 						// content={t("unlockS3user")}
 						// style={{ width: "270px" }}
