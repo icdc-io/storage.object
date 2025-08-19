@@ -82,16 +82,27 @@
   }
 
 	table.users-list.loaded {
-    .name-cell button {
-      background-color: transparent;
-      color: var(--black);
-      font-size: 14px;
-      height: auto;
-      padding: 0;
-      margin: 0;
-      box-shadow: none;
-      font-weight: 400;
-      cursor: default;
+    .name-cell {
+      font-weight: 700;
+
+      a {
+        color: #2A7DBC;
+      }
+
+      button {
+        background-color: transparent;
+        color: var(--black);
+        font-size: 14px;
+        height: auto;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        cursor: default;
+
+        &.deleted {
+          opacity: 0.6;
+        }
+      }
     }
 		th:nth-child(1) {
 			min-width: 8rem;

@@ -138,7 +138,10 @@ const UsersList = () => {
 			Object.keys(item.user_quota).length > 0 &&
 			Object.keys(item.usage).length > 0;
 		const nameCellContent = (
-			<TagName to={`${item.id}`} className="text-overflow">
+			<TagName
+				to={`${item.id}`}
+				className={`text-overflow ${isDeleted ? "deleted" : ""}`}
+			>
 				{item.name}
 			</TagName>
 		);
@@ -163,7 +166,7 @@ const UsersList = () => {
 						{isDeleted && (
 							<Popup content={t("deletedUserPopup")}>
 								<button type="button">
-									<CircleX size={16} />
+									<CircleX size={16} color="#DB2828" />
 								</button>
 							</Popup>
 						)}
