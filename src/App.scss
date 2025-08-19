@@ -47,35 +47,35 @@
 	}
 
   table.quotas-list.loaded {
-    th:nth-child(1) {
+    th.storage-type {
       min-width: 8rem;
       width: 10%;
     }
-    th:nth-child(2) {
+    th.name {
       min-width: 8rem;
       width: 10%;
     }
-    th:nth-child(3) {
+    th.objects {
       min-width: 8rem;
       width: 10%;
     }
-    th:nth-child(4) {
+    th.space {
       min-width: 8rem;
       width: 10%;
     }
-    th:nth-child(5) {
+    th.s3swiftUsers {
       min-width: 8rem;
       width: 10%;
     }
-    th:nth-child(6) {
+    th.buckets {
       min-width: 8rem;
       width: 10%;
     }
-    th:nth-child(7) {
+    th.publicEndpoints {
       min-width: 16rem;
       width: 18%;
     }
-    th:nth-child(8) {
+    th.privateEndpoints {
       min-width: 16rem;
       width: 18%;
     }
