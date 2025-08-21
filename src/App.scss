@@ -379,3 +379,20 @@
 		padding: 0px 2px 0px 1px;
 	}
 }
+
+.objects_quotas_hint {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  color: var(--white);
+  padding: 0.5rem 0;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  max-width: 194px;
+  width: 100vw;
+  h4 {
+    font-size: 12px;
+  }
+}
