@@ -126,7 +126,7 @@ const UsersList = () => {
 			updateAfterLocking(setData),
 		);
 
-	const withContent = data.length > 0;
+	const withContent = data.length > 0 && s3usersFetchStatus === "fulfilled";
 
 	const statuses = [s3usersFetchStatus, s3quotasFetchStatus, poolsFetchStatus];
 
