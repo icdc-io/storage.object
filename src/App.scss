@@ -135,6 +135,10 @@
 		}
 	}
 	table.buckets-list {
+    .thead-info {
+      order: 3;
+      margin-left: 0.5rem;
+    }
 		th:nth-child(1) {
 			min-width: 8rem;
 			width: 30%;

@@ -220,9 +220,9 @@ const BucketsList = ({ s3user }) => {
 										sorted={column === "objects" ? direction : null}
 										onSort={handleSort("objects")}
 									>
-										{t("objects")}&nbsp;&nbsp;
+										<span>{t("objects")}</span>
 										<Popup content={objectsQuotasHint}>
-											<span role="button" tabIndex={0}>
+											<span role="button" tabIndex={0} className="thead-info">
 												<Info size={16} />
 											</span>
 										</Popup>
