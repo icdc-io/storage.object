@@ -115,17 +115,17 @@ const BucketsList = ({ s3user }) => {
 
 	const objectsQuotasBar = (quotas) => (
 		<div className="objects_quotas_hint">
-			<div>
-				<h4>
+			<ul>
+				<li>
 					{t("totalObjects")}: {quotas.total_objects}
-				</h4>
-				<h4>
+				</li>
+				<li>
 					{t("storedObjects")}: {quotas.objects}
-				</h4>
-				<h4>
+				</li>
+				<li>
 					{t("multipartObjects")}: {quotas.multipart_objects}
-				</h4>
-			</div>
+				</li>
+			</ul>
 		</div>
 	);
 
