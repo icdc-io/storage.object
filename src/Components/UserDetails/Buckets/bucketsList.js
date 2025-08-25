@@ -26,7 +26,7 @@ import { isStatusLocked } from "../../../utils/isStatusLocked";
 import DeleteModal from "../../GeneralComponents/DeleteModal";
 import BucketModal from "./bucketModal";
 
-const Bar = (...props) => <Progress {...props} />;
+const Bar = (props) => <Progress {...props} />;
 
 const BucketsList = ({ s3user }) => {
 	const { t } = useTranslation();
@@ -258,14 +258,14 @@ const BucketsList = ({ s3user }) => {
 										<TableCell align="center">
 											<Popup content={objectsQuotasBar(item.usage)}>
 												<button type="button">
-													{item.usage.objects} /{" "}
+													{item.usage.total_objects} /{" "}
 													{item.quota.objects >= 0 ? item.quota.objects : "∞"}
 												</button>
 											</Popup>
 
 											{item.quota.objects >= 0 && (
 												<Bar
-													value={item.usage.objects}
+													value={item.usage.total_objects}
 													total={item.quota.objects}
 												/>
 											)}
