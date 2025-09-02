@@ -173,7 +173,7 @@ const UsersList = () => {
 					</div>
 				</TableCell>
 				<TableCell>
-					<div className="flex-inline">
+					<div className="flex-inline with_copy_button">
 						{item.owner || EMPTY_VALUE}
 						{item.owner && <CopyButton content={item.owner} />}
 					</div>

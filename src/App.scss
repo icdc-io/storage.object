@@ -46,65 +46,64 @@
 		margin-bottom: 2rem;
 	}
 
-  table.quotas-list.loaded {
-    th.storage-type {
-      min-width: 8rem;
-      width: 10%;
-    }
-    th.name {
-      min-width: 8rem;
-      width: 10%;
-    }
-    th.objects {
-      min-width: 8rem;
-      width: 10%;
-    }
-    th.space {
-      min-width: 8rem;
-      width: 10%;
-    }
-    th.s3swiftUsers {
-      min-width: 8rem;
-      width: 10%;
-    }
-    th.buckets {
-      min-width: 8rem;
-      width: 10%;
-    }
-    th.publicEndpoints {
-      min-width: 16rem;
-      width: 18%;
-    }
-    th.privateEndpoints {
-      min-width: 16rem;
-      width: 18%;
-    }
-  }
+	table.quotas-list.loaded {
+		th.storage-type {
+			min-width: 8rem;
+			width: 10%;
+		}
+		th.name {
+			min-width: 8rem;
+			width: 10%;
+		}
+		th.objects {
+			min-width: 8rem;
+			width: 10%;
+		}
+		th.space {
+			min-width: 8rem;
+			width: 10%;
+		}
+		th.s3swiftUsers {
+			min-width: 8rem;
+			width: 10%;
+		}
+		th.buckets {
+			min-width: 8rem;
+			width: 10%;
+		}
+		th.publicEndpoints {
+			min-width: 16rem;
+			width: 18%;
+		}
+		th.privateEndpoints {
+			min-width: 16rem;
+			width: 18%;
+		}
+	}
 
 	table.users-list.loaded {
-    .name-cell {
+		.name-cell {
+			a {
+				color: #2a7dbc;
+				font-weight: 700;
+			}
 
-      a {
-        color: #2A7DBC;
-        font-weight: 700;
-      }
+			button {
+				background-color: transparent;
+				color: var(--black);
+				font-size: 14px;
+				height: auto;
+				padding: 0;
+				margin: 0;
+				box-shadow: none;
+				cursor: default;
+				font-weight: 700;
 
-      button {
-        background-color: transparent;
-        color: var(--black);
-        font-size: 14px;
-        height: auto;
-        padding: 0;
-        margin: 0;
-        box-shadow: none;
-        cursor: default;
-        font-weight: 700;
-
-        &.deleted {
-          opacity: 0.6;
-        }
-      }
-    }
+				&.deleted {
+					opacity: 0.6;
+				}
+			}
+		}
 		th:nth-child(1) {
 			min-width: 8rem;
 			width: 10%;
@@ -135,10 +134,10 @@
 		}
 	}
 	table.buckets-list {
-    .thead-info {
-      order: 3;
-      margin-left: 0.5rem;
-    }
+		.thead-info {
+			order: 3;
+			margin-left: 0.5rem;
+		}
 		th:nth-child(1) {
 			min-width: 8rem;
 			width: 30%;
@@ -305,6 +304,17 @@
 		}
 	}
 
+	.with_copy_button {
+		padding-right: 1rem;
+		justify-content: space-between;
+	}
+
+	.column-copy {
+		flex-basis: 440px;
+		flex-grow: 0;
+		justify-content: space-between;
+	}
+
 	.flex-inline {
 		display: flex;
 		align-items: center;
@@ -385,24 +395,24 @@
 }
 
 .objects_quotas_hint {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  color: var(--white);
-  padding: 0.5rem 0;
-  font-size: 12px;
-  font-weight: 400;
-  text-align: left;
-  max-width: 220px;
-  width: 100vw;
-  h4 {
-    font-size: 12px;
-  }
-  ul {
-    font-size: 12px;
-    list-style-type: disc;
-    font-weight: 700;
-    padding-left: 16px;
-  }
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	gap: 0.5rem;
+	color: var(--white);
+	padding: 0.5rem 0;
+	font-size: 12px;
+	font-weight: 400;
+	text-align: left;
+	max-width: 220px;
+	width: 100vw;
+	h4 {
+		font-size: 12px;
+	}
+	ul {
+		font-size: 12px;
+		list-style-type: disc;
+		font-weight: 700;
+		padding-left: 16px;
+	}
 }

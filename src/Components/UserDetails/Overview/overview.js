@@ -76,21 +76,27 @@ const UserOverview = ({ s3user }) => {
 					<div className="overview_label">{t("id")}</div>
 					<div className="flex align-items gap-2 column-copy">
 						{s3Info.user}
-						<CopyButton content={s3Info.user} />
+						<div className="flex items-center">
+							<CopyButton content={s3Info.user} />
+						</div>
 					</div>
 				</div>
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("accessKey")}</div>
 					<div className="flex align-items gap-2 column-copy">
 						{s3Info.access_key}
-						<CopyButton content={s3Info.access_key} />
+						<div className="flex items-center">
+							<CopyButton content={s3Info.access_key} />
+						</div>
 					</div>
 				</div>
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("secretKey")}</div>
 					<div className="flex align-items gap-2 column-copy">
 						<span className="secret-key">{s3Info.secret_key}</span>
-						<CopyButton content={s3Info.secret_key} />
+						<div className="flex items-center">
+							<CopyButton content={s3Info.secret_key} />
+						</div>
 					</div>
 				</div>
 			</div>
@@ -101,14 +107,18 @@ const UserOverview = ({ s3user }) => {
 					<div className="overview_label">{t("id")}</div>
 					<div className="flex align-items gap-2 column-copy">
 						{swiftInfo.user}
-						<CopyButton content={swiftInfo.user} />
+						<div className="flex items-center">
+							<CopyButton content={swiftInfo.user} />
+						</div>
 					</div>
 				</div>
 				<div className="flex gap-2 flex-wrap">
 					<div className="overview_label">{t("accessKey")}</div>
 					<div className="flex align-items gap-2 column-copy">
 						<span className="secret-key">{swiftInfo.secret_key}</span>
-						<CopyButton content={swiftInfo.secret_key} />
+						<div className="flex items-center">
+							<CopyButton content={swiftInfo.secret_key} />
+						</div>
 					</div>
 				</div>
 			</div>
