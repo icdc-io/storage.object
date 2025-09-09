@@ -55,6 +55,12 @@ const UserDetails = () => {
 	}, [dispatch, userId, user]);
 
 	useEffect(() => {
+		if (activeItem === "resourcesTab") {
+			dispatch(fetchS3User(userId));
+		}
+	}, [activeItem]);
+
+	useEffect(() => {
 		if (s3userFetchStatus === "rejected") {
 			dispatch(clearS3UserFetchStatus());
 			// history.push("/storage");
