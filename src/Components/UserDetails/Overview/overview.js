@@ -137,7 +137,7 @@ const UserOverview = ({ s3user }) => {
 						// style={{ width: "270px" }}
 						variant="secondary"
 						onClick={() =>
-							dispatch(lockS3user(s3user.id, { is_locked: "unlock" }))
+							dispatch(lockS3user(s3user.id, { status: "unlock" }))
 						}
 					>
 						{t("unlockS3user")}
@@ -148,9 +148,7 @@ const UserOverview = ({ s3user }) => {
 						variant="secondary"
 						// style={{ width: "270px" }}
 						// onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
-						onClick={() =>
-							dispatch(lockS3user(s3user.id, { is_locked: "lock" }))
-						}
+						onClick={() => dispatch(lockS3user(s3user.id, { status: "lock" }))}
 					>
 						{t("lockS3user")}
 					</Button>

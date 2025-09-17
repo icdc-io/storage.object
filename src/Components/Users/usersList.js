@@ -117,12 +117,12 @@ const UsersList = () => {
 	};
 
 	const lockS3User = (item) => () =>
-		dispatch(lockS3user(item.id, { is_locked: "lock" })).then(
+		dispatch(lockS3user(item.id, { status: "lock" })).then(
 			updateAfterLocking(setData),
 		);
 
 	const unlockS3User = (item) => () =>
-		dispatch(lockS3user(item.id, { is_locked: "unlock" })).then(
+		dispatch(lockS3user(item.id, { status: "unlock" })).then(
 			updateAfterLocking(setData),
 		);
 
