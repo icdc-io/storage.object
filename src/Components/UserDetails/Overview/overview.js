@@ -1,7 +1,9 @@
 import { Button } from "container/Button";
 import CopyButton from "container/CopyButton";
+import ErrorScreen from "container/ErrorScreen";
+import Loader from "container/Loader";
 import { Lock } from "lucide-react";
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,10 +21,10 @@ const UserOverview = ({ s3user }) => {
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	// const [deleteConfirm, setDeleteConfirm] = useState(false);
-	const userRole = useSelector((state) => state.host.user.role);
 	const deleteModalRef = useRef();
-
+	const s3userFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3userFetchStatus,
+	);
 	const onDeleteBucketModalOpen = (instance) => () => {
 		if (deleteModalRef.current) {
 			deleteModalRef.current.handleClick(instance);
@@ -35,10 +37,12 @@ const UserOverview = ({ s3user }) => {
 
 	const deleteS3user = () => {
 		return dispatch(deleteS3userAndFetch(s3user.id)).then(() => navigate(".."));
-		// setDeleteConfirm(false);
-		// history.push("/amazon");
-		// navigate(-1);
 	};
+
+	if (s3userFetchStatus === "pending")
+		return <Loader active inline="centered" />;
+
+	if (s3userFetchStatus === "rejected") return <ErrorScreen />;
 
 	const s3Info = s3user.keys.s3?.[0] || s3user.keys.s3 || {};
 	const swiftInfo = s3user.keys.swift?.[0] || s3user.keys.swift || {};
@@ -50,18 +54,7 @@ const UserOverview = ({ s3user }) => {
 					<div>
 						<h4 className="flex gap-2 items-center">
 							{s3user.name}
-							{isStatusLocked(s3user) && (
-								// <Icon
-								// 	style={{
-								// 		fontSize: "15px",
-								// 		position: "relative",
-								// 		top: "-5px",
-								// 	}}
-								// 	name="lock"
-								// 	title={t("lockedS3user")}
-								// />
-								<Lock size={16} />
-							)}
+							{isStatusLocked(s3user) && <Lock size={16} />}
 						</h4>
 					</div>
 				</div>
@@ -124,17 +117,11 @@ const UserOverview = ({ s3user }) => {
 			</div>
 
 			<div className="flex gap-2 justify-end mt-auto flex-wrap">
-				<Button
-					onClick={generateNewKeys}
-					variant="secondary"
-					// style={{ width: "270px" }}
-				>
+				<Button onClick={generateNewKeys} variant="secondary">
 					{t("generatenewKeys")}
 				</Button>
 				{isStatusLocked(s3user) ? (
 					<Button
-						// content={t("unlockS3user")}
-						// style={{ width: "270px" }}
 						variant="secondary"
 						onClick={() =>
 							dispatch(lockS3user(s3user.id, { status: "unlock" }))
@@ -146,36 +133,14 @@ const UserOverview = ({ s3user }) => {
 					<Button
 						content={t("lockS3user")}
 						variant="secondary"
-						// style={{ width: "270px" }}
-						// onClick={() => dispatch(lockS3userAndFetch(s3user.id, { action: 'lock' }))}
 						onClick={() => dispatch(lockS3user(s3user.id, { status: "lock" }))}
 					>
 						{t("lockS3user")}
 					</Button>
 				)}
-				<Button
-					variant="warning"
-					onClick={onDeleteBucketModalOpen(s3user)}
-					// content=
-					// style={{ width: "270px" }}
-				>
+				<Button variant="warning" onClick={onDeleteBucketModalOpen(s3user)}>
 					{t("deleteS3user")}
 				</Button>
-				{/* <Confirm
-							open={deleteConfirm}
-							header={t("deleteS3userConfirName")}
-							content={
-								<div className="content">
-									<DangerousHTML
-										html={t("deleteS3userConfirmMessage", {
-											name: `<b>${s3user.name}</b>`,
-										})}
-									/>
-								</div>
-							}
-							onCancel={() => setDeleteConfirm(false)}
-							onConfirm={deleteS3user}
-						/> */}
 			</div>
 
 			<DeleteModal

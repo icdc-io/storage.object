@@ -33,7 +33,7 @@ export const BASE_USERS_URL = process.env.REACT_APP_API_GATEWAY
 
 export const s3PoolsUrl = () => `${BASE_URL}/pools?filter[type]=s3`;
 export const s3UsersUrl = () => `${BASE_URL}/s3/users`;
-export const s3UserUrl = () => `${BASE_URL}/s3/users`;
+export const s3UserUrl = () => `${BASE_URL}/s3/sdusers`;
 export const s3LimitsUrl = () => `${BASE_URL}/s3/limits`;
 export const s3QuotasUrl = () => `${BASE_URL}/s3/quotas`;
 export const s3QuotaUrl = (quota_id) => `${BASE_URL}/s3/quotas/${quota_id}`;
