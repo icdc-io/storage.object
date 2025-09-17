@@ -43,9 +43,15 @@ const BucketsList = ({ s3user }) => {
 	);
 	const user = useSelector((state) => state.host.user);
 	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
-
-	const publicEndpoint = quotas?.find((q) => q.pool.id === s3user.pool.id)
-		?.endpoints.public;
+	const s3userFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3userFetchStatus,
+	);
+	const s3quotasFetchStatus = useSelector(
+		(state) => state.AmazonStore.s3quotasFetchStatus,
+	);
+	const statuses = [bucketsFetchStatus, s3userFetchStatus, s3quotasFetchStatus];
+	const isDataFetchingError = statuses.includes("rejected");
+	const isDataFetchingPending = statuses.includes("pending");
 
 	const [column, setColumn] = useState("");
 	const [direction, setDirection] = useState("ascending");
@@ -129,156 +135,137 @@ const BucketsList = ({ s3user }) => {
 		</div>
 	);
 
+	if (isDataFetchingError) return <ErrorScreen />;
+
+	if (isDataFetchingPending) return <Loader />;
+
+	const publicEndpoint = quotas?.find((q) => q.pool.id === s3user.pool.id)
+		?.endpoints.public;
+
 	return (
-		<React.Fragment>
-			{bucketsFetchStatus === "pending" && <Loader />}
-
-			{Object.keys(buckets).length === 0 &&
-				bucketsFetchStatus === "fulfilled" && (
-					<div className="no_buckets h-full m-auto flex flex-col justify-center gap-4">
-						<div className="">
-							<Meh size={64} className="mx-auto" />
-							<h2>{t("noBuckets")}</h2>
-						</div>
-						<div className="flex">
-							<Button
-								onClick={onBucketModalOpen()}
-								disabled={isUserLocked}
-								className="mx-auto"
-							>
-								{t("create")}
-							</Button>
-						</div>
+		<>
+			{Object.keys(buckets).length === 0 ? (
+				<div className="no_buckets h-full m-auto flex flex-col justify-center gap-4">
+					<div className="">
+						<Meh size={64} className="mx-auto" />
+						<h2>{t("noBuckets")}</h2>
 					</div>
-				)}
-
-			{bucketsFetchStatus === "rejected" && <ErrorScreen />}
-
-			{Object.keys(buckets).length > 0 &&
-				bucketsFetchStatus === "fulfilled" && (
-					<div className="flex flex-col gap-4">
-						<div className="buckets-grid">
-							<div className="flex flex-wrap items-center justify-between gap-4">
-								<h4 className="flex gap-2 items-center">
-									{t("bucketsTab")}
-									{isUserLocked && (
-										<Lock size={16} />
-										// <Icon
-										// 	style={{
-										// 		fontSize: "15px",
-										// 		position: "relative",
-										// 		top: "-5px",
-										// 		marginLeft: "4px",
-										// 	}}
-										// 	name="lock"
-										// 	title={t("lockedS3user")}
-										// />
-									)}
-								</h4>
-								<div className="flex gap-2">
-									<Button
-										variant="outline"
-										className="p-2 color--primary"
-										onClick={() => dispatch(fetchBuckets(s3user.name))}
-									>
-										<RefreshCw size={20} />
-									</Button>
-									<Button
-										onClick={onBucketModalOpen()}
-										// content={t("addBucket")}
-										// icon="plus"
-										// labelPosition="left"
-										// primary
-										disabled={isUserLocked}
-									>
-										{t("addBucket")}
-									</Button>
-								</div>
+					<div className="flex">
+						<Button
+							onClick={onBucketModalOpen()}
+							disabled={isUserLocked}
+							className="mx-auto"
+						>
+							{t("create")}
+						</Button>
+					</div>
+				</div>
+			) : (
+				<div className="flex flex-col gap-4">
+					<div className="buckets-grid">
+						<div className="flex flex-wrap items-center justify-between gap-4">
+							<h4 className="flex gap-2 items-center">
+								{t("bucketsTab")}
+								{isUserLocked && <Lock size={16} />}
+							</h4>
+							<div className="flex gap-2">
+								<Button
+									variant="outline"
+									className="p-2 color--primary"
+									onClick={() => dispatch(fetchBuckets(s3user.name))}
+								>
+									<RefreshCw size={20} />
+								</Button>
+								<Button onClick={onBucketModalOpen()} disabled={isUserLocked}>
+									{t("addBucket")}
+								</Button>
 							</div>
-							<p className="quotas-description">{t("bucketsDescription")}</p>
 						</div>
-						<Table className="buckets-list">
-							<TableHeader>
-								<TableRow>
-									<TableHead
-										sorted={column === "name" ? direction : null}
-										onSort={handleSort("name")}
-									>
-										{t("name")}
-									</TableHead>
-
-									<TableHead
-										align="center"
-										sorted={column === "space" ? direction : null}
-										onSort={handleSort("space")}
-									>
-										{t("space")}
-									</TableHead>
-
-									<TableHead
-										align="center"
-										sorted={column === "objects" ? direction : null}
-										onSort={handleSort("objects")}
-									>
-										<span>{t("objects")}</span>
-										<Popup content={objectsQuotasHint}>
-											<span role="button" tabIndex={0} className="thead-info">
-												<Info size={16} />
-											</span>
-										</Popup>
-									</TableHead>
-									<TableHead />
-								</TableRow>
-							</TableHeader>
-
-							<TableBody>
-								{data?.map((item, i) => (
-									<TableRow key={item.name}>
-										<TableCell>
-											<div className="flex items-center gap-2">
-												{item.name}
-												<CopyButton
-													content={`${publicEndpoint}/${item.path.replace(/\//g, ":")}`}
-													buttonText={t("copyUrl")}
-												/>
-											</div>
-										</TableCell>
-										<TableCell align="center">
-											{item.usage.data_size_mb} /{" "}
-											{item.quota.data_size_mb >= 0
-												? item.quota.data_size_mb
-												: "∞"}
-											{item.quota.data_size_mb >= 0 && (
-												<Bar
-													value={item.usage.data_size_mb}
-													total={item.quota.data_size_mb}
-												/>
-											)}
-										</TableCell>
-										<TableCell align="center">
-											<Popup content={objectsQuotasBar(item.usage)}>
-												<button type="button">
-													{item.usage.total_objects} /{" "}
-													{item.quota.objects >= 0 ? item.quota.objects : "∞"}
-												</button>
-											</Popup>
-
-											{item.quota.objects >= 0 && (
-												<Bar
-													value={item.usage.total_objects}
-													total={item.quota.objects}
-												/>
-											)}
-										</TableCell>
-										<TableCell align="right">
-											<OptionsMenu instance={item} options={options} />
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
+						<p className="quotas-description">{t("bucketsDescription")}</p>
 					</div>
-				)}
+					<Table className="buckets-list">
+						<TableHeader>
+							<TableRow>
+								<TableHead
+									sorted={column === "name" ? direction : null}
+									onSort={handleSort("name")}
+								>
+									{t("name")}
+								</TableHead>
+
+								<TableHead
+									align="center"
+									sorted={column === "space" ? direction : null}
+									onSort={handleSort("space")}
+								>
+									{t("space")}
+								</TableHead>
+
+								<TableHead
+									align="center"
+									sorted={column === "objects" ? direction : null}
+									onSort={handleSort("objects")}
+								>
+									<span>{t("objects")}</span>
+									<Popup content={objectsQuotasHint}>
+										<span role="button" tabIndex={0} className="thead-info">
+											<Info size={16} />
+										</span>
+									</Popup>
+								</TableHead>
+								<TableHead />
+							</TableRow>
+						</TableHeader>
+
+						<TableBody>
+							{data?.map((item, i) => (
+								<TableRow key={item.name}>
+									<TableCell>
+										<div className="flex items-center gap-2">
+											{item.name}
+											<CopyButton
+												content={`${publicEndpoint}/${item.path.replace(/\//g, ":")}`}
+												buttonText={t("copyUrl")}
+											/>
+										</div>
+									</TableCell>
+									<TableCell align="center">
+										{item.usage.data_size_mb} /{" "}
+										{item.quota.data_size_mb >= 0
+											? item.quota.data_size_mb
+											: "∞"}
+										{item.quota.data_size_mb >= 0 && (
+											<Bar
+												value={item.usage.data_size_mb}
+												total={item.quota.data_size_mb}
+											/>
+										)}
+									</TableCell>
+									<TableCell align="center">
+										<Popup content={objectsQuotasBar(item.usage)}>
+											<button type="button">
+												{item.usage.total_objects} /{" "}
+												{item.quota.objects >= 0 ? item.quota.objects : "∞"}
+											</button>
+										</Popup>
+
+										{item.quota.objects >= 0 && (
+											<Bar
+												value={item.usage.total_objects}
+												total={item.quota.objects}
+											/>
+										)}
+									</TableCell>
+									<TableCell align="right">
+										<OptionsMenu instance={item} options={options} />
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</div>
+			)}
+
 			<DeleteModal
 				ref={deleteModalRef}
 				title={"deleteBucketConfirmName"}
@@ -295,7 +282,7 @@ const BucketsList = ({ s3user }) => {
 				)}
 			</DeleteModal>
 			<BucketModal ref={bucketModalRef} />
-		</React.Fragment>
+		</>
 	);
 };
 
