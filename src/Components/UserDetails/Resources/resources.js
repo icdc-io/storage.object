@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchS3User } from "../../../AppActions";
-import { isStatusLocked } from "../../../utils/isStatusLocked";
 import EditResModal from "./editResModal";
 
 const Resources = ({ s3user }) => {
@@ -50,11 +49,7 @@ const Resources = ({ s3user }) => {
 			<p>{`${s3user.usage?.buckets} / ${s3user.user_quota?.buckets}`}</p>
 
 			<div className="resources-bottom-panel mt-auto">
-				<Button
-					onClick={onModalOpen(s3user)}
-					disabled={isStatusLocked(s3user)}
-					variant="secondary"
-				>
+				<Button onClick={onModalOpen(s3user)} variant="secondary">
 					{t("edit")}
 				</Button>
 			</div>
