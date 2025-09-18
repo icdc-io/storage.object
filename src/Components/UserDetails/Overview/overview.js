@@ -124,7 +124,7 @@ const UserOverview = ({ s3user }) => {
 					<Button
 						variant="secondary"
 						onClick={() =>
-							dispatch(lockS3user(s3user.id, { status: "unlock" }))
+							dispatch(lockS3user(s3user.id, { status: "active" }))
 						}
 					>
 						{t("unlockS3user")}
@@ -133,7 +133,9 @@ const UserOverview = ({ s3user }) => {
 					<Button
 						content={t("lockS3user")}
 						variant="secondary"
-						onClick={() => dispatch(lockS3user(s3user.id, { status: "lock" }))}
+						onClick={() =>
+							dispatch(lockS3user(s3user.id, { status: "locked" }))
+						}
 					>
 						{t("lockS3user")}
 					</Button>

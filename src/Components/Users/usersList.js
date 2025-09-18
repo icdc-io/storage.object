@@ -117,12 +117,12 @@ const UsersList = () => {
 	};
 
 	const lockS3User = (item) => () =>
-		dispatch(lockS3user(item.id, { status: "lock" })).then(
+		dispatch(lockS3user(item.id, { status: "locked" })).then(
 			updateAfterLocking(setData),
 		);
 
 	const unlockS3User = (item) => () =>
-		dispatch(lockS3user(item.id, { status: "unlock" })).then(
+		dispatch(lockS3user(item.id, { status: "active" })).then(
 			updateAfterLocking(setData),
 		);
 
@@ -227,7 +227,6 @@ const UsersList = () => {
 							{
 								text: "edit",
 								action: onEditBucketModalOpen,
-								disabled: isLocked,
 							},
 							isLocked
 								? {
