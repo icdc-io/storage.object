@@ -1,0 +1,62 @@
+stages:
+  - lint
+  - audit
+
+variables:
+  GITLEAKS_IMAGE: "ghcr.io/gitleaks/gitleaks:latest"
+  NODE_IMAGE: "node:20-alpine"
+  GIT_DEPTH: "0"
+
+# Lint JS/TS/JSON с Biome
+biome:
+  stage: lint
+  tags:
+    - testing
+  cache:
+    key: npm-${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - .npm/
+  script:
+    - mkdir -p output .npm
+    - >
+      podman run --rm
+      -v "$(pwd):/repo:Z" -w /repo
+      "$NODE_IMAGE" sh -lc '
+        npm ci --cache .npm --prefer-offline --no-audit --fund=false &&
+        npx @biomejs/biome@1.8.3 check --write . || true &&
+        npx @biomejs/biome@1.8.3 lint --diagnostic-level=error --reporter=summary . \
+          > output/biome-report.txt
+      '
+  artifacts:
+    when: always
+    paths:
+      - output/biome-report.txt
+    expire_in: 14 days
+
+gitleaks:
+  stage: audit
+  tags:
+    - testing
+  script:
+    - mkdir -p output
+    - >
+      podman run --rm
+      -v "$(pwd):/repo:Z" -w /repo
+      "$GITLEAKS_IMAGE" detect
+      --redact
+      --no-banner
+      --source=/repo
+      --log-opts="--all"
+      --report-format json
+      --report-path /repo/output/gitleaks.json
+      --exit-code 1
+  artifacts:
+    when: always
+    paths:
+      - output/gitleaks.json
+    reports:
+      secret_detection: output/gitleaks.json
+    expire_in: 14 days
+  after_script:
+    - podman stop -a || true
