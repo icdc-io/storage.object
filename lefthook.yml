@@ -1,6 +1,22 @@
 pre-commit:
+  parallel: true
   commands:
     check:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true
+
+    # if you want to use docker to run gitleaks
+    # Change command podman to docker
+    gitleaks:
+      run: |
+        podman run --rm \
+          -v "$(pwd):/repo:Z" -w /repo \
+          ghcr.io/gitleaks/gitleaks:latest detect \
+          --redact \
+          --no-banner \
+          --source=/repo \
+          --log-opts="--all" \
+          --report-format json \
+          --report-path /repo/gitleaks-precommit.json \
+          --exit-code 1
