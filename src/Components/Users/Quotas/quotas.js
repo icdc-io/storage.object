@@ -45,7 +45,7 @@ const Quotas = () => {
 
 	useEffect(() => {
 		dispatch(fetchS3quotas());
-		dispatch(fetchPools({ type: "s3" }));
+		dispatch(fetchPools());
 		dispatch(fetchS3Limits(user.account));
 	}, [dispatch, user]);
 
@@ -56,22 +56,44 @@ const Quotas = () => {
 	};
 
 	const headers = [
-		{ title: "storageType", data: "pool.name", width: 2 },
+		{
+			title: "storageType",
+			data: "pool.name",
+			width: 2,
+			className: "storage-type",
+		},
 		user.role === OPERATOR && {
 			title: "account",
 			data: "account.name",
 			width: 1,
+			className: "name",
 		},
-		{ title: "objects", data: "objects", width: 2 },
-		{ title: "space", data: "data_size_mb", width: 2 },
-		{ title: "s3swiftUsers", data: "users", width: 2 },
+		{ title: "objects", data: "objects", width: 2, className: "objects" },
+		{ title: "space", data: "data_size_mb", width: 2, className: "space" },
+		{
+			title: "s3swiftUsers",
+			data: "users",
+			width: 2,
+			className: "s3swiftUsers",
+		},
 		{
 			title: "buckets",
 			data: "buckets",
 			width: user.role === OPERATOR ? 1 : 2,
+			className: "buckets",
 		},
-		{ title: "publicEndpoints", data: "public", width: 3 },
-		{ title: "privateEndpoints", data: "private", width: 3 },
+		{
+			title: "publicEndpoints",
+			data: "public",
+			width: 3,
+			className: "publicEndpoints",
+		},
+		{
+			title: "privateEndpoints",
+			data: "private",
+			width: 3,
+			className: "privateEndpoints",
+		},
 		isAdminRights(user.role) && { title: "", data: "edit", width: 1 },
 	].filter(Boolean);
 
@@ -175,7 +197,7 @@ const Quotas = () => {
 		}));
 
 	const createQuotaButton = filterFreeDiskTypes(availableQuotas).length ? (
-		<Button onClick={() => setOpen(true)}>{t("addQuota")}</Button>
+		<Button onClick={onModalOpen(null)}>{t("addQuota")}</Button>
 	) : (
 		<Popup content={t("noPools")}>
 			<Button className="disabled-btn ">
@@ -208,7 +230,11 @@ const Quotas = () => {
 				<TableHeader>
 					<TableRow>
 						{headers.map((item) => (
-							<TableHead key={item.data} width={item.width}>
+							<TableHead
+								key={item.data}
+								width={item.width}
+								className={item.className}
+							>
 								{t(item.title)}
 							</TableHead>
 						))}

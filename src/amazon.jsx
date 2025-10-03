@@ -11,11 +11,6 @@ const Amazon = ({ store }) => {
 	useEffect(() => {
 		store.injectReducer("AmazonStore", AmazonStore);
 		setIsLoaded(true);
-		window.dispatchEvent(
-			new CustomEvent("switchTranslations", {
-				detail: "storage2",
-			}),
-		);
 	}, []);
 
 	return isLoaded ? <Overview /> : <Loader />;

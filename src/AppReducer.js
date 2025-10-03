@@ -2,6 +2,7 @@
 import * as ActionTypes from "./AppConstants";
 
 import Immutable from "seamless-immutable";
+import { formatAccountUsers } from "./utils/formatAccountUsers";
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
@@ -9,17 +10,19 @@ const initialState = Immutable({
 	s3users: [],
 	s3quotas: [],
 	poolsFetchStatus: "",
-	s3quotasFetchStatus: "",
-	s3usersFetchStatus: "",
+	s3quotasFetchStatus: "pending",
+	s3usersFetchStatus: "pending",
 	s3usersCreateStatus: "",
-	s3userFetchStatus: "",
+	s3userFetchStatus: "pending",
 	accountLimitsFetchStatus: "",
 	accountLimits: [],
 	s3user: {},
-	bucketsFetchStatus: "",
+	bucketsFetchStatus: "pending",
 	buckets: [],
 	lang: "en",
 	user: {},
+	accountUsers: [],
+	accountUsersFetchStatus: "",
 });
 
 export let errorMessage = "";
@@ -141,6 +144,17 @@ export const AmazonStore = (state = initialState, action) => {
 
 		case ActionTypes.CHANGE_LANG:
 			return state.set("lang", action.payload);
+
+		case `${ActionTypes.ACCOUNT_USERS_FETCH}_PENDING`:
+			return state.set("accountUsersFetchStatus", "pending");
+		case `${ActionTypes.ACCOUNT_USERS_FETCH}_FULFILLED`:
+			return Immutable.merge(state, {
+				accountUsers: formatAccountUsers(action.payload),
+				accountUsersFetchStatus: "fulfilled",
+			});
+		case `${ActionTypes.ACCOUNT_USERS_FETCH}_REJECTED`:
+			errorMessage = action.payload.response?.data?.explanation;
+			return state.set("accountUsersFetchStatus", "rejected");
 
 		default:
 			return Immutable.merge(state, {});
