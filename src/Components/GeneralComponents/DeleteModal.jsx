@@ -7,7 +7,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "container/Modal";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const DeleteModal = ({ title, children, onConfirm }, ref) => {

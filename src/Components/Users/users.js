@@ -1,6 +1,6 @@
 import { Button } from "container/Button";
 import { Segment } from "container/Segment";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchS3Users } from "../../AppActions";
@@ -20,7 +20,6 @@ const Users = () => {
 		}
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		dispatch(fetchS3Users());
 	}, [dispatch, user]);

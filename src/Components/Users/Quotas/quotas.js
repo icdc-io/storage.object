@@ -3,6 +3,7 @@ import CopyButton from "container/CopyButton";
 import ErrorScreen from "container/ErrorScreen";
 import Loader from "container/Loader";
 import Popup from "container/Popup";
+import { isAdminRights, OPERATOR } from "container/roleUtils";
 import {
 	Table,
 	TableBody,
@@ -11,9 +12,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "container/Table";
-import { OPERATOR, isAdminRights } from "container/roleUtils";
 import { CircleHelp } from "lucide-react";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPools, fetchS3Limits, fetchS3quotas } from "../../../AppActions";
@@ -157,7 +157,7 @@ const Quotas = () => {
 				</TableRow>
 			);
 
-		return quotas.map((quota, i) => (
+		return quotas.map((quota) => (
 			<TableRow key={quota.id + quota.account.name}>
 				{headers.map((headerItem) =>
 					headerItem.data === "edit" ? (

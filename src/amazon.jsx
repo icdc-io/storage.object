@@ -1,6 +1,6 @@
 import Loader from "container/Loader";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AmazonStore } from "./AppReducer.js";
 import Overview from "./Components/overview.js";
 import "./App.scss";

@@ -2,7 +2,7 @@ import { Button } from "container/Button";
 import ErrorScreen from "container/ErrorScreen";
 import Loader from "container/Loader";
 import PropTypes from "prop-types";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";

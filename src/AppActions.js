@@ -1,4 +1,3 @@
-import cogoToast from "cogo-toast";
 import {
 	createData,
 	deleteData,
