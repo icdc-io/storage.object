@@ -4,15 +4,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "container/Modal";
-import React, { useState, useImperativeHandle, forwardRef } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	actionAndFetch,
-	createS3user,
-	editS3user,
-	editS3userAndFetch,
-} from "../../AppActions";
+import { actionAndFetch, createS3user, editS3user } from "../../AppActions";
 import UserForm from "./userForm";
 
 const UserModal = (_props, ref) => {

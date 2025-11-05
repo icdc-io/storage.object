@@ -4,13 +4,13 @@ import { Label } from "container/Label";
 import { DialogClose, DialogFooter } from "container/Modal";
 import { isAdminRights } from "container/roleUtils";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAccountUsers } from "../../AppActions";
-import { emailPattern, number, s3userPattern } from "../../Validaions";
 import { formatI18nMessageToString } from "../../utils/formatErrorMessages";
+import { emailPattern, number, s3userPattern } from "../../Validaions";
 import { ComboboxFormField } from "../GeneralComponents/ComboboxFormField";
 import { InputFormField } from "../GeneralComponents/InputFormField";
 
@@ -148,7 +148,6 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 		setLimits(newLimits);
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (initialValues) {
 			form.reset(initialValues);

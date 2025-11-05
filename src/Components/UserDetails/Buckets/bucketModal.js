@@ -1,16 +1,10 @@
-import { Button } from "container/Button";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "container/Modal";
-import React, {
-	useState,
-	useEffect,
-	useImperativeHandle,
-	forwardRef,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { createBucketAndFetch, editBucketAndFetch } from "../../../AppActions";
@@ -25,7 +19,6 @@ const mapApiToProps = (item) => ({
 const BucketModal = (_props, ref) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
-	const userAccount = useSelector((state) => state.host.user.account);
 	const s3user = useSelector((state) => state.AmazonStore.s3user);
 
 	const [limits, setLimits] = useState({});

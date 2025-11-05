@@ -5,7 +5,7 @@ import {
 	DialogTitle,
 } from "container/Modal";
 import PropTypes from "prop-types";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actionAndFetch, editS3user } from "../../../AppActions";
 import EditResForm from "./editResForm";
@@ -22,7 +22,6 @@ const EditResModal = ({ label }, ref) => {
 		},
 	}));
 
-	const userRole = useSelector((state) => state.host.user.role);
 	const userAccount = useSelector((state) => state.host.user.account);
 	const currentOwner = useSelector((state) => state.host.email);
 	const quotas = useSelector((state) => state.AmazonStore.s3quotas);

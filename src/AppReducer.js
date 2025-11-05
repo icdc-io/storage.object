@@ -1,7 +1,7 @@
 /* eslint camelcase: 0 */
-import * as ActionTypes from "./AppConstants";
 
 import Immutable from "seamless-immutable";
+import * as ActionTypes from "./AppConstants";
 import { formatAccountUsers } from "./utils/formatAccountUsers";
 
 // eslint-disable-next-line new-cap

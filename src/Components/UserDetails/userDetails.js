@@ -1,13 +1,11 @@
 import { Button } from "container/Button";
 import { Segment } from "container/Segment";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "container/Tabs";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { clearS3UserFetchStatus, fetchS3User } from "../../AppActions";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { fetchS3User } from "../../AppActions";
 import { isStatusDeleted } from "../../utils/isStatusLocked";
 import BucketsList from "./Buckets/bucketsList";
 import UserOverview from "./Overview/overview";
@@ -41,7 +39,6 @@ const UserDetails = () => {
 
 	const dispatch = useDispatch();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		dispatch(fetchS3User(userId));
 	}, [dispatch, userId, user]);

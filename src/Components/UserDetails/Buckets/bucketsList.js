@@ -16,7 +16,7 @@ import {
 import _ from "lodash";
 import { Info, Lock, Meh, RefreshCw } from "lucide-react";
 import PropTypes from "prop-types";
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +41,6 @@ const BucketsList = ({ s3user }) => {
 	const bucketsFetchStatus = useSelector(
 		(state) => state.AmazonStore.bucketsFetchStatus,
 	);
-	const user = useSelector((state) => state.host.user);
 	const quotas = useSelector((state) => state.AmazonStore.s3quotas);
 	const s3userFetchStatus = useSelector(
 		(state) => state.AmazonStore.s3userFetchStatus,
@@ -58,7 +57,6 @@ const BucketsList = ({ s3user }) => {
 	const [data, setData] = useState([]);
 	const isUserLocked = isStatusLocked(s3user);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		s3user && dispatch(fetchBuckets(s3user.name));
 	}, [s3user]);
@@ -208,6 +206,7 @@ const BucketsList = ({ s3user }) => {
 								>
 									<span>{t("objects")}</span>
 									<Popup content={objectsQuotasHint}>
+										{/** biome-ignore lint/a11y/useSemanticElements: need for tooltip */}
 										<span role="button" tabIndex={0} className="thead-info">
 											<Info size={16} />
 										</span>
@@ -218,7 +217,7 @@ const BucketsList = ({ s3user }) => {
 						</TableHeader>
 
 						<TableBody>
-							{data?.map((item, i) => (
+							{data?.map((item) => (
 								<TableRow key={item.name}>
 									<TableCell>
 										<div className="flex items-center gap-2">

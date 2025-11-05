@@ -2,7 +2,7 @@ import { Button } from "container/Button";
 import { Form, useForm } from "container/Form";
 import { Label } from "container/Label";
 import { DialogClose, DialogFooter } from "container/Modal";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { bucketPattern, number } from "../../../Validaions";
 import { InputFormField } from "../../GeneralComponents/InputFormField";
@@ -54,7 +54,6 @@ const BucketForm = ({ handleClose, onSubmit, initialValues, limits }) => {
 
 	const edit = !!initialValues;
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		initialValues && form.reset(initialValues);
 	}, [initialValues]);
