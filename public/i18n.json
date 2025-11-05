@@ -68,7 +68,9 @@
 			"privateEndpoints": "Private Endpoints",
 			"overviewTab": "Overview",
 			"resourcesTab": "Resources",
-			"remove": "Remove"
+			"remove": "Remove",
+			"deleteBucketConfirmName": "Delete Bucket Confirmation",
+			"deleteS3userConfirName": "Delete S3 User Confirmation"
 		}
 	},
 	"ru": {
@@ -140,7 +142,9 @@
 			"privateEndpoints": "Приватные точки доступа",
 			"overviewTab": "Обзор",
 			"resourcesTab": "Ресурсы",
-			"remove": "Удалить"
+			"remove": "Удалить",
+			"deleteBucketConfirmName": "Подтвердите удаление корзины",
+			"deleteS3userConfirName": "Подтвердите удаление S3-пользователя"
 		}
 	}
 }
