@@ -70,7 +70,8 @@
 			"resourcesTab": "Resources",
 			"remove": "Remove",
 			"deleteBucketConfirmName": "Delete Bucket Confirmation",
-			"deleteS3userConfirName": "Delete S3 User Confirmation"
+			"deleteS3userConfirName": "Delete S3 User Confirmation",
+			"s3userName": "Only numbers, latin letters, hyphens, periods, @ signs and underscores are allowed"
 		}
 	},
 	"ru": {
@@ -144,7 +145,8 @@
 			"resourcesTab": "Ресурсы",
 			"remove": "Удалить",
 			"deleteBucketConfirmName": "Подтвердите удаление корзины",
-			"deleteS3userConfirName": "Подтвердите удаление S3-пользователя"
+			"deleteS3userConfirName": "Подтвердите удаление S3-пользователя",
+			"s3userName": "Допускаются только цифры, латинские буквы, дефисы, точки, знаки @ и знаки подчеркивания"
 		}
 	}
 }
