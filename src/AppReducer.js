@@ -127,6 +127,11 @@ export const AmazonStore = (state = initialState, action) => {
 				s3user: action.payload,
 			});
 
+		case `${ActionTypes.S3_USER_GENERATE_KEYS}_FULFILLED`:
+			return Immutable.merge(state, {
+				s3user: action.payload,
+			});
+
 		// fetch all s3 user buckets
 		case `${ActionTypes.BUCKETS_FETCH}_PENDING`:
 			return state.set("bucketsFetchStatus", "pending");
