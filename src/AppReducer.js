@@ -70,7 +70,7 @@ export const AmazonStore = (state = initialState, action) => {
 			return state.set("poolsFetchStatus", "pending");
 		case `${ActionTypes.POOLS_FETCH}_FULFILLED`:
 			return Immutable.merge(state, {
-				pools: action.payload,
+				pools: action.payload.filter((pool) => pool.type === "s3"),
 				poolsFetchStatus: "fulfilled",
 			});
 		case `${ActionTypes.POOLS_FETCH}_REJECTED`:
