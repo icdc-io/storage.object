@@ -195,7 +195,7 @@ const Quotas = () => {
 			...diskOption,
 			isFree: !quotas.map(mapQuotasToDiskType).includes(diskOption.text),
 		}));
-	console.log(filterFreeDiskTypes(availableQuotas));
+
 	const createQuotaButton = filterFreeDiskTypes(availableQuotas).length ? (
 		<Button onClick={onModalOpen(null)}>{t("addQuota")}</Button>
 	) : (
