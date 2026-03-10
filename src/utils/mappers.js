@@ -4,4 +4,4 @@ export const mapPoolToDiskTypeOptions = (poolsInfo) => ({
 	value: poolsInfo.id,
 });
 
-export const mapQuotasToDiskType = (quotasInfo) => quotasInfo.pool.klass;
+export const mapQuotasToDiskType = (quotasInfo) => quotasInfo.pool.class;

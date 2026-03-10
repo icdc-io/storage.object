@@ -35,7 +35,7 @@ const Resources = ({ s3user }) => {
 	return (
 		<div className="flex flex-col gap-4 h-full">
 			<h4>{t("storageType")}</h4>
-			<p>{s3user.pool?.klass}</p>
+			<p>{s3user.pool?.class}</p>
 
 			<h4>{t("space")}</h4>
 			<p>
