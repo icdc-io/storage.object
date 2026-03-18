@@ -37,11 +37,11 @@ const EditResModal = ({ label }, ref) => {
 				data_size_mb:
 					userPool.data_size_mb -
 					userPool.usage.data_size_mb +
-					s3user.user_quota.data_size_mb,
+					s3user.quota.data_size_mb,
 				objects:
-					userPool.objects - userPool.usage.objects + s3user.user_quota.objects,
+					userPool.objects - userPool.usage.objects + s3user.quota.objects,
 				buckets:
-					userPool.buckets - userPool.usage.buckets + s3user.user_quota.buckets,
+					userPool.buckets - userPool.usage.buckets + s3user.quota.buckets,
 			}
 		: {
 				data_size_mb: 0,
@@ -63,9 +63,9 @@ const EditResModal = ({ label }, ref) => {
 		name: item.name,
 		description: item.description,
 		default_placement: item.pool.id,
-		data_size_mb: item.user_quota.data_size_mb || 0,
-		objects: item.user_quota.objects || 0,
-		buckets: +item.user_quota.buckets || 0,
+		data_size_mb: item.quota.data_size_mb || 0,
+		objects: item.quota.objects || 0,
+		buckets: +item.quota.buckets || 0,
 		owner: item.owner,
 	});
 
