@@ -38,15 +38,13 @@ const Resources = ({ s3user }) => {
 			<p>{s3user.pool?.class}</p>
 
 			<h4>{t("space")}</h4>
-			<p>
-				{`${s3user.usage?.data_size_mb} / ${s3user.user_quota?.data_size_mb}`}
-			</p>
+			<p>{`${s3user.usage?.data_size_mb} / ${s3user.quota?.data_size_mb}`}</p>
 
 			<h4>{t("objectsLimit")}</h4>
-			<p>{`${s3user.usage?.objects} / ${s3user.user_quota?.objects}`}</p>
+			<p>{`${s3user.usage?.objects} / ${s3user.quota?.objects}`}</p>
 
 			<h4>{t("numberBucketsLimit")}</h4>
-			<p>{`${s3user.usage?.buckets} / ${s3user.user_quota?.buckets}`}</p>
+			<p>{`${s3user.usage?.buckets} / ${s3user.quota?.buckets}`}</p>
 
 			<div className="resources-bottom-panel mt-auto">
 				<Button onClick={onModalOpen(s3user)} variant="secondary">

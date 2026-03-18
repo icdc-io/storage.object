@@ -43,7 +43,7 @@ const sortChartData = (data, field) =>
 	data.sort((a, b) => {
 		if (!a.usage[field]) {
 			if (!b.usage[field]) {
-				return a.user_quota[field] - b.user_quota[field];
+				return a.quota[field] - b.quota[field];
 			}
 			return -1;
 		}
@@ -134,8 +134,7 @@ const UsersList = () => {
 		const isDeleted = isStatusDeleted(item);
 		const TagName = isDeleted ? Button : Link;
 		const isData =
-			Object.keys(item.user_quota).length > 0 &&
-			Object.keys(item.usage).length > 0;
+			Object.keys(item.quota).length > 0 && Object.keys(item.usage).length > 0;
 		const nameCellContent = (
 			<TagName
 				to={`${item.id}`}
@@ -193,10 +192,10 @@ const UsersList = () => {
 				<TableCell>{item.pool.name || EMPTY_VALUE}</TableCell>
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.data_size_mb} / {item.user_quota.data_size_mb}
+						{item.usage.data_size_mb} / {item.quota.data_size_mb}
 						<Bar
 							value={item.usage.data_size_mb}
-							total={item.user_quota.data_size_mb}
+							total={item.quota.data_size_mb}
 						/>
 					</TableCell>
 				) : (
@@ -204,16 +203,16 @@ const UsersList = () => {
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.buckets} / {item.user_quota.buckets}
-						<Bar value={item.usage.buckets} total={item.user_quota.buckets} />
+						{item.usage.buckets} / {item.quota.buckets}
+						<Bar value={item.usage.buckets} total={item.quota.buckets} />
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.objects} / {item.user_quota.objects}
-						<Bar value={item.usage.objects} total={item.user_quota.objects} />
+						{item.usage.objects} / {item.quota.objects}
+						<Bar value={item.usage.objects} total={item.quota.objects} />
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>

@@ -158,15 +158,15 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 				data_size_mb:
 					userPool.data_size_mb -
 					userPool.usage.data_size_mb +
-					initialValues.user.user_quota.data_size_mb,
+					initialValues.user.quota.data_size_mb,
 				objects:
 					userPool.objects -
 					userPool.usage.objects +
-					initialValues.user.user_quota.objects,
+					initialValues.user.quota.objects,
 				buckets:
 					userPool.buckets -
 					userPool.usage.buckets +
-					initialValues.user.user_quota.buckets,
+					initialValues.user.quota.buckets,
 			});
 		}
 	}, [initialValues]);

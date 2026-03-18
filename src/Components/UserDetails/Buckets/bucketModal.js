@@ -38,18 +38,17 @@ const BucketModal = (_props, ref) => {
 			bucket
 				? {
 						data_size_mb:
-							s3user.user_quota.data_size_mb -
+							s3user.quota.data_size_mb -
 							s3user.usage.data_size_mb +
 							bucket.usage.data_size_mb,
 						objects:
-							s3user.user_quota.objects -
+							s3user.quota.objects -
 							s3user.usage.objects +
 							bucket.usage.objects,
 					}
 				: {
-						data_size_mb:
-							s3user.user_quota.data_size_mb - s3user.usage.data_size_mb,
-						objects: s3user.user_quota.objects - s3user.usage.objects,
+						data_size_mb: s3user.quota.data_size_mb - s3user.usage.data_size_mb,
+						objects: s3user.quota.objects - s3user.usage.objects,
 					},
 		);
 	}, [s3user, bucket]);
