@@ -143,6 +143,11 @@ const UsersList = () => {
 				{item.name}
 			</TagName>
 		);
+		const spaceUsage = isLocked
+			? item.quota.data_size_mb
+			: item.usage.data_size_mb;
+		const backetsUsage = isLocked ? item.quota.buckets : item.usage.buckets;
+		const objectsUsage = isLocked ? item.quota.objects : item.usage.objects;
 		return (
 			<TableRow key={item.name}>
 				<TableCell>
@@ -192,27 +197,24 @@ const UsersList = () => {
 				<TableCell>{item.pool.name || EMPTY_VALUE}</TableCell>
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.data_size_mb} / {item.quota.data_size_mb}
-						<Bar
-							value={item.usage.data_size_mb}
-							total={item.quota.data_size_mb}
-						/>
+						{spaceUsage} / {item.quota.data_size_mb}
+						<Bar value={spaceUsage} total={item.quota.data_size_mb} />
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.buckets} / {item.quota.buckets}
-						<Bar value={item.usage.buckets} total={item.quota.buckets} />
+						{backetsUsage} / {item.quota.buckets}
+						<Bar value={backetsUsage} total={item.quota.buckets} />
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.objects} / {item.quota.objects}
-						<Bar value={item.usage.objects} total={item.quota.objects} />
+						{objectsUsage} / {item.quota.objects}
+						<Bar value={objectsUsage} total={item.quota.objects} />
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
