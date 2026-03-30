@@ -27,7 +27,9 @@ import { isStatusDeleted, isStatusLocked } from "../../utils/isStatusLocked";
 import DeleteModal from "../GeneralComponents/DeleteModal";
 import UserModal from "./userModal";
 
-const Bar = ({ value, total }) => <Progress value={value} total={total} />;
+const Bar = ({ value, total, disabled }) => (
+	<Progress value={value} total={total} disabled={disabled} />
+);
 
 export const fullCellWidth = (content) => {
 	return (
@@ -143,11 +145,9 @@ const UsersList = () => {
 				{item.name}
 			</TagName>
 		);
-		const spaceUsage = isLocked
-			? item.quota.data_size_mb
-			: item.usage.data_size_mb;
-		const backetsUsage = isLocked ? item.quota.buckets : item.usage.buckets;
-		const objectsUsage = isLocked ? item.quota.objects : item.usage.objects;
+		const spaceUsage = item.usage.data_size_mb;
+		const bucketsUsage = item.usage.buckets;
+		const objectsUsage = item.usage.objects;
 		return (
 			<TableRow key={item.name}>
 				<TableCell>
@@ -198,15 +198,23 @@ const UsersList = () => {
 				{isData ? (
 					<TableCell align="center">
 						{spaceUsage} / {item.quota.data_size_mb}
-						<Bar value={spaceUsage} total={item.quota.data_size_mb} />
+						<Bar
+							value={spaceUsage}
+							total={item.quota.data_size_mb}
+							disabled={isLocked}
+						/>
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{backetsUsage} / {item.quota.buckets}
-						<Bar value={backetsUsage} total={item.quota.buckets} />
+						{bucketsUsage} / {item.quota.buckets}
+						<Bar
+							value={bucketsUsage}
+							total={item.quota.buckets}
+							disabled={isLocked}
+						/>
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
@@ -214,7 +222,11 @@ const UsersList = () => {
 				{isData ? (
 					<TableCell align="center">
 						{objectsUsage} / {item.quota.objects}
-						<Bar value={objectsUsage} total={item.quota.objects} />
+						<Bar
+							value={objectsUsage}
+							total={item.quota.objects}
+							disabled={isLocked}
+						/>
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
