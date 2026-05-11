@@ -1,4 +1,3 @@
-import cogoToast from "cogo-toast";
 import {
 	createData,
 	deleteData,
@@ -82,7 +81,6 @@ export const generateKeys = (user_id) => (dispatch) => {
 	const response = dispatch(generateKeysAC(user_id));
 
 	return response.then(() => {
-		dispatch(fetchS3User(user_id));
 		showSuccessNotification("");
 	}, handleError);
 };

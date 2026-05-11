@@ -2,7 +2,7 @@ import { Button } from "container/Button";
 import ErrorScreen from "container/ErrorScreen";
 import Loader from "container/Loader";
 import PropTypes from "prop-types";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -35,18 +35,16 @@ const Resources = ({ s3user }) => {
 	return (
 		<div className="flex flex-col gap-4 h-full">
 			<h4>{t("storageType")}</h4>
-			<p>{s3user.pool?.klass}</p>
+			<p>{s3user.pool?.class}</p>
 
 			<h4>{t("space")}</h4>
-			<p>
-				{`${s3user.usage?.data_size_mb} / ${s3user.user_quota?.data_size_mb}`}
-			</p>
+			<p>{`${s3user.usage?.data_size_mb} / ${s3user.quota?.data_size_mb}`}</p>
 
 			<h4>{t("objectsLimit")}</h4>
-			<p>{`${s3user.usage?.objects} / ${s3user.user_quota?.objects}`}</p>
+			<p>{`${s3user.usage?.objects} / ${s3user.quota?.objects}`}</p>
 
 			<h4>{t("numberBucketsLimit")}</h4>
-			<p>{`${s3user.usage?.buckets} / ${s3user.user_quota?.buckets}`}</p>
+			<p>{`${s3user.usage?.buckets} / ${s3user.quota?.buckets}`}</p>
 
 			<div className="resources-bottom-panel mt-auto">
 				<Button onClick={onModalOpen(s3user)} variant="secondary">

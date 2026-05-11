@@ -17,7 +17,7 @@ export default ({ envMode }) => {
 			define: publicVars,
 		},
 		tools: {
-			rspack: (config, { appendPlugins, rspack, isProd }) => {
+			rspack: (config, { appendPlugins, rspack }) => {
 				config.output.publicPath = "auto";
 
 				config.plugins = config.plugins || [];

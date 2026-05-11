@@ -16,18 +16,20 @@ import {
 import _ from "lodash";
 import { CircleX, Lock, Meh } from "lucide-react";
 import PropTypes from "prop-types";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { actionAndFetch, deleteS3user, lockS3user } from "../../AppActions";
 import { EMPTY_VALUE } from "../../AppConstants";
 import { isStatusDeleted, isStatusLocked } from "../../utils/isStatusLocked";
 import DeleteModal from "../GeneralComponents/DeleteModal";
 import UserModal from "./userModal";
 
-const Bar = ({ value, total }) => <Progress value={value} total={total} />;
+const Bar = ({ value, total, disabled }) => (
+	<Progress value={value} total={total} disabled={disabled} />
+);
 
 export const fullCellWidth = (content) => {
 	return (
@@ -43,7 +45,7 @@ const sortChartData = (data, field) =>
 	data.sort((a, b) => {
 		if (!a.usage[field]) {
 			if (!b.usage[field]) {
-				return a.user_quota[field] - b.user_quota[field];
+				return a.quota[field] - b.quota[field];
 			}
 			return -1;
 		}
@@ -62,7 +64,6 @@ const updateAfterLocking = (setData) => (data) => {
 const UsersList = () => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 	const items = useSelector((state) => state.AmazonStore.s3users);
 	const s3usersFetchStatus = useSelector(
 		(state) => state.AmazonStore.s3usersFetchStatus,
@@ -135,8 +136,7 @@ const UsersList = () => {
 		const isDeleted = isStatusDeleted(item);
 		const TagName = isDeleted ? Button : Link;
 		const isData =
-			Object.keys(item.user_quota).length > 0 &&
-			Object.keys(item.usage).length > 0;
+			Object.keys(item.quota).length > 0 && Object.keys(item.usage).length > 0;
 		const nameCellContent = (
 			<TagName
 				to={`${item.id}`}
@@ -145,6 +145,9 @@ const UsersList = () => {
 				{item.name}
 			</TagName>
 		);
+		const spaceUsage = item.usage.data_size_mb;
+		const bucketsUsage = item.usage.buckets;
+		const objectsUsage = item.usage.objects;
 		return (
 			<TableRow key={item.name}>
 				<TableCell>
@@ -194,10 +197,11 @@ const UsersList = () => {
 				<TableCell>{item.pool.name || EMPTY_VALUE}</TableCell>
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.data_size_mb} / {item.user_quota.data_size_mb}
+						{spaceUsage} / {item.quota.data_size_mb}
 						<Bar
-							value={item.usage.data_size_mb}
-							total={item.user_quota.data_size_mb}
+							value={spaceUsage}
+							total={item.quota.data_size_mb}
+							disabled={isLocked}
 						/>
 					</TableCell>
 				) : (
@@ -205,16 +209,24 @@ const UsersList = () => {
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.buckets} / {item.user_quota.buckets}
-						<Bar value={item.usage.buckets} total={item.user_quota.buckets} />
+						{bucketsUsage} / {item.quota.buckets}
+						<Bar
+							value={bucketsUsage}
+							total={item.quota.buckets}
+							disabled={isLocked}
+						/>
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>
 				)}
 				{isData ? (
 					<TableCell align="center">
-						{item.usage.objects} / {item.user_quota.objects}
-						<Bar value={item.usage.objects} total={item.user_quota.objects} />
+						{objectsUsage} / {item.quota.objects}
+						<Bar
+							value={objectsUsage}
+							total={item.quota.objects}
+							disabled={isLocked}
+						/>
 					</TableCell>
 				) : (
 					<TableCell align="center">{t("notAvailable")}</TableCell>

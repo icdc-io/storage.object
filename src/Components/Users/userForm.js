@@ -4,13 +4,12 @@ import { Label } from "container/Label";
 import { DialogClose, DialogFooter } from "container/Modal";
 import { isAdminRights } from "container/roleUtils";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-// import DangerousHTML from "react-dangerous-html";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAccountUsers } from "../../AppActions";
-import { emailPattern, number, s3userPattern } from "../../Validaions";
 import { formatI18nMessageToString } from "../../utils/formatErrorMessages";
+import { emailPattern, number, s3userPattern } from "../../Validaions";
 import { ComboboxFormField } from "../GeneralComponents/ComboboxFormField";
 import { InputFormField } from "../GeneralComponents/InputFormField";
 
@@ -148,7 +147,6 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 		setLimits(newLimits);
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (initialValues) {
 			form.reset(initialValues);
@@ -160,15 +158,15 @@ const UserForm = ({ initialValues, handleClose, onSubmit }) => {
 				data_size_mb:
 					userPool.data_size_mb -
 					userPool.usage.data_size_mb +
-					initialValues.user.user_quota.data_size_mb,
+					initialValues.user.quota.data_size_mb,
 				objects:
 					userPool.objects -
 					userPool.usage.objects +
-					initialValues.user.user_quota.objects,
+					initialValues.user.quota.objects,
 				buckets:
 					userPool.buckets -
 					userPool.usage.buckets +
-					initialValues.user.user_quota.buckets,
+					initialValues.user.quota.buckets,
 			});
 		}
 	}, [initialValues]);

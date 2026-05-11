@@ -4,15 +4,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "container/Modal";
-import React, { useState, useImperativeHandle, forwardRef } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	actionAndFetch,
-	createS3user,
-	editS3user,
-	editS3userAndFetch,
-} from "../../AppActions";
+import { actionAndFetch, createS3user, editS3user } from "../../AppActions";
 import UserForm from "./userForm";
 
 const UserModal = (_props, ref) => {
@@ -60,9 +55,9 @@ const UserModal = (_props, ref) => {
 		name: item.name,
 		description: item.description,
 		pool_id: item.pool.id,
-		data_size_mb: item.user_quota.data_size_mb || 0,
-		objects: item.user_quota.objects || 0,
-		buckets: item.user_quota.buckets || 0,
+		data_size_mb: item.quota.data_size_mb || 0,
+		objects: item.quota.objects || 0,
+		buckets: item.quota.buckets || 0,
 		owner: item.owner,
 		user: user,
 	});

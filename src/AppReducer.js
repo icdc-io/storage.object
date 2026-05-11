@@ -1,7 +1,7 @@
 /* eslint camelcase: 0 */
-import * as ActionTypes from "./AppConstants";
 
 import Immutable from "seamless-immutable";
+import * as ActionTypes from "./AppConstants";
 import { formatAccountUsers } from "./utils/formatAccountUsers";
 
 // eslint-disable-next-line new-cap
@@ -70,7 +70,7 @@ export const AmazonStore = (state = initialState, action) => {
 			return state.set("poolsFetchStatus", "pending");
 		case `${ActionTypes.POOLS_FETCH}_FULFILLED`:
 			return Immutable.merge(state, {
-				pools: action.payload,
+				pools: action.payload.filter((pool) => pool.type === "s3"),
 				poolsFetchStatus: "fulfilled",
 			});
 		case `${ActionTypes.POOLS_FETCH}_REJECTED`:
@@ -123,6 +123,11 @@ export const AmazonStore = (state = initialState, action) => {
 
 		// edit single s3 user
 		case `${ActionTypes.EDIT_S3_USER}_FULFILLED`:
+			return Immutable.merge(state, {
+				s3user: action.payload,
+			});
+
+		case `${ActionTypes.S3_USER_GENERATE_KEYS}_FULFILLED`:
 			return Immutable.merge(state, {
 				s3user: action.payload,
 			});

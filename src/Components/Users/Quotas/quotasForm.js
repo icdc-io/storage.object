@@ -3,13 +3,13 @@ import { Form, useForm } from "container/Form";
 import { Label } from "container/Label";
 import { DialogClose, DialogFooter } from "container/Modal";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // import DangerousHTML from "react-dangerous-html";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { number } from "../../../Validaions";
 import { filterFreeDiskTypes } from "../../../utils/filterFreeQuotas";
 import { formatI18nMessageToString } from "../../../utils/formatErrorMessages";
+import { number } from "../../../Validaions";
 import { ComboboxFormField } from "../../GeneralComponents/ComboboxFormField";
 import { InputFormField } from "../../GeneralComponents/InputFormField";
 
@@ -92,7 +92,6 @@ const QuotasForm = ({
 	const [limits, setLimits] = useState({});
 	const edit = !!initialValues;
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (initialValues) {
 			const storageLimits = accountLimits.find(
